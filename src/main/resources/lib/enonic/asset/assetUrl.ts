@@ -26,7 +26,7 @@ export function assetUrl({
   type,
 }: AssetUrlParams): string {
   const pathWithoutTrailingSlash = path.replace(/\/$/, '');
-  let staticServiceUrl = serviceUrlRootViaAssetUrl({
+  let assetServiceUrl = serviceUrlRootViaAssetUrl({
     application,
     params,
     service: 'asset',
@@ -35,13 +35,13 @@ export function assetUrl({
   if (fingerprinting) {
     const fingerprint = getFingerprint(application);
     if (fingerprint) {
-      staticServiceUrl = staticServiceUrl.replace(`/_/service/${application}/asset`, `/_/service/${application}/asset/${fingerprint}`);
+      assetServiceUrl = assetServiceUrl.replace(`/_/service/${application}/asset`, `/_/service/${application}/asset/${fingerprint}`);
     }
   }
 
-  const firstQuestionMarkIndex = staticServiceUrl.indexOf('?');
+  const firstQuestionMarkIndex = assetServiceUrl.indexOf('?');
   if (firstQuestionMarkIndex !== -1) {
-    return `${staticServiceUrl.substring(0, firstQuestionMarkIndex)}/${pathWithoutTrailingSlash}${staticServiceUrl.substring(firstQuestionMarkIndex)}`;
+    return `${assetServiceUrl.substring(0, firstQuestionMarkIndex)}/${pathWithoutTrailingSlash}${assetServiceUrl.substring(firstQuestionMarkIndex)}`;
   }
-  return `${staticServiceUrl}/${pathWithoutTrailingSlash}`;
+  return `${assetServiceUrl}/${pathWithoutTrailingSlash}`;
 }

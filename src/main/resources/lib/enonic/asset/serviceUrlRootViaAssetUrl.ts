@@ -5,7 +5,7 @@ import type {
 
 import { assetUrl as getAssetUrl } from '/lib/xp/portal';
 
-const SERVICE_NAME = 'static';
+const SERVICE_NAME = 'asset';
 
 export function serviceUrlRootViaAssetUrl({
   application = app.name,

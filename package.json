@@ -9,13 +9,18 @@
     "@enonic-types/global": "^7.14.4",
     "@enonic-types/lib-io": "^7.14.4",
     "@enonic-types/lib-portal": "^7.14.4",
+    "@eslint/js": "^9.9.1",
     "@item-enonic-types/lib-router": "^3.0.0",
+    "@swc/core": "^1.7.23",
     "@types/bun": "^1.1.8",
     "bun": "^1.1.26",
     "concurrently": "^8.2.2",
+    "eslint": "^8.57.0",
     "jest-cucumber": "^4.5.0",
     "q-i": "^2.0.1",
-    "typescript": "^5.5.4"
+    "tsup": "^8.2.4",
+    "typescript": "^5.5.4",
+    "typescript-eslint": "^8.4.0"
   },
   "homepage": "https://github.com/enonic/lib-asset#readme",
   "name": "lib-asset",
@@ -26,7 +31,12 @@
     "url": "git+https://github.com/enonic/lib-asset.git"
   },
   "scripts": {
+    "build": "concurrently -c auto -g --timings npm:build:*",
+    "build:server": "npx tsup -d build/resources/main",
+    "check": "concurrently -c auto -g --timings npm:check:types npm:lint",
     "check:types": "concurrently -g -r --timings npm:check:types:*",
-    "check:types:server": "npx tsc --noEmit -p src/main/resources/tsconfig.json"
+    "check:types:server": "npx tsc --noEmit -p src/main/resources/tsconfig.json",
+    "lint": "eslint --cache",
+    "test": "bun test"
   }
 }
