@@ -5,7 +5,7 @@ import type {
 import type { LibAssetResourceInterface } from './types';
 
 
-export class LibStaticResource implements LibAssetResourceInterface {
+export class LibAssetResource implements LibAssetResourceInterface {
   private readonly native: LibAssetResourceInterface;
 
   constructor(native: LibAssetResourceInterface) {
@@ -40,12 +40,12 @@ export class LibStaticResource implements LibAssetResourceInterface {
   public readString(): string {
     return this.native.readString();
   }
-} // class LibStaticResource
+} // class LibAssetResource
 
 
 const ioService = __.newBean<{
   getMimeType: (name: string|ResourceKey) => string,
-  getResource: (key: string|ResourceKey) => LibStaticResource
+  getResource: (key: string|ResourceKey) => LibAssetResource
   readText: (stream: ByteSource) => string
 }>('lib.enonic.asset.IoService');
 
@@ -55,7 +55,7 @@ export const getMimeType = (name: string|ResourceKey) => {
 
 export const getResource = (key: string|ResourceKey) => {
     const native = ioService.getResource(key);
-    return new LibStaticResource(native);
+    return new LibAssetResource(native);
 };
 
 export const readText = (stream: ByteSource) => {

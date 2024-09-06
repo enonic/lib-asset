@@ -13,7 +13,7 @@ public class ProcessorFactory {
     {
         return new ResourceProcessor.Builder<ResourceKey, String>().
                 key( key ).
-                segment( "lib-static" ).
+                segment( "lib-asset" ).
                 keyTranslator( k -> k ).
                 processor( resource -> "\"" + hasher.getHash( resource.readBytes() ) + "\"" ).
                 build();
