@@ -1,0 +1,16 @@
+{
+  "compilerOptions": {
+    "lib": [
+      "ES2015", // String.prototype.endsWith // TODO Check that this works in Nashorn
+    ],
+    "paths": {
+      "/lib/router": ["../../../node_modules/@item-enonic-types/lib-router"],
+      "/lib/xp/*": ["../../../node_modules/@enonic-types/lib-*"],
+      // "/*": ["./*"], // bun doesn't resolve these?
+    },
+    "skipLibCheck": true,
+    "types": [
+      "@enonic-types/global"
+    ],
+  }
+}
