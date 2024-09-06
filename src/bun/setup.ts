@@ -45,7 +45,7 @@ const resources: Record<string, {
 globalThis.__ = {
   // @ts-ignore
   newBean: (bean: string) => {
-    if (bean === 'lib.enonic.asset.AppHelper') {
+    if (bean === 'com.enonic.lib.asset.AppHelper') {
       return {
         isDevMode: () => false,
         getFingerprint: (application: string) => {
@@ -54,7 +54,7 @@ globalThis.__ = {
         },
       };
     }
-    if (bean === 'lib.enonic.asset.IoService') {
+    if (bean === 'com.enonic.lib.asset.IoService') {
       return mockIoService({ resources });
     }
     throw new Error(`Unmocked bean:${bean}!`);

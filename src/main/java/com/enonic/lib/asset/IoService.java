@@ -1,4 +1,4 @@
-package lib.enonic.asset;
+package com.enonic.lib.asset;
 
 import java.io.IOException;
 import java.io.InputStream;

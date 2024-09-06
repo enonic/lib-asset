@@ -47,7 +47,7 @@ const ioService = __.newBean<{
   getMimeType: (name: string|ResourceKey) => string,
   getResource: (key: string|ResourceKey) => LibAssetResource
   readText: (stream: ByteSource) => string
-}>('lib.enonic.asset.IoService');
+}>('com.enonic.lib.asset.IoService');
 
 export const getMimeType = (name: string|ResourceKey) => {
     return ioService.getMimeType(name);

@@ -1,4 +1,4 @@
-package lib.enonic.asset.etag;
+package com.enonic.lib.asset.etag;
 
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceProcessor;

@@ -1,6 +1,6 @@
 const etagService = __.newBean<{
   getEtag: (path: string, etagOverride?: number) => Record<string,string>
-}>('lib.enonic.asset.etag.EtagService');
+}>('com.enonic.lib.asset.etag.EtagService');
 
 /** Gets a content string and MD5-contenthash etag string.
  *  In XP prod mode, cache the etag by file path only.

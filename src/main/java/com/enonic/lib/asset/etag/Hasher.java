@@ -1,4 +1,4 @@
-package lib.enonic.asset.etag;
+package com.enonic.lib.asset.etag;
 
 import com.google.common.hash.Hashing;
 

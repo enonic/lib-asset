@@ -1,4 +1,4 @@
-package lib.enonic.asset;
+package com.enonic.lib.asset;
 
 import java.util.Objects;
 
@@ -7,7 +7,7 @@ import com.enonic.xp.context.ContextAccessor;
 // import com.enonic.xp.core.impl.app.ApplicationFactoryService;
 // import com.enonic.xp.core.impl.app.resolver.ApplicationUrlResolver;
 // import com.enonic.xp.core.internal.HexCoder;
-import lib.enonic.asset.HexCoder;
+import com.enonic.lib.asset.HexCoder;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 // import com.enonic.xp.resource.ResourceService;
