@@ -13,10 +13,12 @@ export const getRelativeResourcePath = (request: Request) => {
   log.debug('getRelativeResourcePath: request: %s', request);
 
   let {rawPath, contextPath} = (request || {});
-  if (!isStringLiteral(rawPath)) {
-    // Gives 500-type error
-    throw Error(`${ERROR_MESSAGE_REQUEST_WITHOUT_RAWPATH} Request: ${JSON.stringify(request)}`);
-  }
+
+  // Already handled in the requestHandler
+  // if (!isStringLiteral(rawPath)) {
+  //   // Gives 500-type error
+  //   throw Error(`${ERROR_MESSAGE_REQUEST_WITHOUT_RAWPATH} Request: ${JSON.stringify(request)}`);
+  // }
 
   let removePrefix = (contextPath || '').trim() || '** missing or falsy **';
   log.debug('getRelativeResourcePath: removePrefix: %s', removePrefix);

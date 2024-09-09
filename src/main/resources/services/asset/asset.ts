@@ -4,7 +4,7 @@ import type {
 } from '../../lib/enonic/asset/types';
 
 import Router from '/lib/router';
-import { isEnabled } from '../../lib/enonic/asset/config';
+// import { isEnabled } from '../../lib/enonic/asset/config';
 import { requestHandler } from './requestHandler';
 
 const router = Router();
@@ -14,8 +14,8 @@ router.get('{path:.*}', (request: Request): Response => {
 });
 
 export const all = (request: Request) => {
-	if (isEnabled()) {
+	// if (isEnabled()) {
 		return router.dispatch(request);
-	}
-	return { status: 404 };
+	// }
+	// return { status: 404 };
 }

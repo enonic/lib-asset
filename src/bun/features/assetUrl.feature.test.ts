@@ -24,61 +24,72 @@ const feature = loadFeature('./src/bun/features/assetUrl.feature', {
 });
 
 export const steps: StepDefinitions = ({ given, and, when, then }) => {
-  let config: Partial<Config>;
+  let assetUrlParams: Partial<AssetUrlParams> = {};
   let assetUrlReturnValue: string;
 
   given('there is no configuration file', () => {
-    // no-op
+    globalThis._resources['/com.enonic.lib.asset.json'] = {
+      exists: false
+    };
   });
 
-  given('fingerprint is disabled', () => {
-    if (!config) {
-      config = {};
-    }
-    config.fingerprint = false;
+  given('The following configuration:', (table: {option: string, value: unknown}[]) => {
+    const configFromJson = JSON.parse(globalThis._resources['/com.enonic.lib.asset.json'].bytes || '{}');
+    // log.debug('table:%s', table);
+    table.forEach(({ option, value }) => {
+      // log.debug('option:%s value:%s', option, value);
+      configFromJson[option] = value;
+    });
+    globalThis._resources['/com.enonic.lib.asset.json'] = {
+      bytes: JSON.stringify(configFromJson),
+      exists: true,
+      isDirectory: false,
+      mimeType: 'application/json'
+    };
   });
+
+  // given('cacheBust is disabled via parameters', () => {
+  //   assetUrlParams.cacheBust = false;
+  // });
+
+  // given('fingerprint is disabled in the configuration file', () => {
+  //   let configFromJson = {
+  //     fingerprint: false
+  //   };
+  //   if (globalThis._resources['/com.enonic.lib.asset.json']?.exists) {
+  //     configFromJson = JSON.parse(globalThis._resources['/com.enonic.lib.asset.json'].bytes || '{}');
+  //     configFromJson.fingerprint = false;
+  //   }
+  //   globalThis._resources['/com.enonic.lib.asset.json'] = {
+  //     bytes: JSON.stringify(configFromJson),
+  //     exists: true,
+  //     isDirectory: false,
+  //     mimeType: 'application/json'
+  //   };
+  // });
 
   when(/^I call assetUrl with the path "(.*)"$/, (path) => {
-    let fingerprinting = true;
-    if (config && config.fingerprint !== undefined) {
-      fingerprinting = config.fingerprint;
-    }
-    assetUrlReturnValue = assetUrl({
-      fingerprinting,
-      path,
-    });
+    assetUrlParams.path = path;
+    assetUrlReturnValue = assetUrl(assetUrlParams as AssetUrlParams);
   });
 
   when('I call assetUrl with the following parameters:', (table: {parameter: string, value: unknown}[]) => {
+    assetUrlParams = {};
     // log.debug('table:%s', table);
-    let fingerprinting = true;
-    if (config && config.fingerprint !== undefined) {
-      fingerprinting = config.fingerprint;
-    }
-    let application: AssetUrlParams['application'];
-    let params: AssetUrlParams['params'];
-    let path: AssetUrlParams['path'] = '';
-    let type: AssetUrlParams['type'];
     table.forEach(({ parameter, value }) => {
       if (parameter === 'application') {
-        application = value as string;
-      } else if (parameter === 'fingerprinting') {
-        fingerprinting = value === 'true';
+        assetUrlParams.application = value as string;
+      } else if (parameter === 'cacheBust') {
+        assetUrlParams.cacheBust = value === 'true';
       } else if (parameter === 'params') {
-        params = JSON.parse(value as string) as Record<string, unknown>;
+        assetUrlParams.params = JSON.parse(value as string) as Record<string, unknown>;
       } else if (parameter === 'path') {
-        path = value as string;
+        assetUrlParams.path = value as string;
       } else if (parameter === 'type') {
-        type = value as 'server' | 'absolute';
+        assetUrlParams.type = value as 'server' | 'absolute';
       }
     });
-    assetUrlReturnValue = assetUrl({
-      application,
-      fingerprinting,
-      params,
-      path,
-      type
-    });
+    assetUrlReturnValue = assetUrl(assetUrlParams as AssetUrlParams);
   });
 
   then(/^I should get the following url "(.*)"$/, (url) => {

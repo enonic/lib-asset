@@ -16,6 +16,7 @@ import {
 import { stringify } from 'q-i';
 // import { Resource } from '../jest/Resource';
 import { FINGERPRINT } from './constants';
+import { mockEtagService } from './mocks/etagService';
 import { mockIoService, mockGetResource } from './mocks/ioService';
 
 
@@ -25,59 +26,23 @@ declare module globalThis {
   var app: App
   var log: Log
   var __: DoubleUnderscore
+  var _devMode: boolean;
+  var _resources: Record<string, {
+    bytes?: string
+    exists?: boolean
+    etag?: string
+    isDirectory?: boolean
+    mimeType?: string
+  }>
 }
+
+const LOG_LEVEL: 'debug' | 'error' | 'info' | 'warn' | 'silent' = 'silent';
+
 
 export const isObject = (value: object | unknown): value is object =>
 	Object.prototype.toString.call(value).slice(8,-1) === 'Object';
 
-const resources: Record<string, {
-  bytes?: string
-  exists?: boolean
-  etag?: string
-  isDirectory?: boolean
-  mimeType?: string
-}> = {
-  '/lib/enonic/asset/config.json': {
-    exists: false
-  }
-};
-
-globalThis.__ = {
-  // @ts-ignore
-  newBean: (bean: string) => {
-    if (bean === 'com.enonic.lib.asset.AppHelper') {
-      return {
-        isDevMode: () => false,
-        getFingerprint: (application: string) => {
-          // log.debug('getFingerprint(%s) --> %s', application, FINGERPRINT);
-          return FINGERPRINT;
-        },
-      };
-    }
-    if (bean === 'com.enonic.lib.asset.IoService') {
-      return mockIoService({ resources });
-    }
-    throw new Error(`Unmocked bean:${bean}!`);
-  },
-  nullOrValue: (v: any) => {
-    log.debug(`nullOrValue value:${JSON.stringify(v, null, 4)}`);
-    return v;
-  },
-  toNativeObject: (v: any) => {
-    // log.debug(`toNativeObject value:${JSON.stringify(v, null, 4)}`);
-    if (
-      isObject(v)
-      // && v['etag'] === '"1234567890abcdef"'
-    ) {
-      return v as any;
-    }
-    throw new Error(`toNativeObject: Unmocked value:${JSON.stringify(v, null, 4)}!`);
-  },
-  toScriptValue: (v: any) => {
-    log.debug(`toScriptValue value:${JSON.stringify(v, null, 4)}`);
-    return v;
-  },
-};
+globalThis._devMode = false;
 
 globalThis.app = {
   name: 'com.example.myproject',
@@ -154,6 +119,14 @@ function logWith({
   format: string,
   values: unknown[]
 }) {
+  if (
+    LOG_LEVEL === 'silent' ||
+    (LOG_LEVEL === 'info' && name === 'debug') ||
+    (LOG_LEVEL === 'warn' && (name === 'debug' || name === 'info')) ||
+    (LOG_LEVEL === 'error' && (name === 'debug' || name === 'info' || name === 'warn'))
+  ) {
+    return;
+  }
   const prefix = `${color}${rpad(name.toUpperCase(), 6)}${format}${reset}`;
   if (values.length) {
     console[name](prefix, ...colorize(values, color));
@@ -206,11 +179,65 @@ globalThis.log = {
   },
 }
 
+globalThis._resources = { // This should establish an object pointer that should no be overwritten.
+  '/com.enonic.lib.asset.json': {
+    exists: false
+  },
+  '/static/index.css': {
+    bytes: 'body { color: green; }',
+    exists: true,
+    etag: 'etag-index-css', // 1234567890abcdef
+    mimeType: 'text/css',
+  },
+  '/static/404.css': {
+    exists: false
+  }
+};
+// log.info('initial globalThis._resources:%s', globalThis._resources);
+
+globalThis.__ = {
+  // @ts-ignore
+  newBean: (bean: string) => {
+    if (bean === 'com.enonic.lib.asset.AppHelper') {
+      return {
+        isDevMode: () => globalThis._devMode,
+        getFingerprint: (application: string) => {
+          // log.debug('getFingerprint(%s) --> %s', application, FINGERPRINT);
+          return FINGERPRINT;
+        },
+      };
+    }
+    if (bean === 'com.enonic.lib.asset.etag.EtagService') {
+      return mockEtagService({ resources: globalThis._resources });
+    }
+    if (bean === 'com.enonic.lib.asset.IoService') {
+      return mockIoService();
+    }
+    throw new Error(`Unmocked bean:${bean}!`);
+  },
+  nullOrValue: (v: any) => {
+    log.debug(`nullOrValue value:${JSON.stringify(v, null, 4)}`);
+    return v;
+  },
+  toNativeObject: (v: any) => {
+    if (
+      isObject(v)
+    ) {
+      return v as any;
+    }
+    throw new Error(`toNativeObject: Unmocked value:${JSON.stringify(v, null, 4)}!`);
+  },
+  toScriptValue: (v: any) => {
+    log.debug(`toScriptValue value:${JSON.stringify(v, null, 4)}`);
+    return v;
+  },
+};
+
 const BASEURL_WEBAPP = `/webapp/${app.name}`;
 const BASEURL = BASEURL_WEBAPP;
 
 mock.module('/lib/xp/io', () => ({
-  getResource: mockGetResource({ resources }),
+  getResource: mockGetResource(),
   readText: (_stream: ByteSource) => {
     return _stream as unknown as string;
   }
@@ -219,8 +246,10 @@ mock.module('/lib/xp/io', () => ({
 mock.module('/lib/xp/portal', () => ({
   assetUrl: (({
     params,
+    type,
   }: AssetUrlParams) => {
     const query = params ? `?${new URLSearchParams(params as Record<string,string>).toString()}` : '';
-    return `${BASEURL}/_/asset/${app.name}:${FINGERPRINT}${query}`;
+    const prefix = type === 'absolute' ? 'http://localhost:8080' : '';
+    return `${prefix}${BASEURL}/_/asset/${app.name}:${FINGERPRINT}${query}`;
   }),
 }));

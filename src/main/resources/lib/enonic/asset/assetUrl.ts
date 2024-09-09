@@ -1,4 +1,4 @@
-import { isFingerprintEnabled } from './config';
+import { isCacheBust } from './config';
 import { serviceUrlRootViaAssetUrl } from './serviceUrlRootViaAssetUrl';
 import { getFingerprint } from './runMode';
 
@@ -13,14 +13,14 @@ export interface AssetUrlParams {
   path: string
   // Optional
   application?: string
-  fingerprinting?: boolean
+  cacheBust?: boolean
   params?: object
   type?: 'server' | 'absolute'
 }
 
 export function assetUrl({
   application = app.name,
-  fingerprinting = isFingerprintEnabled(),
+  cacheBust = isCacheBust(),
   params,
   path,
   type,
@@ -32,7 +32,7 @@ export function assetUrl({
     service: 'asset',
     type,
   });
-  if (fingerprinting) {
+  if (cacheBust) {
     const fingerprint = getFingerprint(application);
     if (fingerprint) {
       assetServiceUrl = assetServiceUrl.replace(`/_/service/${application}/asset`, `/_/service/${application}/asset/${fingerprint}`);

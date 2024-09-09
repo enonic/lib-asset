@@ -3,16 +3,20 @@ import { isDev } from './runMode';
 
 
 export interface Config {
-  enabled: boolean
-  fingerprint: boolean
+  cacheBust: boolean
+  cacheControl: string
+  // enabled: boolean
+  root: string
 }
 
 
-const RESOURCE_PATH = '/lib/enonic/asset/config.json';
+const RESOURCE_PATH = '/com.enonic.lib.asset.json';
 
 const DEFAULT_CONFIG: Config = {
-  enabled: true,
-  fingerprint: true,
+  cacheBust: true,
+  cacheControl: 'public, max-age=31536000, immutable',
+  // enabled: true,
+  root: '/static',
 };
 
 function _getConfig(): Config {
@@ -42,10 +46,18 @@ export function getConfig(): Config {
   return CONFIG;
 }
 
-export function isEnabled(): Config['enabled'] {
-  return getConfig().enabled;
+export function configuredCacheControl(): Config['cacheControl'] {
+  return getConfig().cacheControl;
 }
 
-export function isFingerprintEnabled(): Config['fingerprint'] {
-  return getConfig().fingerprint;
+export function configuredRoot(): Config['root'] {
+  return getConfig().root;
+}
+
+// export function isEnabled(): Config['enabled'] {
+//   return getConfig().enabled;
+// }
+
+export function isCacheBust(): Config['cacheBust'] {
+  return getConfig().cacheBust;
 }
