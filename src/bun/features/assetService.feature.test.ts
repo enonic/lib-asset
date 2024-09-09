@@ -40,9 +40,9 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
     Object.keys(globalThis._resources).forEach((key) => {
       delete globalThis._resources[key];
     });
-    table.forEach(({ path, exists, mimeType, etag, content, isDirectory }) => {
+    table.forEach(({ path, exist, mimeType, etag, content, isDir }) => {
       globalThis._resources[path] = {
-        exists: exists !== 'false',
+        exists: exist !== 'false',
       };
       if (content) {
         globalThis._resources[path].bytes = content;
@@ -53,8 +53,8 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
       if (mimeType) {
         globalThis._resources[path].mimeType = mimeType;
       }
-      if (isDirectory) {
-        globalThis._resources[path].isDirectory = isDirectory;
+      if (isDir) {
+        globalThis._resources[path].isDirectory = isDir;
       }
     });
     // log.info('resources:%s', globalThis._resources);

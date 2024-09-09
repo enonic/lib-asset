@@ -2,12 +2,11 @@ Feature: asset service
 
 
 Scenario: Responds with 200 ok when resource found
-
 Given enonic is running in production mode
 # Given the following resources:
-#   | path                       | exists | mimeType | etag           | content               |
-#   | /com.enonic.lib.asset.json | false  |          |                |                       |
-#   | /static/index.css          | true   | text/css | etag-index-css | body { color: green } |
+#   | path                       | exist | mimeType | etag           | content               |
+#   | /com.enonic.lib.asset.json | false |          |                |                       |
+#   | /static/index.css          | true  | text/css | etag-index-css | body { color: green } |
 Given the following request:
   | property    | value                                                                                                               |
   | branch      | master                                                                                                              |
@@ -34,7 +33,6 @@ And the response should have the following headers:
 
 
 Scenario: Responds with 304 Not modified when if-none-match matches etag
-
 Given enonic is running in production mode
 # Given the following resources:
 #   | path              | mimeType | etag           | content               |
@@ -56,7 +54,6 @@ Then the response should have the following properties:
 
 
 Scenario: Responds with 404 Not found when resource not found
-
 Given enonic is running in production mode
 Given the following request:
 | property    | value                                                                                                             |
@@ -72,7 +69,6 @@ Then the response should have the following properties:
 
 
 Scenario: Responds with 400 bad request when path is illegal in prod mode
-
 Given enonic is running in production mode
 Given the following request:
 | property    | value                                                                                                       |
@@ -87,7 +83,6 @@ Then the response should have the following properties:
   | status      | 400   |
 
 Scenario: Responds with 400 bad request when path is illegal in dev mode
-
 Given enonic is running in development mode
 Given the following request:
 | property    | value                                                                                                       |
@@ -104,7 +99,6 @@ Then the response should have the following properties:
 And the response body should start with "can't contain '..' or any of these characters:"
 
 Scenario: Responds with 400 bad request when rawPath is missing in prod mode
-
 Given enonic is running in production mode
 Given the following resources:
   | path              | mimeType | etag             | content               |
@@ -121,12 +115,11 @@ Then the response should have the following properties:
 
 
 Scenario: Responds with 400 bad request with body when rawPath is missing in dev mode
-
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exists | mimeType | etag             | content               |
-  | /com.enonic.lib.asset.json | false  |          |                  |                       |
-  | /static/index.css          | true   | text/css | 1234567890abcdef | body { color: green } |
+  | path                       | exist | mimeType | etag             | content               |
+  | /com.enonic.lib.asset.json | false |          |                  |                       |
+  | /static/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
 And the following request:
 | property    | value                                                                                                               |
 | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
@@ -143,9 +136,9 @@ And the response body should start with "request.rawPath is missing!"
 Scenario: Responds with cache control "private, no-store" when resource found in dev mode
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exists | mimeType | etag             | content               |
-  | /com.enonic.lib.asset.json | false  |          |                  |                       |
-  | /static/index.css          | true   | text/css | 1234567890abcdef | body { color: green } |
+  | path                       | exist | mimeType | etag             | content               |
+  | /com.enonic.lib.asset.json | false |          |                  |                       |
+  | /static/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
 Given the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -191,9 +184,9 @@ Scenario: Responds with 500 internal server error when the configured root is em
 # Testing in development mode to avoid cached configuration
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exists | content               |
-  | /com.enonic.lib.asset.json | true   | {"root":""}           |
-  | /static/index.css          | true   | body { color: green } |
+  | path                       | exist | content               |
+  | /com.enonic.lib.asset.json | true  | {"root":""}           |
+  | /static/index.css          | true  | body { color: green } |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -212,12 +205,13 @@ Scenario: Responds with 404 not found when cacheBust is true and the request doe
 # Testing in development mode to avoid cached configuration
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exists | content               |
-  | /com.enonic.lib.asset.json | true   | {"cacheBust":true}   |
-  | /static/index.css          | true   | body { color: green } |
+  | path                       | exist | isDir | content               |
+  | /com.enonic.lib.asset.json | true  | false | {"cacheBust":true}    |
+  | /static/index.css          | true  | false | body { color: green } |
+  | /static                    | false | true  |                       |
 And the following request:
   | property    | value                                                                                                               |
-  # | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+  | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
   | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/index.css                      |
   # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/index.css |
 # Then log info the request
@@ -231,12 +225,13 @@ Scenario: Responds with 404 not found when cacheBust is false and the request co
 # Testing in development mode to avoid cached configuration
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exists | content               |
-  | /com.enonic.lib.asset.json | true   | {"cacheBust":false}   |
-  | /static/index.css          | true   | body { color: green } |
+  | path                       | exist | isDir | content               |
+  | /com.enonic.lib.asset.json | true  | false | {"cacheBust":false}   |
+  | /static/index.css          | true  | false | body { color: green } |
+  # | /static                    | true  | true  |                       |
 And the following request:
   | property    | value                                                                                                               |
-  # | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+  | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
   | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
   # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
 # Then log info the request
@@ -245,3 +240,30 @@ When the request is sent
 Then the response should have the following properties:
   | property    | value |
   | status      | 404   |
+
+
+Scenario: Responds with cache control "private, no-store" when cacheBust is true and the request contains wrong fingerprint
+# Testing in development mode to avoid cached configuration
+Given enonic is running in development mode
+Given the following resources:
+  | path                               | exist | mimeType         | content               | etag           |
+  | /com.enonic.lib.asset.json         | true  | application/json | {"cacheBust":true}    |                |
+  | /static/index.css                  | true  | text/css         | body { color: green } | etag-index-css |
+  | /static/wrongFingerprint/index.css | false |                  |                       |                |
+And the following request:
+  | property    | value                                                                                                               |
+  | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+  | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/wrongFingerprint/index.css                      |
+  # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/wrongFingerprint/index.css |
+# Then log info the request
+When the request is sent
+# Then log info the response
+Then the response should have the following properties:
+  | property    | value    |
+  | status      | 200      |
+  | contentType | text/css |
+And the response should have the following headers:
+  | header        | value             |
+  # etag is undefined in dev mode
+  | etag          | undefined         |
+  | cache-control | private, no-store |

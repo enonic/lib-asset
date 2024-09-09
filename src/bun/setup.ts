@@ -1,5 +1,5 @@
 import {
-  getResource,
+  // getResource,
   ByteSource,
   type ResourceKey
 } from '@enonic-types/lib-io';

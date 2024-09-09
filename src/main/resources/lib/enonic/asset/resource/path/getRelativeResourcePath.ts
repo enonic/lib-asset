@@ -1,6 +1,6 @@
 import type { Request } from '../../types';
 
-import {isStringLiteral} from '../../util/isStringLiteral';
+// import {isStringLiteral} from '../../util/isStringLiteral';
 
 
 export const ERROR_MESSAGE_REQUEST_RAWPATH_DOES_NOT_STARTWITH_REMOVEPREFIX = "Default functionality can't resolve relative asset path: the request was expected to contain a .contextPath string attribute that is a prefix in a .rawPath string attribute. You may need to supply a getCleanPath(request) function parameter to extract a relative asset path from the request.";

@@ -16,7 +16,10 @@ import { read } from '../../lib/enonic/asset/etagReader';
 import { getMimeType } from '../../lib/enonic/asset/io';
 import { getIfNoneMatchHeader } from '../../lib/enonic/asset/request/getIfNoneMatchHeader';
 import { checkPath } from '../../lib/enonic/asset/resource/path/checkPath';
-import { getAbsoluteResourcePathWithoutTrailingSlash } from '../../lib/enonic/asset/resource/path/getAbsoluteResourcePathWithoutTrailingSlash';
+// import { getAbsoluteResourcePathWithoutTrailingSlash } from '../../lib/enonic/asset/resource/path/getAbsoluteResourcePathWithoutTrailingSlash';
+import { prefixWithRoot } from '../../lib/enonic/asset/resource/path/prefixWithRoot';
+import { getRelativeResourcePath } from '../../lib/enonic/asset/resource/path/getRelativeResourcePath';
+import { getRootFromPath } from '../../lib/enonic/asset/resource/path/getRootFromPath';
 import {
   badRequestResponse,
   internalServerErrorResponse,
@@ -52,38 +55,48 @@ export function requestHandler({
     const fingerprint = getFingerprint(app.name);
     log.debug('fingerprint "%s"', fingerprint);
 
-    // when cacheBust and request contains fingerprint, remove fingerprint from path and respond 200
-    // when cacheBust and request doesn't fingerprint, respond 404
-    // when cacheBust and request doesn't fingerprint respond 200
-    // when cacheBust and request contains fingerprint, respons 404
     const cacheBust = isCacheBust();
 
-    // WARN: This could fail if a folder is named with the fingerprint
-    const fingerprintInUrl = request.rawPath.indexOf(`/${fingerprint}/`) !== -1;
+    let relPath = getRelativeResourcePath(request);
+    log.debug('relPath "%s"', relPath);
+
+    const rootPath = getRootFromPath(relPath);
 
     if (cacheBust) {
-      if (fingerprintInUrl) {
-        request.rawPath = request.rawPath.replace(`/${fingerprint}/`, '/');
+      if (rootPath === fingerprint) {
+        // Remove fingerprint from path to find the resource.
+        // request.rawPath = request.rawPath.replace(`/${fingerprint}/`, '/');
+        relPath = relPath.replace(`/${fingerprint}`, '');
+      } else if (rootPath) {
+        // Try remove the rootPath from the relPath to find the resource.
+        // and set cacheControl to private, no-store
+        cacheControl = `${RESPONSE_CACHE_CONTROL_DIRECTIVE.PRIVATE}, ${RESPONSE_CACHE_CONTROL_DIRECTIVE.NO_STORE}`;
+        // request.rawPath = request.rawPath.replace(`/${rootPath}/`, '/');
+        relPath = relPath.replace(`/${rootPath}`, '');
       } else {
         return notFoundResponse();
       }
-    } else {
-      if (fingerprintInUrl) {
-        // NOTE: This should handle itself since the asset won't be found, could short circuit though.
-        return notFoundResponse();
-      } //else {
-        // no-op
-      //}
+    } else { // !cacheBust
+      if (rootPath === fingerprint) {
+        return notFoundResponse(); // Code below would figure this out, but short-circuiting.
+      // } else if (rootPath) {
+      //   // let code below figure out to return 200 or 404
+      }
     }
-    log.debug('request.rawPath (2) "%s"', request.rawPath);
+    // log.debug('request.rawPath (2) "%s"', request.rawPath);
 
     const root = configuredRoot();
     log.debug('root "%s"', root);
 
-    const absResourcePathWithoutTrailingSlash = getAbsoluteResourcePathWithoutTrailingSlash({
-      request,
+    // const absResourcePathWithoutTrailingSlash = getAbsoluteResourcePathWithoutTrailingSlash({
+    //   request,
+    //   root
+    // });
+    const absResourcePathWithoutTrailingSlash = prefixWithRoot({
+      path: relPath,
       root
     });
+    log.debug('absResourcePathWithoutTrailingSlash "%s"', absResourcePathWithoutTrailingSlash);
 
     const errorResponse = checkPath({ absResourcePathWithoutTrailingSlash });
     if (errorResponse) {
