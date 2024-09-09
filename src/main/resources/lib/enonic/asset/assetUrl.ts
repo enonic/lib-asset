@@ -13,14 +13,12 @@ export interface AssetUrlParams {
   path: string
   // Optional
   application?: string
-  cacheBust?: boolean
   params?: object
   type?: 'server' | 'absolute'
 }
 
 export function assetUrl({
   application = app.name,
-  cacheBust = isCacheBust(),
   params,
   path,
   type,
@@ -32,7 +30,7 @@ export function assetUrl({
     service: 'asset',
     type,
   });
-  if (cacheBust) {
+  if (isCacheBust()) {
     const fingerprint = getFingerprint(application);
     if (fingerprint) {
       assetServiceUrl = assetServiceUrl.replace(`/_/service/${application}/asset`, `/_/service/${application}/asset/${fingerprint}`);
