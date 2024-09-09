@@ -192,7 +192,7 @@ Scenario: Responds with 500 internal server error when the configured root is em
 Given enonic is running in development mode
 Given the following resources:
   | path                       | exists | content               |
-  | /com.enonic.lib.asset.json | true   | {"root":""}     |
+  | /com.enonic.lib.asset.json | true   | {"root":""}           |
   | /static/index.css          | true   | body { color: green } |
 And the following request:
   | property    | value                                                                                                               |
@@ -206,3 +206,42 @@ Then the response should have the following properties:
   | status      | 500                   |
   | contentType | text/plain; charset=utf-8 |
 And the response body should start with "Server error (logged with error ID: "
+
+
+Scenario: Responds with 404 not found when cacheBust is true and the request doesn't contain fingerprint
+# Testing in development mode to avoid cached configuration
+Given enonic is running in development mode
+Given the following resources:
+  | path                       | exists | content               |
+  | /com.enonic.lib.asset.json | true   | {"cacheBust":true}   |
+  | /static/index.css          | true   | body { color: green } |
+And the following request:
+  | property    | value                                                                                                               |
+  # | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+  | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/index.css                      |
+  # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/index.css |
+# Then log info the request
+When the request is sent
+# Then log info the response
+Then the response should have the following properties:
+  | property    | value |
+  | status      | 404   |
+
+Scenario: Responds with 404 not found when cacheBust is false and the request contains fingerprint
+# Testing in development mode to avoid cached configuration
+Given enonic is running in development mode
+Given the following resources:
+  | path                       | exists | content               |
+  | /com.enonic.lib.asset.json | true   | {"cacheBust":false}   |
+  | /static/index.css          | true   | body { color: green } |
+And the following request:
+  | property    | value                                                                                                               |
+  # | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+  | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
+  # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+# Then log info the request
+When the request is sent
+# Then log info the response
+Then the response should have the following properties:
+  | property    | value |
+  | status      | 404   |

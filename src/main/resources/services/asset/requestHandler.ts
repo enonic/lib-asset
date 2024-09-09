@@ -9,7 +9,8 @@ import {
 } from '../../lib/enonic/asset/constants';
 import {
   configuredCacheControl,
-  configuredRoot
+  configuredRoot,
+  isCacheBust,
 } from '../../lib/enonic/asset/config';
 import { read } from '../../lib/enonic/asset/etagReader';
 import { getMimeType } from '../../lib/enonic/asset/io';
@@ -51,8 +52,28 @@ export function requestHandler({
     const fingerprint = getFingerprint(app.name);
     log.debug('fingerprint "%s"', fingerprint);
 
-    if (fingerprint && request.rawPath.indexOf(`/${fingerprint}/`) !== -1) {
-      request.rawPath = request.rawPath.replace(`/${fingerprint}/`, '/');
+    // when cacheBust and request contains fingerprint, remove fingerprint from path and respond 200
+    // when cacheBust and request doesn't fingerprint, respond 404
+    // when cacheBust and request doesn't fingerprint respond 200
+    // when cacheBust and request contains fingerprint, respons 404
+    const cacheBust = isCacheBust();
+
+    // WARN: This could fail if a folder is named with the fingerprint
+    const fingerprintInUrl = request.rawPath.indexOf(`/${fingerprint}/`) !== -1;
+
+    if (cacheBust) {
+      if (fingerprintInUrl) {
+        request.rawPath = request.rawPath.replace(`/${fingerprint}/`, '/');
+      } else {
+        return notFoundResponse();
+      }
+    } else {
+      if (fingerprintInUrl) {
+        // NOTE: This should handle itself since the asset won't be found, could short circuit though.
+        return notFoundResponse();
+      } //else {
+        // no-op
+      //}
     }
     log.debug('request.rawPath (2) "%s"', request.rawPath);
 
