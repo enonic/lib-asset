@@ -32,9 +32,9 @@ dependencies {
   // implementation "com.enonic.xp:lib-vhost:${xpVersion}"
   implementation 'com.enonic.lib:lib-router:3.1.0'
 
-  testImplementation "com.enonic.xp:testing:${xpVersion}"
+  // testImplementation "com.enonic.xp:testing:${xpVersion}"
 
-  testImplementation "org.mockito:mockito-inline:5.2.0"
+  // testImplementation "org.mockito:mockito-inline:5.2.0"
 }
 
 processResources {
