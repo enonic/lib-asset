@@ -15,7 +15,7 @@ import {
 } from 'jest-cucumber';
 // import { all } from '../../main/resources/services/asset/asset';
 import { requestHandler } from '../../main/resources/services/asset/requestHandler';
-import { readText } from '@enonic-types/lib-io';
+// import { readText } from '@enonic-types/lib-io';
 
 const feature = loadFeature('./src/bun/features/assetService.feature', {
   runner: {
