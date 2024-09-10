@@ -1,21 +1,19 @@
 import type {
   ByteSource,
   Resource as ResourceInterface,
-  // ResourceKey
 } from '@enonic-types/lib-io';
 
+// @ts-expect-error
 export class Resource implements ResourceInterface {
   private readonly _bytes: string; // ByteSource
   private readonly _exists: boolean;
   private readonly _key: string;
-  private readonly _isDirectory: boolean;
   private readonly _size: number; // ResourceKey
   private readonly _timestamp: number;
 
   constructor({
     bytes,
     exists,
-    isDirectory = false,
     key,
     size,
     timestamp,
@@ -23,14 +21,12 @@ export class Resource implements ResourceInterface {
     bytes: string
     exists: boolean
     key: string
-    isDirectory?: boolean
     size: number
     timestamp: number
   }) {
     this._bytes = bytes;
     this._exists = exists;
     this._key = key;
-    this._isDirectory = isDirectory;
     this._size = size;
     this._timestamp = timestamp;
   }
@@ -39,6 +35,7 @@ export class Resource implements ResourceInterface {
     return this._exists;
   }
 
+  /* coverage ignore start */
   public getBytes(): string {
     return this._bytes;
   }
@@ -46,19 +43,18 @@ export class Resource implements ResourceInterface {
   public getSize(): number {
     return this._size;
   }
+  /* coverage ignore end */
 
   public getStream(): ByteSource {
     // throw new Error(`getStream called key:${JSON.stringify(this._key, null, 4)}`);
     return this._bytes as unknown as ByteSource;
   }
 
+  /* coverage ignore start */
   public getTimestamp(): number {
     return this._timestamp;
   }
-
-  public isDirectory(): boolean {
-    return this._isDirectory;
-  }
+  /* coverage ignore end */
 
   public readString(): string {
     return this._bytes;

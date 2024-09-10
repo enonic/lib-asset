@@ -205,10 +205,10 @@ Scenario: Responds with 404 not found when cacheBust is true and the request doe
 # Testing in development mode to avoid cached configuration
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exist | isDir | content               |
-  | /com.enonic.lib.asset.json | true  | false | {"cacheBust":true}    |
-  | /static/index.css          | true  | false | body { color: green } |
-  | /static                    | false | true  |                       |
+  | path                       | exist |  content               |
+  | /com.enonic.lib.asset.json | true  |  {"cacheBust":true}    |
+  | /static/index.css          | true  |  body { color: green } |
+  | /static                    | false |                        |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -225,10 +225,10 @@ Scenario: Responds with 404 not found when cacheBust is false and the request co
 # Testing in development mode to avoid cached configuration
 Given enonic is running in development mode
 Given the following resources:
-  | path                       | exist | isDir | content               |
-  | /com.enonic.lib.asset.json | true  | false | {"cacheBust":false}   |
-  | /static/index.css          | true  | false | body { color: green } |
-  # | /static                    | true  | true  |                       |
+  | path                       | exist |  content               |
+  | /com.enonic.lib.asset.json | true  |  {"cacheBust":false}   |
+  | /static/index.css          | true  |  body { color: green } |
+  # | /static                    | true  |                        |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |

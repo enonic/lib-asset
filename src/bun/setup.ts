@@ -31,7 +31,6 @@ declare module globalThis {
     bytes?: string
     exists?: boolean
     etag?: string
-    isDirectory?: boolean
     mimeType?: string
   }>
 }
@@ -52,31 +51,31 @@ globalThis.app = {
 
 const wrap = (code: number) => `\u001b[${code}m`;
 const reset = wrap(0);
-const bold = wrap(1);
-const dim = wrap(2);
-const italic = wrap(3);
-const underline = wrap(4);
-const inverse = wrap(7);
-const hidden = wrap(8);
-const strikethrough = wrap(9);
-const black = wrap(30);
-const red = wrap(31);
+// const bold = wrap(1);
+// const dim = wrap(2);
+// const italic = wrap(3);
+// const underline = wrap(4);
+// const inverse = wrap(7);
+// const hidden = wrap(8);
+// const strikethrough = wrap(9);
+// const black = wrap(30);
+// const red = wrap(31);
 const green = wrap(32);
 const yellow = wrap(33);
 const blue = wrap(34);
 const magenta = wrap(35);
-const cyan = wrap(36);
+// const cyan = wrap(36);
 const white = wrap(37);
 const grey = wrap(90);
 const brightRed = wrap(91);
-const brightGreen = wrap(92);
+// const brightGreen = wrap(92);
 const brightYellow = wrap(93);
-const brightBlue = wrap(94);
-const brightMagenta = wrap(95);
-const brightCyan = wrap(96);
-const brightWhite = wrap(97);
+// const brightBlue = wrap(94);
+// const brightMagenta = wrap(95);
+// const brightCyan = wrap(96);
+// const brightWhite = wrap(97);
 
-
+/* coverage ignore start */
 function colorize(a: unknown[], color = brightYellow) {
   return a.map(i => {
     if (typeof i === 'string') {
@@ -96,14 +95,14 @@ function colorize(a: unknown[], color = brightYellow) {
 }
 
 export function rpad(
-	u: unknown,
+  u: unknown,
 	w: number = 2,
 	z: string = ' '
 ): string {
-	const s = '' + u; // Cast to string
+  const s = '' + u; // Cast to string
 	return s.length >= w
-		? s
-		: s + new Array(w - s.length + 1).join(z);
+  ? s
+  : s + new Array(w - s.length + 1).join(z);
 }
 
 function logWith({
@@ -134,6 +133,7 @@ function logWith({
     console[name](prefix);
   }
 }
+/* coverage ignore end */
 
 
 globalThis.log = {
@@ -213,24 +213,26 @@ globalThis.__ = {
     if (bean === 'com.enonic.lib.asset.IoService') {
       return mockIoService();
     }
+    /* coverage ignore next */
     throw new Error(`Unmocked bean:${bean}!`);
   },
-  nullOrValue: (v: any) => {
-    log.debug(`nullOrValue value:${JSON.stringify(v, null, 4)}`);
-    return v;
-  },
+  // nullOrValue: (v: any) => {
+  //   log.debug(`nullOrValue value:${JSON.stringify(v, null, 4)}`);
+  //   return v;
+  // },
   toNativeObject: (v: any) => {
     if (
       isObject(v)
     ) {
       return v as any;
     }
+    /* coverage ignore next */
     throw new Error(`toNativeObject: Unmocked value:${JSON.stringify(v, null, 4)}!`);
   },
-  toScriptValue: (v: any) => {
-    log.debug(`toScriptValue value:${JSON.stringify(v, null, 4)}`);
-    return v;
-  },
+  // toScriptValue: (v: any) => {
+  //   log.debug(`toScriptValue value:${JSON.stringify(v, null, 4)}`);
+  //   return v;
+  // },
 };
 
 const BASEURL_WEBAPP = `/webapp/${app.name}`;

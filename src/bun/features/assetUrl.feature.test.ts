@@ -43,7 +43,6 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
     globalThis._resources['/com.enonic.lib.asset.json'] = {
       bytes: JSON.stringify(configFromJson),
       exists: true,
-      isDirectory: false,
       mimeType: 'application/json'
     };
   });
@@ -63,7 +62,6 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
   //   globalThis._resources['/com.enonic.lib.asset.json'] = {
   //     bytes: JSON.stringify(configFromJson),
   //     exists: true,
-  //     isDirectory: false,
   //     mimeType: 'application/json'
   //   };
   // });

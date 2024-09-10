@@ -11,7 +11,6 @@ declare module globalThis {
     bytes?: string
     exists?: boolean
     etag?: string
-    isDirectory?: boolean
     mimeType?: string
   }>
 }
@@ -28,7 +27,6 @@ export function mockGetResource() {
     if (!resource.exists) {
       return {
         exists: () => false,
-        isDirectory: () => resource.isDirectory,
       };
     }
 
@@ -36,7 +34,6 @@ export function mockGetResource() {
       bytes: resource.bytes || '',
       exists: true,
       key: key.toString(),
-      isDirectory: resource.isDirectory,
       size: (resource.bytes || '').length,
       timestamp: 2
     });
