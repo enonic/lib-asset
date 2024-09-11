@@ -18,12 +18,14 @@ dependencies {
 }
 ----
 
-In your JavaScript controller, add a require statement:
+In your controller, add a require statement:
 
+JavaScript
 ```js
 var assetLib = require('/lib/enonic/asset');
 ```
 
+TypeScript
 ```typescript
 import {assetUrl} from '/lib/enonic/asset';
 ```
@@ -67,12 +69,14 @@ Returns
 [.lead]
 Example
 
+JavaScript
 ```js
 const url = portalLib.assetUrl({
   path: 'styles/main.css'
 });
 ```
 
+TypeScript
 ```typescript
 const url = assetUrl({
   path: 'styles/main.css'
