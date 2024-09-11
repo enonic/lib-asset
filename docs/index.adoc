@@ -91,6 +91,8 @@ The library can be configured by addding a `com.enonic.lib.asset.json` file in t
 
 The following properties can be configured:
 
+{zwsp} +
+
 `root` This is the root folder in the JAR, where the service will look for resources. Default is `/static`
 
 NOTE: All files in the configured root folder are accessible through the service.
