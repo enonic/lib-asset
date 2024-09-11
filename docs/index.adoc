@@ -111,6 +111,8 @@ TIP: If the assets already contain fingerprints in *all* their names, you should
 
 CAUTION: When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to `public, max-age=10, stale-while-revalidate=50` to cache assets in browsers for 10 seconds and revalidate asynchronously.
 
+TIP: To have even more control when hosting static resources, have a look at the link:https://developer.enonic.com/docs/static-asset-lib/stable[static assets library].
+
 {zwsp} +
 
 Here is an example of a configuration file using the default values:
