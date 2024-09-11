@@ -12,20 +12,21 @@ export interface AssetUrlParams {
   // Required
   path: string
   // Optional
-  application?: string
+  // application?: string
   params?: object
   type?: 'server' | 'absolute'
 }
 
 export function assetUrl({
-  application = app.name,
+  // application = app.name,
   params,
   path,
   type,
 }: AssetUrlParams): string {
+  const application = app.name;
   const pathWithoutTrailingSlash = path.replace(/\/$/, '');
   let assetServiceUrl = serviceUrlRootViaAssetUrl({
-    application,
+    // application,
     params,
     service: 'asset',
     type,
