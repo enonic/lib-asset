@@ -44,7 +44,7 @@ Parameters
 [grid="none"]
 |===
 | Name   | Type   | Description
-| params | object | Input parameters as JSON
+| params | object | Input parameters
 
 [%header,cols="1%,1%,1%,1%,96%a"]
 [frame="topbot"]
