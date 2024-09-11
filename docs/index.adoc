@@ -1,0 +1,139 @@
+= Asset Library
+:toc: right
+
+== Introduction
+
+This library provides a service which can host static assets like CSS, JavaScript, images, etc.
+
+In addition the library provides a function that can be used to generate URLs to these assets.
+
+== Usage
+
+Add the following to your `build.gradle` file:
+
+[source,groovy]
+----
+dependencies {
+  include "com.enonic.lib:lib-asset:${libVersion}"
+}
+----
+
+In your JavaScript controller, add a require statement:
+
+```js
+var assetLib = require('/lib/enonic/asset');
+```
+
+```typescript
+import {assetUrl} from '/lib/enonic/asset';
+```
+
+You are now ready to use the library functionality.
+
+== Function
+
+The `assetUrl` function generates a URL pointing to a static file.
+
+[.lead]
+Parameters
+
+[%header,cols="1%,1%,98%a"]
+[frame="none"]
+[grid="none"]
+|===
+| Name   | Type   | Description
+| params | object | Input parameters as JSON
+
+[%header,cols="1%,1%,1%,1%,96%a"]
+[frame="topbot"]
+[grid="none"]
+[caption=""]
+.Properties
+!===
+! Name        ! Type   ! Attributes ! Default ! Description
+! path        ! string !            !         ! Path to the asset
+// ! application ! string ! <optional> !         ! Other application to reference to. Defaults to current application
+! type        ! string ! <optional> ! server  ! URL type. Either server (server-relative URL) or absolute
+! params      ! object ! <optional> !         ! Custom parameters to append to the url
+!===
+
+|===
+
+[.lead]
+Returns
+
+*string* : The generated URL.
+
+[.lead]
+Example
+
+```js
+const url = portalLib.assetUrl({
+  path: 'styles/main.css'
+});
+```
+
+```typescript
+const url = assetUrl({
+  path: 'styles/main.css'
+});
+```
+
+== Configuration
+
+The library can be configured by addding a `com.enonic.lib.asset.json` file in the `src/main/resources` directory of your project. The configuration file is optional.
+
+{zwsp} +
+
+The following properties can be configured:
+
+`root` This is the root folder in the JAR, where the service will look for resources. Default is `/static`
+
+NOTE: All files in the configured root folder are accessible through the service.
+
+{zwsp} +
+
+`cacheControl` Cache-Control header value to be sent in 304 and 200 responses. Default is `public, max-age=31536000, immutable`
+
+NOTE: In XP dev mode cacheControl has no effect. Cache-Control header is always `private, no-store`.
+
+{zwsp} +
+
+`cacheBust` default is `true`. Adds/removes an application fingerprint segment in service path.
+
+TIP: If the assets already contain fingerprints in *all* their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.
+
+CAUTION: When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to `public, max-age=10, stale-while-revalidate=50` to cache assets in browsers for 10 seconds and revalidate asynchronously.
+
+{zwsp} +
+
+Here is an example of a configuration file using the default values:
+
+.com.enonic.lib.asset.json
+[source,json]
+----
+{
+  "root": "/static",
+  "cacheBust": true,
+  "cacheControl": "public, max-age=31536000, immutable"
+}
+----
+
+== Service
+
+=== Url
+
+By default (without extra configuration) asset service URL looks like this: `/_/service/{app-name}/asset/{app-fingerprint}/...`
+
+With Cache Busting disabled (cacheBust: false) URL looks like this `/_/service/{app-name}/asset/...`
+
+NOTE: In case of mismatching fingerprint service still responds with the asset contents and 200 code. But with Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+
+=== Etag
+
+Service calculates and caches ETag for each requested asset. Cache is cleared on application restart.
+ETag is used to respond with `304 Not Modified` for conditional requests.
+
+NOTE: In XP dev mode ETags are not generated/cached.
+
+NOTE: ETag is useful even if Cache-Control contains immutable directive. CDNs and Chrome browser ignore immutable.
