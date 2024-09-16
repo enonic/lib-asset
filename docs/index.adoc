@@ -87,45 +87,49 @@ const url = assetUrl({
 
 The library can be configured by addding a `com.enonic.lib.asset.json` file in the `src/main/resources` directory of your project. The configuration file is optional.
 
-{zwsp} +
-
-The following properties can be configured:
-
-{zwsp} +
-
-`root` This is the root folder in the JAR, where the service will look for resources. Default is `/static`
-
-NOTE: All files in the configured root folder are accessible through the service.
-
-{zwsp} +
-
-`cacheControl` Cache-Control header value to be sent in 304 and 200 responses. Default is `public, max-age=31536000, immutable`
-
-NOTE: In XP dev mode cacheControl has no effect. Cache-Control header is always `private, no-store`.
-
-{zwsp} +
-
-`cacheBust` default is `true`. Adds/removes an application fingerprint segment in service path.
-
-TIP: If the assets already contain fingerprints in *all* their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.
-
-CAUTION: When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to `public, max-age=10, stale-while-revalidate=50` to cache assets in browsers for 10 seconds and revalidate asynchronously.
-
-TIP: To have even more control when hosting static resources, have a look at the link:https://developer.enonic.com/docs/static-asset-lib/stable[static assets library].
-
-{zwsp} +
-
 Here is an example of a configuration file using the default values:
 
 .com.enonic.lib.asset.json
 [source,json]
 ----
 {
-  "root": "/static",
-  "cacheBust": true,
-  "cacheControl": "public, max-age=31536000, immutable"
+  "root": "/assets", <1>
+  "cacheBust": true, <2>
+  "cacheControl": "public, max-age=31536000, immutable" <3>
 }
 ----
+
+<1> `root` This is the root folder in the JAR, where the service will look for resources. Default is `/assets`
++
+[NOTE]
+====
+All files in the configured root folder are accessible through the service.
+====
++
+{zwsp} +
++
+<2> `cacheBust` default is `true`. Adds/removes an application fingerprint segment in service path.
++
+[TIP]
+====
+If the assets already contain fingerprints in *all* their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.
+====
++
+[CAUTION]
+====
+When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to `public, max-age=10, stale-while-revalidate=50` to cache assets in browsers for 10 seconds and revalidate asynchronously.
+====
++
+{zwsp} +
++
+<3> `cacheControl` Cache-Control header value to be sent in 304 and 200 responses. Default is `public, max-age=31536000, immutable`
++
+NOTE: In XP dev mode cacheControl has no effect. Cache-Control header is always `private, no-store`.
+
+{zwsp} +
+
+TIP: To have even more control when hosting static resources, have a look at the link:https://developer.enonic.com/docs/static-asset-lib/stable[static assets library].
+
 
 == Service
 
