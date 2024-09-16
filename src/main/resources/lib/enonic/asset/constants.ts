@@ -97,9 +97,5 @@ export const INDEXFALLBACK_CACHE_CONTROL = RESPONSE_CACHE_CONTROL_DIRECTIVE.NO_C
 
 export const GETTER_ROOT = 'assets';
 
-export const RESPONSE_NOT_MODIFIED = {
-    status: 304
-} as const;
-
 export const REGEX_PATH_DOUBLE_DOT = /\.\./;
 export const REGEX_PATH_ILLEGAL_CHARS = /[<>:"'`´\\|?*]/;
