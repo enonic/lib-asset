@@ -6,7 +6,7 @@ Given enonic is running in production mode
 # Given the following resources:
 #   | path                       | exist | mimeType | etag           | content               |
 #   | /com.enonic.lib.asset.json | false |          |                |                       |
-#   | /static/index.css          | true  | text/css | etag-index-css | body { color: green } |
+#   | /assets/index.css          | true  | text/css | etag-index-css | body { color: green } |
 Given the following request:
   | property    | value                                                                                                               |
   | branch      | master                                                                                                              |
@@ -36,7 +36,7 @@ Scenario: Responds with 304 Not modified when if-none-match matches etag
 Given enonic is running in production mode
 # Given the following resources:
 #   | path              | mimeType | etag           | content               |
-#   | /static/index.css | text/css | etag-index-css | body { color: green } |
+#   | /assets/index.css | text/css | etag-index-css | body { color: green } |
 Given the following request:
 | property    | value                                                                                                               |
 | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -102,7 +102,7 @@ Scenario: Responds with 400 bad request when rawPath is missing in prod mode
 Given enonic is running in production mode
 Given the following resources:
   | path              | mimeType | etag             | content               |
-  | /static/index.css | text/css | 1234567890abcdef | body { color: green } |
+  | /assets/index.css | text/css | 1234567890abcdef | body { color: green } |
 Given the following request:
 | property    | value                                                                                                               |
 | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
@@ -119,7 +119,7 @@ Given enonic is running in development mode
 Given the following resources:
   | path                       | exist | mimeType | etag             | content               |
   | /com.enonic.lib.asset.json | false |          |                  |                       |
-  | /static/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
+  | /assets/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
 And the following request:
 | property    | value                                                                                                               |
 | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
@@ -138,7 +138,7 @@ Given enonic is running in development mode
 Given the following resources:
   | path                       | exist | mimeType | etag             | content               |
   | /com.enonic.lib.asset.json | false |          |                  |                       |
-  | /static/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
+  | /assets/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
 Given the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -186,7 +186,7 @@ Given enonic is running in development mode
 Given the following resources:
   | path                       | exist | content               |
   | /com.enonic.lib.asset.json | true  | {"root":""}           |
-  | /static/index.css          | true  | body { color: green } |
+  | /assets/index.css          | true  | body { color: green } |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -207,8 +207,8 @@ Given enonic is running in development mode
 Given the following resources:
   | path                       | exist |  content               |
   | /com.enonic.lib.asset.json | true  |  {"cacheBust":true}    |
-  | /static/index.css          | true  |  body { color: green } |
-  | /static                    | false |                        |
+  | /assets/index.css          | true  |  body { color: green } |
+  | /assets                    | false |                        |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -227,8 +227,8 @@ Given enonic is running in development mode
 Given the following resources:
   | path                       | exist |  content               |
   | /com.enonic.lib.asset.json | true  |  {"cacheBust":false}   |
-  | /static/index.css          | true  |  body { color: green } |
-  # | /static                    | true  |                        |
+  | /assets/index.css          | true  |  body { color: green } |
+  # | /assets                    | true  |                        |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
@@ -248,8 +248,8 @@ Given enonic is running in development mode
 Given the following resources:
   | path                               | exist | mimeType         | content               | etag           |
   | /com.enonic.lib.asset.json         | true  | application/json | {"cacheBust":true}    |                |
-  | /static/index.css                  | true  | text/css         | body { color: green } | etag-index-css |
-  | /static/wrongFingerprint/index.css | false |                  |                       |                |
+  | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css |
+  | /assets/wrongFingerprint/index.css | false |                  |                       |                |
 And the following request:
   | property    | value                                                                                                               |
   | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |

@@ -183,13 +183,13 @@ globalThis._resources = { // This should establish an object pointer that should
   '/com.enonic.lib.asset.json': {
     exists: false
   },
-  '/static/index.css': {
+  '/assets/index.css': {
     bytes: 'body { color: green; }',
     exists: true,
     etag: 'etag-index-css', // 1234567890abcdef
     mimeType: 'text/css',
   },
-  '/static/404.css': {
+  '/assets/404.css': {
     exists: false
   }
 };
