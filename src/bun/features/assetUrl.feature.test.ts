@@ -75,9 +75,6 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
     assetUrlParams = {};
     // log.debug('table:%s', table);
     table.forEach(({ parameter, value }) => {
-      // if (parameter === 'application') {
-      //   assetUrlParams.application = value as string;
-      // } else
       if (parameter === 'params') {
         assetUrlParams.params = JSON.parse(value as string) as Record<string, unknown>;
       } else if (parameter === 'path') {
