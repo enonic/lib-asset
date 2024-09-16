@@ -11,7 +11,6 @@ Scenario: Getting the URL for an asset with parameters
 Given there is no configuration file
 When I call assetUrl with the following parameters:
   | parameter   | value                                                                       |
-  # | application | com.example.another                                                         |
   | params      | {"array":["one","two","three"],"boolean":true,"number":0,"string":"string"} |
   | path        | index.css                                                                   |
   | type        | absolute                                                                    |

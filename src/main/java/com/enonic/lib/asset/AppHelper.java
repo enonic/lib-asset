@@ -22,6 +22,11 @@ public class AppHelper implements ScriptBean
   }
 
   public String getFingerprint(String application) {
+    if (isDevMode())
+    {
+      return String.valueOf(stableTime());
+    }
+
     final ApplicationKey applicationKey = ApplicationKey.from( application );
 
     final Resource resource = this.resourceService.getResource( ResourceKey.from( applicationKey, "META-INF/MANIFEST.MF" ) );
@@ -29,7 +34,7 @@ public class AppHelper implements ScriptBean
     {
       throw new IllegalArgumentException( "Could not find application [" + applicationKey + "]" );
     }
-    return isDevMode() ? String.valueOf(stableTime()) : HexCoder.toHex(resource.getTimestamp());
+    return HexCoder.toHex(resource.getTimestamp());
   }
 
   @Override
