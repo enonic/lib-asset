@@ -51,6 +51,10 @@ When the request is sent
 Then the response should have the following properties:
   | property    | value |
   | status      | 304   |
+Then the response should have the following headers:
+  | header        | value                               |
+  | etag          | "etag-index-css"                    |
+  | cache-control | public, max-age=31536000, immutable |
 
 
 Scenario: Responds with 404 Not found when resource not found

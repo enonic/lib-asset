@@ -11,6 +11,16 @@ export function okResponse({
   }
 }
 
+export function notModifiedResponse({
+  status: _hardcoded,
+  ...rest
+}: Partial<Response> = {}): Response {
+  return {
+    ...rest,
+    status: 304,
+  }
+}
+
 export function badRequestResponse({
   status: _hardcoded,
   ...rest

@@ -5,7 +5,6 @@ import { getResource } from '/lib/xp/io';
 import {
   HTTP2_RESPONSE_HEADER,
   RESPONSE_CACHE_CONTROL_DIRECTIVE,
-  RESPONSE_NOT_MODIFIED,
 } from '../../lib/enonic/asset/constants';
 import {
   configuredCacheControl,
@@ -24,6 +23,7 @@ import {
   badRequestResponse,
   internalServerErrorResponse,
   notFoundResponse,
+  notModifiedResponse,
   okResponse
 } from '../../lib/enonic/asset/response/responses';
 import { generateErrorId } from '../../lib/enonic/asset/response/generateErrorId';
@@ -129,20 +129,22 @@ export function requestHandler({
     const etagWithDblFnutts = read(absResourcePathWithoutTrailingSlash);
     log.debug('etagWithDblFnutts "%s"', etagWithDblFnutts);
 
-    const ifNoneMatchRequestHeader = getIfNoneMatchHeader({ request })
-    if (
-      ifNoneMatchRequestHeader
-      && ifNoneMatchRequestHeader === etagWithDblFnutts
-    ) {
-      return RESPONSE_NOT_MODIFIED;
-    }
-
     const headers = {
       [HTTP2_RESPONSE_HEADER.ETAG]: etagWithDblFnutts
     };
 
     if (cacheControl) {
       headers[HTTP2_RESPONSE_HEADER.CACHE_CONTROL] = cacheControl;
+    }
+
+    const ifNoneMatchRequestHeader = getIfNoneMatchHeader({ request })
+    if (
+      ifNoneMatchRequestHeader
+      && ifNoneMatchRequestHeader === etagWithDblFnutts
+    ) {
+      return notModifiedResponse({
+        headers
+      });
     }
 
     return okResponse({
