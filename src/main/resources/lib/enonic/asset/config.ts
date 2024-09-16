@@ -16,7 +16,7 @@ const DEFAULT_CONFIG: Config = {
   cacheBust: true,
   cacheControl: 'public, max-age=31536000, immutable',
   // enabled: true,
-  root: '/static',
+  root: '/assets',
 };
 
 function _getConfig(): Config {
