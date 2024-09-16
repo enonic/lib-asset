@@ -1,6 +1,7 @@
 /.enonic
 /.gradle
 /build/
+/coverage/
 /node_modules/
 
 # Compiled class file
