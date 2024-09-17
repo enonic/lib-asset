@@ -95,11 +95,18 @@ Here is an example of a configuration file using the default values:
 {
   "root": "/assets", <1>
   "cacheBust": true, <2>
-  "cacheControl": "public, max-age=31536000, immutable" <3>
+  "cacheControl": "public, max-age=31536000, immutable", <3>
+  "staticCompress": true <4>
 }
 ----
 
-<1> `root` This is the root folder in the JAR, where the service will look for resources. Default is `/assets`
+<1> `root`
++
+Type: *string*
++
+Default: *'/assets'*
++
+This is the root folder in the JAR, where the service will look for resources.
 +
 [NOTE]
 ====
@@ -108,7 +115,13 @@ All files in the configured root folder are accessible through the service.
 +
 {zwsp} +
 +
-<2> `cacheBust` default is `true`. Adds/removes an application fingerprint segment in service path.
+<2> `cacheBust`
++
+Type: *boolean*
++
+Default: *true*
++
+Adds/removes an application fingerprint segment in service path.
 +
 [TIP]
 ====
@@ -122,9 +135,25 @@ When disabling cacheBust for assets without fingerprints in their names, make su
 +
 {zwsp} +
 +
-<3> `cacheControl` Cache-Control header value to be sent in 304 and 200 responses. Default is `public, max-age=31536000, immutable`
+<3> `cacheControl`
++
+Type: *string*
++
+Default: *'public, max-age=31536000, immutable'*
++
+Cache-Control header value to be sent in 304 and 200 responses.
 +
 NOTE: In XP dev mode cacheControl has no effect. Cache-Control header is always `private, no-store`.
++
+{zwsp} +
++
+<4> `staticCompress`
++
+Type: *boolean*
++
+Default: *true*
++
+When enabled, the service will check the request accept-encoding header for `br` or `gzip` and serve a compressed version of the requested asset *if it exists*. The service will also set the `content-encoding` header and modify the `etag` header in the response.
 
 {zwsp} +
 

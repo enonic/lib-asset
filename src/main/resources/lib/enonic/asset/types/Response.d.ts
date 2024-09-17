@@ -18,6 +18,7 @@ export interface Response<
 	Headers extends Record<string,string|number|(string|number)[]> = {
 		'content-type'?: string
 		'cache-control'?: string
+    'content-encoding'?: string
 		'content-security-policy'?: string
 		etag?: string|number
     location?: string

@@ -31,6 +31,65 @@ And the response should have the following headers:
   | etag          | "etag-index-css"                  |
   | cache-control | public, max-age=31536000, immutable |
 
+Scenario: returns brotli compressed content when br comes first among the highest weight in accept-encoding header
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                               | exist | mimeType         | content               | etag                         |
+    | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the following request headers:
+    | header           | value                                                        |
+    | accept-encoding  | br;q=1.0, gzip, deflate;q=0.6, identity;q=0.4, *;q=0.1 |
+  # Then the resources are info logged
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
+  And the response should have the following headers:
+    | header           | value                               |
+    | cache-control    | public, max-age=31536000, immutable |
+    | content-encoding | br                                  |
+    | etag             | "etag-index-css-br"                 |
+
+Scenario: returns gzip compressed content when the gzip scores the highest in accept-encoding header
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                               | exist | mimeType         | content               | etag                         |
+    | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the following request headers:
+    | header           | value                                                        |
+    | accept-encoding  | br;q=0.9, gzip, deflate;q=0.6, identity;q=0.4, *;q=0.1 |
+  # Then the resources are info logged
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
+  And the response should have the following headers:
+    | header           | value                               |
+    | cache-control    | public, max-age=31536000, immutable |
+    | content-encoding | gzip                                |
+    | etag             | "etag-index-css-gzip"               |
 
 Scenario: Responds with 304 Not modified when if-none-match matches etag
 Given enonic is running in production mode
@@ -58,18 +117,22 @@ Then the response should have the following headers:
 
 
 Scenario: Responds with 404 Not found when resource not found
-Given enonic is running in production mode
-Given the following request:
-| property    | value                                                                                                             |
-| contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                               |
-| rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/404.css                      |
-# | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/404.css |
-# Then log info the request
-When the request is sent
-# Then log info the response
-Then the response should have the following properties:
-  | property    | value |
-  | status      | 404   |
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                       | exist |
+    | /com.enonic.lib.asset.json | false |
+    | /assets/404.css            | false  |
+  Given the following request:
+    | property    | value                                                                                                             |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                               |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/404.css                      |
+    # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/404.css |
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
 
 
 Scenario: Responds with 400 bad request when path is illegal in prod mode
