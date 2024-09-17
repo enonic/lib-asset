@@ -5,8 +5,8 @@ import { isDev } from './runMode';
 export interface Config {
   cacheBust: boolean
   cacheControl: string
-  // enabled: boolean
   root: string
+  staticCompress: boolean
 }
 
 
@@ -15,8 +15,8 @@ const RESOURCE_PATH = '/com.enonic.lib.asset.json';
 const DEFAULT_CONFIG: Config = {
   cacheBust: true,
   cacheControl: 'public, max-age=31536000, immutable',
-  // enabled: true,
   root: '/assets',
+  staticCompress: true,
 };
 
 function _getConfig(): Config {
@@ -54,10 +54,10 @@ export function configuredRoot(): Config['root'] {
   return getConfig().root;
 }
 
-// export function isEnabled(): Config['enabled'] {
-//   return getConfig().enabled;
-// }
-
 export function isCacheBust(): Config['cacheBust'] {
   return getConfig().cacheBust;
+}
+
+export function doStaticCompression(): Config['staticCompress'] {
+  return getConfig().staticCompress;
 }

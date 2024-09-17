@@ -4,10 +4,19 @@ export declare interface DefaultCookies {
 	[key: string]: string|undefined
 }
 
+export type Qvalue = `;q=${number}`
+export type AcceptEncodingCompressionFormat = 'gzip'|'deflate'|'br'|'identity'
+export type AcceptEncodingItem = AcceptEncodingCompressionFormat | `${AcceptEncodingCompressionFormat}${Qvalue}`
+export type AcceptEncodingString =
+  | AcceptEncodingItem
+  | `${AcceptEncodingItem}, ${AcceptEncodingItem}`
+  | `${AcceptEncodingItem}, ${AcceptEncodingItem}, ${AcceptEncodingItem}`
+  | `${AcceptEncodingItem}, ${AcceptEncodingItem}, ${AcceptEncodingItem}, ${AcceptEncodingItem}`
+
 export declare interface DefaultHeaders {
 	accept?: string // text/html
 	'accept-charset'?: string
-	'accept-encoding'?: string
+	'accept-encoding'?: AcceptEncodingString
 	'accept-language'?: string
 	authorization?: string
 	'cache-control'?: string // no-cache

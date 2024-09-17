@@ -1,5 +1,9 @@
 /.enonic
 /.gradle
+
+# Don't know what keeps generating this folder, perhaps some VSCode extension?
+/bin/
+
 /build/
 /coverage/
 /node_modules/

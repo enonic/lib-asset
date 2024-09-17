@@ -1,4 +1,8 @@
-import type { Request } from '../../lib/enonic/asset/types/Request';
+import type {
+  AcceptEncodingCompressionFormat,
+  AcceptEncodingItem,
+  Request
+} from '../../lib/enonic/asset/types/Request';
 import type { Response } from '../../lib/enonic/asset/types/Response';
 
 import { getResource } from '/lib/xp/io';
@@ -9,6 +13,7 @@ import {
 import {
   configuredCacheControl,
   configuredRoot,
+  doStaticCompression,
   isCacheBust,
 } from '../../lib/enonic/asset/config';
 import { read } from '../../lib/enonic/asset/etagReader';
@@ -145,6 +150,46 @@ export function requestHandler({
       return notModifiedResponse({
         headers
       });
+    }
+
+    if (doStaticCompression() && request.headers?.['accept-encoding']) {
+      let compression: AcceptEncodingCompressionFormat | undefined;
+      let highestWeight = 0;
+      request.headers['accept-encoding'].split(/\s*,\s*/).forEach((encoding: AcceptEncodingItem) => {
+        const [aCompression, qvalue] = encoding.split(';q=') as [AcceptEncodingCompressionFormat, string];
+        if (aCompression === 'br' || aCompression === 'gzip') {
+          if (qvalue) {
+            const weight = parseFloat(qvalue);
+            if (weight > highestWeight) {
+              highestWeight = weight;
+              compression = aCompression;
+            }
+          } else {
+            if (1 > highestWeight) {
+              highestWeight = 1;
+              compression = aCompression;
+            }
+          }
+        }
+      }); // forEach compression
+
+      if (compression === 'br') {
+        const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
+        if (resourceBr.exists()) {
+          headers['content-encoding'] = 'br';
+          if (etagWithDblFnutts) {
+            headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-br"');
+          }
+        }
+      } else if (compression === 'gzip') {
+        const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
+        if (resourceGz.exists()) {
+          headers['content-encoding'] = 'gzip';
+          if (etagWithDblFnutts) {
+            headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-gzip"');
+          }
+        }
+      }
     }
 
     return okResponse({

@@ -25,7 +25,10 @@ const feature = loadFeature('./src/bun/features/assetService.feature', {
 });
 
 export const steps: StepDefinitions = ({ given, and, when, then }) => {
-  let request: Partial<Request> = {};
+  let request: Partial<Request> = {
+    // Uncertain whether headers are optional, but it's good for the code to handle missing headers, just in case
+    // headers: {},
+  };
   let response: Response;
 
   given('enonic is running in development mode', () => {
@@ -58,7 +61,10 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 	});
 
   given('the following request:', (table) => {
-    request = {};
+    request = {
+      // Uncertain whether headers are optional, but it's good for the code to handle missing headers, just in case
+      // headers: {},
+    };
     table.forEach(({ property, value }) => {
       request[property] = value;
     });
@@ -69,6 +75,10 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
     table.forEach(({ header, value }) => {
       request.headers[header] = value;
     });
+	});
+
+  then('the resources are info logged', () => {
+    log.info('resources:%s', globalThis._resources);
 	});
 
   then('debug the request', () => {
