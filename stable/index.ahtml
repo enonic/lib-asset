@@ -621,17 +621,23 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>The library can be configured by addding a <code>com.enonic.lib.asset.json</code> file in the <code>src/main/resources</code> directory of your project. The configuration file is optional.</p>
 </div>
 <div class="paragraph">
-<p>&#8203;<br></p>
+<p>Here is an example of a configuration file using the default values:</p>
 </div>
-<div class="paragraph">
-<p>The following properties can be configured:</p>
+<div class="listingblock">
+<div class="title">com.enonic.lib.asset.json</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "root": "/assets", <i class="conum" data-value="1"></i><b>(1)</b>
+  "cacheBust": true, <i class="conum" data-value="2"></i><b>(2)</b>
+  "cacheControl": "public, max-age=31536000, immutable" <i class="conum" data-value="3"></i><b>(3)</b>
+}</code></pre>
 </div>
-<div class="paragraph">
-<p>&#8203;<br></p>
 </div>
-<div class="paragraph">
-<p><code>root</code> This is the root folder in the JAR, where the service will look for resources. Default is <code>/static</code></p>
-</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td><code>root</code> This is the root folder in the JAR, where the service will look for resources. Default is <code>/assets</code>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -639,35 +645,20 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-All files in the configured root folder are accessible through the service.
+<div class="paragraph">
+<p>All files in the configured root folder are accessible through the service.</p>
+</div>
 </td>
 </tr>
 </table>
 </div>
 <div class="paragraph">
 <p>&#8203;<br></p>
-</div>
-<div class="paragraph">
-<p><code>cacheControl</code> Cache-Control header value to be sent in 304 and 200 responses. Default is <code>public, max-age=31536000, immutable</code></p>
-</div>
-<div class="admonitionblock note">
-<table>
+</div></td>
+</tr>
 <tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-In XP dev mode cacheControl has no effect. Cache-Control header is always <code>private, no-store</code>.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>&#8203;<br></p>
-</div>
-<div class="paragraph">
-<p><code>cacheBust</code> default is <code>true</code>. Adds/removes an application fingerprint segment in service path.</p>
-</div>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td><code>cacheBust</code> default is <code>true</code>. Adds/removes an application fingerprint segment in service path.
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -675,7 +666,9 @@ In XP dev mode cacheControl has no effect. Cache-Control header is always <code>
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-If the assets already contain fingerprints in <strong>all</strong> their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.
+<div class="paragraph">
+<p>If the assets already contain fingerprints in <strong>all</strong> their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.</p>
+</div>
 </td>
 </tr>
 </table>
@@ -687,10 +680,37 @@ If the assets already contain fingerprints in <strong>all</strong> their names, 
 <i class="fa icon-caution" title="Caution"></i>
 </td>
 <td class="content">
-When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to <code>public, max-age=10, stale-while-revalidate=50</code> to cache assets in browsers for 10 seconds and revalidate asynchronously.
+<div class="paragraph">
+<p>When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to <code>public, max-age=10, stale-while-revalidate=50</code> to cache assets in browsers for 10 seconds and revalidate asynchronously.</p>
+</div>
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>&#8203;<br></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td><code>cacheControl</code> Cache-Control header value to be sent in 304 and 200 responses. Default is <code>public, max-age=31536000, immutable</code>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In XP dev mode cacheControl has no effect. Cache-Control header is always <code>private, no-store</code>.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+<div class="paragraph">
+<p>&#8203;<br></p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -703,22 +723,6 @@ To have even more control when hosting static resources, have a look at the <a h
 </td>
 </tr>
 </table>
-</div>
-<div class="paragraph">
-<p>&#8203;<br></p>
-</div>
-<div class="paragraph">
-<p>Here is an example of a configuration file using the default values:</p>
-</div>
-<div class="listingblock">
-<div class="title">com.enonic.lib.asset.json</div>
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "root": "/static",
-  "cacheBust": true,
-  "cacheControl": "public, max-age=31536000, immutable"
-}</code></pre>
-</div>
 </div>
 </div>
 </div>
@@ -782,7 +786,7 @@ ETag is useful even if Cache-Control contains immutable directive. CDNs and Chro
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-16 09:35:39 UTC
+Last updated 2024-09-17 06:12:23 UTC
 </div>
 </div>
 </body>
