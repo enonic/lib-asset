@@ -53,7 +53,7 @@ tasks.withType(Copy) {
 }
 
 tasks.register('bunInstall', CrossPlatformExec) {
-	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'install'
+	commandLine 'bunx', '--bun', 'bun', 'install'
 	environment [
 		'FORCE_COLOR': 'true',
 	]
@@ -64,7 +64,7 @@ clean {
 }
 
 tasks.register('bunBuild', CrossPlatformExec) {
-	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'run', 'build'
+	commandLine 'bunx', '--bun', 'bun', 'run', 'build'
 	environment [
 		'FORCE_COLOR': 'true',
     'LOG_LEVEL_FROM_GRADLE': gradle.startParameter.logLevel.toString(),
@@ -101,7 +101,7 @@ htmlSanityCheck {
 }
 
 tasks.register('bunCheck', CrossPlatformExec) {
-	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'check'
+	commandLine 'bunx', '--bun', 'bun', 'check'
 	environment [
 		'FORCE_COLOR': 'true',
 	]
@@ -112,7 +112,7 @@ tasks.register('bunCheck', CrossPlatformExec) {
 check.dependsOn bunCheck
 
 tasks.register('bunTest', CrossPlatformExec) {
-	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'test'
+	commandLine 'bunx', '--bun', 'bun', 'test'
 	environment [
 		'FORCE_COLOR': 'true',
 	]
