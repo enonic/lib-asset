@@ -15,7 +15,6 @@
     "@swc/core": "^1.7.26",
     "@types/bun": "^1.1.9",
     "bun": "^1.1.27",
-    "concurrently": "^9.0.1",
     "eslint": "^8.57.0",
     "jest-cucumber": "^4.5.0",
     "q-i": "^2.0.1",
@@ -32,11 +31,8 @@
     "url": "git+https://github.com/enonic/lib-asset.git"
   },
   "scripts": {
-    "build": "concurrently -c auto -g --timings npm:build:*",
-    "build:server": "npx tsup -d build/resources/main",
-    "check": "concurrently -c auto -g --timings npm:check:types npm:lint",
-    "check:types": "concurrently -g -r --timings npm:check:types:*",
-    "check:types:server": "npx tsc --noEmit -p src/main/resources/tsconfig.json",
+    "build": "bunx --bun tsup -d build/resources/main",
+    "check": "bunx --bun tsc --noEmit -p src/main/resources/tsconfig.json",
     "lint": "eslint --cache",
     "test": "bun test"
   }

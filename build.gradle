@@ -3,9 +3,9 @@ plugins {
     id 'maven-publish'
     id 'com.enonic.defaults' version '2.1.5'
     id 'com.enonic.xp.base' version '3.5.0'
-    id 'com.github.node-gradle.node' version '7.0.2'
     id 'org.asciidoctor.jvm.convert' version '4.0.3'
     id "org.aim42.htmlSanityCheck" version '1.1.6'
+    id 'com.github.jlouns.cpe' version '0.5.0' // CrossPlatformExec
 }
 
 java {
@@ -48,41 +48,37 @@ repositories {
     xp.enonicRepo('dev')
 }
 
-node {
-  // Whether to download and install a specific Node.js version or not
-  // If false, it will use the globally installed Node.js
-  // If true, it will download node using above parameters
-  // Note that npm is bundled with Node.js
-  //
-  // This is set to false to test if bun works on github without downloading node
-  download = false
-
-  // Version of node to download and install (only used if download is true)
-  // It will be unpacked in the workDir
-  version = '20.14.0'
-}
-
 tasks.withType(Copy) {
   includeEmptyDirs = false
 }
 
-tasks.register('npmBuild', NpmTask) {
-  args = [
-    'run',
-    '--silent',
-    'build'
-  ]
-  dependsOn npmInstall
-  dependsOn 'javadoc'
-  environment = [
-    'FORCE_COLOR': 'true',
+tasks.register('bunInstall', CrossPlatformExec) {
+	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'install'
+	environment [
+		'FORCE_COLOR': 'true',
+	]
+}
+
+clean {
+  delete 'coverage'
+}
+
+tasks.register('bunBuild', CrossPlatformExec) {
+	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'run', 'build'
+	environment [
+		'FORCE_COLOR': 'true',
     'LOG_LEVEL_FROM_GRADLE': gradle.startParameter.logLevel.toString(),
-    'NODE_ENV': project.hasProperty('dev') || project.hasProperty('development') ? 'development' : 'production'
-  ]
-  inputs.dir 'src/main/resources'
+    // Next line causes: No map entry allowed at this place (with wrong line number)
+    // 'NODE_ENV': project.hasProperty('dev') || project.hasProperty('development') ? 'development' : 'production'
+    'NODE_ENV': 'production',
+	]
+	dependsOn bunInstall
+  dependsOn javadoc
+	inputs.dir 'src/main/resources'
   outputs.dir 'build/resources/main'
 }
-jar.dependsOn npmBuild
+
+jar.dependsOn bunBuild
 
 asciidoctor {
     sourceDir = file('docs')
@@ -104,30 +100,26 @@ htmlSanityCheck {
     sourceDir = tasks.asciidoctor.outputDir
 }
 
-tasks.register('npmCheck', NpmTask) {
-	dependsOn npmInstall
-	args = [
-		'run',
-		'check'
-	]
-	environment = [
+tasks.register('bunCheck', CrossPlatformExec) {
+	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'check'
+	environment [
 		'FORCE_COLOR': 'true',
 	]
+	dependsOn bunInstall
+	inputs.dir 'src/main/resources'
 }
 
-check.dependsOn npmCheck
+check.dependsOn bunCheck
 
-tasks.register('npmTest', NpmTask) {
-	args = [
-		'run',
-		'test'
-	]
-	dependsOn npmInstall
-	environment = [
+tasks.register('bunTest', CrossPlatformExec) {
+	commandLine 'npx', '--', 'bunx', '--bun', 'bun', 'test'
+	environment [
 		'FORCE_COLOR': 'true',
 	]
-  inputs.dir 'src/bun'
+	dependsOn bunInstall
+	inputs.dir 'src/bun'
+	inputs.dir 'src/main/resources'
   outputs.dir 'coverage'
 }
 
-test.dependsOn npmTest
+test.dependsOn bunTest
