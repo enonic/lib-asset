@@ -22,7 +22,7 @@ import {
 } from '../../lib/enonic/asset/config';
 import { read } from '../../lib/enonic/asset/etagReader';
 import { getMimeType } from '../../lib/enonic/asset/io';
-import { getIfNoneMatchHeader } from '../../lib/enonic/asset/request/getIfNoneMatchHeader';
+import { getLowerCasedHeaders } from '../../lib/enonic/asset/request/getLowerCasedHeaders';
 import { checkPath } from '../../lib/enonic/asset/resource/path/checkPath';
 // import { getAbsoluteResourcePathWithoutTrailingSlash } from '../../lib/enonic/asset/resource/path/getAbsoluteResourcePathWithoutTrailingSlash';
 import { prefixWithRoot } from '../../lib/enonic/asset/resource/path/prefixWithRoot';
@@ -136,7 +136,6 @@ export function requestHandler({
     }
 
     const etagWithDblFnutts = read(absResourcePathWithoutTrailingSlash);
-    log.debug('etagWithDblFnutts "%s"', etagWithDblFnutts);
 
     const headers = {
       [HTTP2_RESPONSE_HEADER.ETAG]: etagWithDblFnutts // undefinedin DEV mode
@@ -147,11 +146,14 @@ export function requestHandler({
     }
 
     const staticCompression = doStaticCompression();
+
     if (staticCompression) {
       headers[HTTP2_RESPONSE_HEADER.VARY] = VARY.ACCEPT_ENCODING;
     }
 
-    const ifNoneMatchRequestHeader = getIfNoneMatchHeader({ request })
+    const lowerCasedRequestHeaders = getLowerCasedHeaders({ request });
+
+    const ifNoneMatchRequestHeader = lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.IF_NONE_MATCH]
     if (
       ifNoneMatchRequestHeader
       && ifNoneMatchRequestHeader === etagWithDblFnutts
@@ -162,9 +164,9 @@ export function requestHandler({
     }
 
     if (staticCompression) {
-      if (request.headers?.[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
+      if (lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
         let highestWeight = 0;
-        request.headers[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].split(/\s*,\s*/).forEach((encoding: AcceptEncodingItem) => {
+        lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].split(/\s*,\s*/).forEach((encoding: AcceptEncodingItem) => {
           const [aCompression, qvalue = '1'] = encoding.split(';q=') as [AcceptEncodingCompressionFormat, string];
           const weight = parseFloat(qvalue);
           if (aCompression === CONTENT_CODING.BR) {

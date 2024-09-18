@@ -190,6 +190,37 @@ Scenario: Does not use compression when weight is 0
     | etag             | "etag-index-css"                    |
     | vary             | Accept-Encoding                     |
 
+Scenario: handles camelcase request headers
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                               | exist | mimeType         | content               | etag                         |
+    | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the following request headers:
+    | header           | value                                                        |
+    | Accept-Encoding  | gzip, deflate, br, zstd |
+  # Then the resources are info logged
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
+  And the response should have the following headers:
+    | header           | value                               |
+    | cache-control    | public, max-age=31536000, immutable |
+    | content-encoding | gzip                                |
+    | etag             | "etag-index-css-gzip"               |
+    | vary             | Accept-Encoding                     |
+
 Scenario: Responds with 304 Not modified when if-none-match matches etag
 Given enonic is running in production mode
 # Given the following resources:
