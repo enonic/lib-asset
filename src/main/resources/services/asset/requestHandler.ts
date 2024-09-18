@@ -112,7 +112,7 @@ export function requestHandler({
       return errorResponse;
     }
 
-    const resource = getResource(absResourcePathWithoutTrailingSlash);
+    let resource = getResource(absResourcePathWithoutTrailingSlash);
 
     if (!resource.exists()) {
       return notFoundResponse();
@@ -178,6 +178,7 @@ export function requestHandler({
                 if (etagWithDblFnutts) {
                   headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-br"');
                 }
+                resource = resourceBr;
               }
             }
           } else if (aCompression === CONTENT_CODING.GZIP) {
@@ -189,6 +190,7 @@ export function requestHandler({
                 if (etagWithDblFnutts) {
                   headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-gzip"');
                 }
+                resource = resourceGz;
               }
             }
           }

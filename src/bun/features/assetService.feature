@@ -37,8 +37,8 @@ Scenario: returns brotli compressed content when br comes first among the highes
     | path                               | exist | mimeType         | content               | etag                         |
     | /com.enonic.lib.asset.json         | false |                  |                       |                              |
     | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
-    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
-    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+    | /assets/index.css.br               | true  | text/css         | brContent             | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
@@ -51,10 +51,10 @@ Scenario: returns brotli compressed content when br comes first among the highes
   When the request is sent
   # Then log info the response
   Then the response should have the following properties:
-    | property    | value                 |
-    | body        | body { color: green } |
-    | status      | 200                   |
-    | contentType | text/css              |
+    | property    | value     |
+    | body        | brContent |
+    | status      | 200       |
+    | contentType | text/css  |
   And the response should have the following headers:
     | header           | value                               |
     | cache-control    | public, max-age=31536000, immutable |
@@ -68,8 +68,8 @@ Scenario: returns gzip compressed content when the gzip scores the highest in ac
     | path                               | exist | mimeType         | content               | etag                         |
     | /com.enonic.lib.asset.json         | false |                  |                       |                              |
     | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
-    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
-    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+    | /assets/index.css.br               | true  | text/css         | brContent             | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
@@ -82,10 +82,10 @@ Scenario: returns gzip compressed content when the gzip scores the highest in ac
   When the request is sent
   # Then log info the response
   Then the response should have the following properties:
-    | property    | value                 |
-    | body        | body { color: green } |
-    | status      | 200                   |
-    | contentType | text/css              |
+    | property    | value       |
+    | body        | gzipContent |
+    | status      | 200         |
+    | contentType | text/css    |
   And the response should have the following headers:
     | header           | value                               |
     | cache-control    | public, max-age=31536000, immutable |
@@ -101,7 +101,7 @@ Scenario: returns gzip when br file is missing, even though br has higher weight
     | /com.enonic.lib.asset.json         | false |                  |                       |                              |
     | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
     | /assets/index.css.br               | false |                  |                       |                              |
-    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
@@ -114,10 +114,10 @@ Scenario: returns gzip when br file is missing, even though br has higher weight
   When the request is sent
   # Then log info the response
   Then the response should have the following properties:
-    | property    | value                 |
-    | body        | body { color: green } |
-    | status      | 200                   |
-    | contentType | text/css              |
+    | property    | value       |
+    | body        | gzipContent |
+    | status      | 200         |
+    | contentType | text/css    |
   And the response should have the following headers:
     | header           | value                               |
     | cache-control    | public, max-age=31536000, immutable |
@@ -133,8 +133,8 @@ Scenario: Does NOT set vary when staticCompress = false
     | path                               | exist | mimeType         | content                  | etag                         |
     | /com.enonic.lib.asset.json         | true  |                  | {"staticCompress":false} |                              |
     | /assets/index.css                  | true  | text/css         | body { color: green }    | etag-index-css               |
-    | /assets/index.css.br               | true  | text/css         | br                       | br-etag-should-not-be-used   |
-    | /assets/index.css.gz               | true  | text/css         | gzip                     | gzip-etag-should-not-be-used |
+    | /assets/index.css.br               | true  | text/css         | brContent                | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent              | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
@@ -165,8 +165,8 @@ Scenario: Does not use compression when weight is 0
     | path                               | exist | mimeType         | content               | etag                         |
     | /com.enonic.lib.asset.json         | false |                  |                       |                              |
     | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
-    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
-    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+    | /assets/index.css.br               | true  | text/css         | brContent             | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
@@ -196,8 +196,8 @@ Scenario: handles camelcase request headers
     | path                               | exist | mimeType         | content               | etag                         |
     | /com.enonic.lib.asset.json         | false |                  |                       |                              |
     | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
-    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
-    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+    | /assets/index.css.br               | true  | text/css         | brContent             | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
@@ -210,10 +210,10 @@ Scenario: handles camelcase request headers
   When the request is sent
   # Then log info the response
   Then the response should have the following properties:
-    | property    | value                 |
-    | body        | body { color: green } |
-    | status      | 200                   |
-    | contentType | text/css              |
+    | property    | value       |
+    | body        | gzipContent |
+    | status      | 200         |
+    | contentType | text/css    |
   And the response should have the following headers:
     | header           | value                               |
     | cache-control    | public, max-age=31536000, immutable |
