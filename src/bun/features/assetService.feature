@@ -60,6 +60,7 @@ Scenario: returns brotli compressed content when br comes first among the highes
     | cache-control    | public, max-age=31536000, immutable |
     | content-encoding | br                                  |
     | etag             | "etag-index-css-br"                 |
+    | vary             | Accept-Encoding                     |
 
 Scenario: returns gzip compressed content when the gzip scores the highest in accept-encoding header
   Given enonic is running in production mode
@@ -90,6 +91,104 @@ Scenario: returns gzip compressed content when the gzip scores the highest in ac
     | cache-control    | public, max-age=31536000, immutable |
     | content-encoding | gzip                                |
     | etag             | "etag-index-css-gzip"               |
+    | vary             | Accept-Encoding                     |
+
+Scenario: returns gzip when br file is missing, even though br has higher weight
+  # Given loglevel is set to "debug"
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                               | exist | mimeType         | content               | etag                         |
+    | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+    | /assets/index.css.br               | false |                  |                       |                              |
+    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the following request headers:
+    | header           | value                                                        |
+    | accept-encoding  | br;q=1.0, gzip;q=0.1, deflate;q=0.6, identity;q=0.4, *;q=0.2 |
+  # Then the resources are info logged
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
+  And the response should have the following headers:
+    | header           | value                               |
+    | cache-control    | public, max-age=31536000, immutable |
+    | content-encoding | gzip                                |
+    | etag             | "etag-index-css-gzip"               |
+    | vary             | Accept-Encoding                     |
+
+Scenario: Does NOT set vary when staticCompress = false
+  # Running in development mode to avoid cached configuration
+  Given enonic is running in development mode
+  # And loglevel is set to "debug"
+  And the following resources:
+    | path                               | exist | mimeType         | content                  | etag                         |
+    | /com.enonic.lib.asset.json         | true  |                  | {"staticCompress":false} |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green }    | etag-index-css               |
+    | /assets/index.css.br               | true  | text/css         | br                       | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzip                     | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the following request headers:
+    | header           | value                          |
+    | accept-encoding  | br, gzip, deflate, identity, * |
+  # And the resources are info logged
+  # And log info the request
+  When the request is sent
+  # Then loglevel is set to "silent"
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
+  And the response should have the following headers:
+    | header           | value             |
+    | cache-control    | private, no-store |
+    | content-encoding | undefined         |
+    | etag             | undefined         |
+    | vary             | undefined         |
+
+Scenario: Does not use compression when weight is 0
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                               | exist | mimeType         | content               | etag                         |
+    | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+    | /assets/index.css.br               | true  | text/css         | br                    | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzip                  | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the following request headers:
+    | header           | value                                                    |
+    | accept-encoding  | br;q=0, gzip;q=0, deflate;q=0.6, identity;q=0.4, *;q=0.1 |
+  # Then the resources are info logged
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
+  And the response should have the following headers:
+    | header           | value                               |
+    | cache-control    | public, max-age=31536000, immutable |
+    | content-encoding | undefined                           |
+    | etag             | "etag-index-css"                    |
+    | vary             | Accept-Encoding                     |
 
 Scenario: Responds with 304 Not modified when if-none-match matches etag
 Given enonic is running in production mode
@@ -158,7 +257,7 @@ Given the following request:
 | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/< |
 # Then log info the request
 When the request is sent
-Then log info the response
+# Then log info the response
 Then the response should have the following properties:
   | property    | value                     |
   | status      | 400                       |
