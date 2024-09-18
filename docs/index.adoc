@@ -153,7 +153,7 @@ Type: *boolean*
 +
 Default: *true*
 +
-When enabled, the service will check the request accept-encoding header for `br` or `gzip` and serve a compressed version of the requested asset *if it exists*. The service will also set the `content-encoding` header and modify the `etag` header in the response.
+When enabled, the service will check the request accept-encoding header for `br` or `gzip` and serve a compressed version of the requested asset *if it exists*. 
 
 {zwsp} +
 
