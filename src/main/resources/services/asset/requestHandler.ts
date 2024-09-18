@@ -7,8 +7,12 @@ import type { Response } from '../../lib/enonic/asset/types/Response';
 
 import { getResource } from '/lib/xp/io';
 import {
+  CONTENT_CODING,
+  CONTENT_ENCODING,
+  HTTP2_REQUEST_HEADER,
   HTTP2_RESPONSE_HEADER,
   RESPONSE_CACHE_CONTROL_DIRECTIVE,
+  VARY,
 } from '../../lib/enonic/asset/constants';
 import {
   configuredCacheControl,
@@ -135,11 +139,16 @@ export function requestHandler({
     log.debug('etagWithDblFnutts "%s"', etagWithDblFnutts);
 
     const headers = {
-      [HTTP2_RESPONSE_HEADER.ETAG]: etagWithDblFnutts
+      [HTTP2_RESPONSE_HEADER.ETAG]: etagWithDblFnutts // undefinedin DEV mode
     };
 
     if (cacheControl) {
       headers[HTTP2_RESPONSE_HEADER.CACHE_CONTROL] = cacheControl;
+    }
+
+    const staticCompression = doStaticCompression();
+    if (staticCompression) {
+      headers[HTTP2_RESPONSE_HEADER.VARY] = VARY.ACCEPT_ENCODING;
     }
 
     const ifNoneMatchRequestHeader = getIfNoneMatchHeader({ request })
@@ -152,45 +161,38 @@ export function requestHandler({
       });
     }
 
-    if (doStaticCompression() && request.headers?.['accept-encoding']) {
-      let compression: AcceptEncodingCompressionFormat | undefined;
-      let highestWeight = 0;
-      request.headers['accept-encoding'].split(/\s*,\s*/).forEach((encoding: AcceptEncodingItem) => {
-        const [aCompression, qvalue] = encoding.split(';q=') as [AcceptEncodingCompressionFormat, string];
-        if (aCompression === 'br' || aCompression === 'gzip') {
-          if (qvalue) {
-            const weight = parseFloat(qvalue);
-            if (weight > highestWeight) {
-              highestWeight = weight;
-              compression = aCompression;
+    if (staticCompression) {
+      if (request.headers?.[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
+        let highestWeight = 0;
+        request.headers[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].split(/\s*,\s*/).forEach((encoding: AcceptEncodingItem) => {
+          const [aCompression, qvalue = '1'] = encoding.split(';q=') as [AcceptEncodingCompressionFormat, string];
+          const weight = parseFloat(qvalue);
+          if (aCompression === CONTENT_CODING.BR) {
+            const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
+            if (resourceBr.exists()) {
+              if (weight > highestWeight) {
+                highestWeight = weight;
+                headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.BR;
+                if (etagWithDblFnutts) {
+                  headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-br"');
+                }
+              }
             }
-          } else {
-            if (1 > highestWeight) {
-              highestWeight = 1;
-              compression = aCompression;
+          } else if (aCompression === CONTENT_CODING.GZIP) {
+            const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
+            if (resourceGz.exists()) {
+              if (weight > highestWeight) {
+                highestWeight = weight;
+                headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.GZIP;
+                if (etagWithDblFnutts) {
+                  headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-gzip"');
+                }
+              }
             }
           }
-        }
-      }); // forEach compression
-
-      if (compression === 'br') {
-        const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
-        if (resourceBr.exists()) {
-          headers['content-encoding'] = 'br';
-          if (etagWithDblFnutts) {
-            headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-br"');
-          }
-        }
-      } else if (compression === 'gzip') {
-        const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
-        if (resourceGz.exists()) {
-          headers['content-encoding'] = 'gzip';
-          if (etagWithDblFnutts) {
-            headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-gzip"');
-          }
-        }
-      }
-    }
+        }); // forEach compression
+      } // if accept-encoding
+    } // if doStaticCompression
 
     return okResponse({
       body: resource.getStream(),

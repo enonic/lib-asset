@@ -16,6 +16,7 @@ import {
 // import { all } from '../../main/resources/services/asset/asset';
 import { requestHandler } from '../../main/resources/services/asset/requestHandler';
 // import { readText } from '@enonic-types/lib-io';
+import {testLogger} from '../setup';
 
 const feature = loadFeature('./src/bun/features/assetService.feature', {
   runner: {
@@ -37,6 +38,10 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 
   given('enonic is running in production mode', () => {
     globalThis._devMode = false;
+  });
+
+  given(/^loglevel is set to "(.*)"$/, (level) => {
+    globalThis._logLevel = level;
   });
 
   given('the following resources:', (table) => {
@@ -78,15 +83,15 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 	});
 
   then('the resources are info logged', () => {
-    log.info('resources:%s', globalThis._resources);
+    testLogger.info('resources:%s', globalThis._resources);
 	});
 
   then('debug the request', () => {
-    log.debug('request:%s', request);
+    testLogger.debug('request:%s', request);
 	});
 
   then('log info the request', () => {
-    log.info('request:%s', request);
+    testLogger.info('request:%s', request);
 	});
 
   when('the request is sent', () => {
@@ -94,11 +99,11 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 	});
 
   then('debug the response', () => {
-    log.debug('response:%s', response);
+    testLogger.debug('response:%s', response);
 	});
 
   then('log info the response', () => {
-    log.info('response:%s', response);
+    testLogger.info('response:%s', response);
 	});
 
   then('the response should have the following properties:', (table) => {
