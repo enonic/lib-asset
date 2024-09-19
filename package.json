@@ -14,14 +14,14 @@
     "@jest/globals": "^29.7.0",
     "@swc/core": "^1.7.26",
     "@types/bun": "^1.1.9",
-    "bun": "^1.1.27",
+    "bun": "^1.1.28",
     "concurrently": "^9.0.1",
     "eslint": "^8.57.0",
     "jest-cucumber": "^4.5.0",
     "q-i": "^2.0.1",
-    "tsup": "^8.2.4",
+    "tsup": "^8.3.0",
     "typescript": "^5.6.2",
-    "typescript-eslint": "^8.5.0"
+    "typescript-eslint": "^8.6.0"
   },
   "homepage": "https://github.com/enonic/lib-asset#readme",
   "name": "lib-asset",
