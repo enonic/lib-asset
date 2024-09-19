@@ -17,14 +17,6 @@ export function mapKeys(
 	}
 	const result = {};
 	const keys = Object.keys(obj);
-	// for (let i = 0; i < keys.length; i++) {
-	// 	const key = keys[i];
-	// 	fn({
-	// 		key,
-	// 		result,
-	// 		value: obj[key]
-	// 	});
-	// }
   for (const key of keys) {
     fn({
         key,
