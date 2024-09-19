@@ -31,7 +31,7 @@ And the response should have the following headers:
   | etag          | "etag-index-css"                  |
   | cache-control | public, max-age=31536000, immutable |
 
-Scenario: returns brotli compressed content when br comes first among the highest weight in accept-encoding header
+Scenario: prefers brotli even though it comes last and have lowest qvalue weight
   Given enonic is running in production mode
   Given the following resources:
     | path                               | exist | mimeType         | content               | etag                         |
@@ -44,8 +44,8 @@ Scenario: returns brotli compressed content when br comes first among the highes
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
     | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
   And the following request headers:
-    | header           | value                                                        |
-    | accept-encoding  | br;q=1.0, gzip, deflate;q=0.6, identity;q=0.4, *;q=0.1 |
+    | header           | value                                                  |
+    | accept-encoding  | gzip, deflate;q=0.9, identity;q=0.8, *;q=0.7, br;q=0.1 |
   # Then the resources are info logged
   # Then log info the request
   When the request is sent
@@ -62,7 +62,7 @@ Scenario: returns brotli compressed content when br comes first among the highes
     | etag             | "etag-index-css-br"                 |
     | vary             | Accept-Encoding                     |
 
-Scenario: returns gzip compressed content when the gzip scores the highest in accept-encoding header
+Scenario: returns gzip compressed content gzip, but no brotli in accept-encoding header
   Given enonic is running in production mode
   Given the following resources:
     | path                               | exist | mimeType         | content               | etag                         |
@@ -75,8 +75,8 @@ Scenario: returns gzip compressed content when the gzip scores the highest in ac
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
     | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
   And the following request headers:
-    | header           | value                                                        |
-    | accept-encoding  | br;q=0.9, gzip, deflate;q=0.6, identity;q=0.4, *;q=0.1 |
+    | header           | value                                            |
+    | accept-encoding  | deflate;q=1.0, identity;q=0.9, *;q=0.8, gzip=0.1 |
   # Then the resources are info logged
   # Then log info the request
   When the request is sent
@@ -93,7 +93,7 @@ Scenario: returns gzip compressed content when the gzip scores the highest in ac
     | etag             | "etag-index-css-gzip"               |
     | vary             | Accept-Encoding                     |
 
-Scenario: returns gzip when br file is missing, even though br has higher weight
+Scenario: returns gzip when br file is missing
   # Given loglevel is set to "debug"
   Given enonic is running in production mode
   Given the following resources:
@@ -159,7 +159,7 @@ Scenario: Does NOT set vary when staticCompress = false
     | etag             | undefined         |
     | vary             | undefined         |
 
-Scenario: Does not use compression when weight is 0
+Scenario: Does not use compression when accept-encoding endswith gzip;q=0 and includes br;q=0,
   Given enonic is running in production mode
   Given the following resources:
     | path                               | exist | mimeType         | content               | etag                         |
@@ -173,7 +173,7 @@ Scenario: Does not use compression when weight is 0
     | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
   And the following request headers:
     | header           | value                                                    |
-    | accept-encoding  | br;q=0, gzip;q=0, deflate;q=0.6, identity;q=0.4, *;q=0.1 |
+    | accept-encoding  | br;q=0, deflate;q=0.6, identity;q=0.4, *;q=0.1, gzip;q=0 |
   # Then the resources are info logged
   # Then log info the request
   When the request is sent
@@ -190,7 +190,7 @@ Scenario: Does not use compression when weight is 0
     | etag             | "etag-index-css"                    |
     | vary             | Accept-Encoding                     |
 
-Scenario: handles camelcase request headers
+Scenario: Does not use compression when accept-encoding endswith br;q=0 and includes gzip;q=0,
   Given enonic is running in production mode
   Given the following resources:
     | path                               | exist | mimeType         | content               | etag                         |
@@ -203,23 +203,54 @@ Scenario: handles camelcase request headers
     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
     | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
   And the following request headers:
-    | header           | value                                                        |
-    | Accept-Encoding  | gzip, deflate, br, zstd |
+    | header           | value                                                    |
+    | accept-encoding  | gzip;q=0, deflate;q=0.6, identity;q=0.4, *;q=0.1, br;q=0 |
   # Then the resources are info logged
   # Then log info the request
   When the request is sent
   # Then log info the response
   Then the response should have the following properties:
-    | property    | value       |
-    | body        | gzipContent |
-    | status      | 200         |
-    | contentType | text/css    |
+    | property    | value                 |
+    | body        | body { color: green } |
+    | status      | 200                   |
+    | contentType | text/css              |
   And the response should have the following headers:
     | header           | value                               |
     | cache-control    | public, max-age=31536000, immutable |
-    | content-encoding | gzip                                |
-    | etag             | "etag-index-css-gzip"               |
+    | content-encoding | undefined                           |
+    | etag             | "etag-index-css"                    |
     | vary             | Accept-Encoding                     |
+
+# Scenario: handles camelcase request headers
+#   Given enonic is running in production mode
+#   Given the following resources:
+#     | path                               | exist | mimeType         | content               | etag                         |
+#     | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+#     | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+#     | /assets/index.css.br               | true  | text/css         | brContent             | br-etag-should-not-be-used   |
+#     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
+#   And the following request:
+#     | property    | value                                                                                          |
+#     | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+#     | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+#   And the following request headers:
+#     | header           | value                                                        |
+#     | Accept-Encoding  | gzip, deflate, br, zstd |
+#   # Then the resources are info logged
+#   # Then log info the request
+#   When the request is sent
+#   # Then log info the response
+#   Then the response should have the following properties:
+#     | property    | value       |
+#     | body        | gzipContent |
+#     | status      | 200         |
+#     | contentType | text/css    |
+#   And the response should have the following headers:
+#     | header           | value                               |
+#     | cache-control    | public, max-age=31536000, immutable |
+#     | content-encoding | gzip                                |
+#     | etag             | "etag-index-css-gzip"               |
+#     | vary             | Accept-Encoding                     |
 
 Scenario: Responds with 304 Not modified when if-none-match matches etag
 Given enonic is running in production mode

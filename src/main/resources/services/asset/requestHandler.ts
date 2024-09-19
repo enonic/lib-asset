@@ -163,40 +163,40 @@ export function requestHandler({
       });
     }
 
-    if (staticCompression) {
-      if (lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
-        let highestWeight = 0;
-        lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].split(/\s*,\s*/).forEach((encoding: AcceptEncodingItem) => {
-          const [aCompression, qvalue = '1'] = encoding.split(';q=') as [AcceptEncodingCompressionFormat, string];
-          const weight = parseFloat(qvalue);
-          if (aCompression === CONTENT_CODING.BR) {
-            const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
-            if (resourceBr.exists()) {
-              if (weight > highestWeight) {
-                highestWeight = weight;
-                headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.BR;
-                if (etagWithDblFnutts) {
-                  headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-br"');
-                }
-                resource = resourceBr;
-              }
+    if (staticCompression && lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
+
+      if (
+          lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(CONTENT_CODING.BR)
+          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(`${CONTENT_CODING.BR};q=0,`)
+          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].endsWith(`${CONTENT_CODING.BR};q=0`)
+        ) {
+          const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
+          if (resourceBr.exists()) {
+            headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.BR;
+            if (etagWithDblFnutts) {
+              headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-br"');
             }
-          } else if (aCompression === CONTENT_CODING.GZIP) {
-            const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
-            if (resourceGz.exists()) {
-              if (weight > highestWeight) {
-                highestWeight = weight;
-                headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.GZIP;
-                if (etagWithDblFnutts) {
-                  headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-gzip"');
-                }
-                resource = resourceGz;
-              }
-            }
+            resource = resourceBr;
           }
-        }); // forEach compression
-      } // if accept-encoding
-    } // if doStaticCompression
+        } // brotli
+
+        if (
+          !headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] // prefer brotli
+          && lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(CONTENT_CODING.GZIP)
+          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(`${CONTENT_CODING.GZIP};q=0,`)
+          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].endsWith(`${CONTENT_CODING.GZIP};q=0`)
+        ) {
+          const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
+          if (resourceGz.exists()) {
+            headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.GZIP;
+            if (etagWithDblFnutts) {
+              headers[HTTP2_RESPONSE_HEADER.ETAG] = etagWithDblFnutts.replace(/"$/, '-gzip"');
+            }
+            resource = resourceGz;
+          }
+        } // gzip
+
+    } // if doStaticCompression && acceptEncoding
 
     return okResponse({
       body: resource.getStream(),
