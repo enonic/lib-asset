@@ -165,12 +165,13 @@ export function requestHandler({
       });
     }
 
-    if (staticCompression && lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
+    const trimmedAcceptEncoding: string = lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]?.trim() || '';
+    if (staticCompression && trimmedAcceptEncoding) {
 
       if (
-        stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], CONTENT_CODING.BR)
-        && !stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.BR};q=0,`)
-        && !stringEndsWith(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.BR};q=0`)
+        stringIncludes(trimmedAcceptEncoding, CONTENT_CODING.BR)
+        && !stringIncludes(trimmedAcceptEncoding, `${CONTENT_CODING.BR};q=0,`)
+        && !stringEndsWith(trimmedAcceptEncoding, `${CONTENT_CODING.BR};q=0`)
       ) {
           const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
           if (resourceBr.exists()) {
@@ -184,9 +185,9 @@ export function requestHandler({
 
         if (
           !headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] // prefer brotli
-          && stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], CONTENT_CODING.GZIP)
-          && !stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.GZIP};q=0,`)
-          && !stringEndsWith(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.GZIP};q=0`)
+          && stringIncludes(trimmedAcceptEncoding, CONTENT_CODING.GZIP)
+          && !stringIncludes(trimmedAcceptEncoding, `${CONTENT_CODING.GZIP};q=0,`)
+          && !stringEndsWith(trimmedAcceptEncoding, `${CONTENT_CODING.GZIP};q=0`)
         ) {
           const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
           if (resourceGz.exists()) {
