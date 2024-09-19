@@ -65,6 +65,10 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
     // log.info('resources:%s', globalThis._resources);
 	});
 
+  given('the request is reset', () => {
+    request = {};
+  });
+
   given('the following request:', (table) => {
     request = {
       // Uncertain whether headers are optional, but it's good for the code to handle missing headers, just in case
@@ -74,6 +78,13 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
       request[property] = value;
     });
 	});
+
+  and(/the request header "(.+)" is "(.+)"$/, (header: string, value: string) => {
+    if (!request.headers) {
+      request.headers = {};
+    }
+    request.headers[header] = value;
+  });
 
   and('the following request headers:', (table) => {
     request.headers = {};
