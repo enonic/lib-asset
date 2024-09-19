@@ -1,5 +1,5 @@
-import { getResource, readText } from '/lib/xp/io';
-import { isDev } from './runMode';
+import {getResource, readText} from '/lib/xp/io';
+import {isDev} from './runMode';
 
 
 export interface Config {
@@ -27,7 +27,7 @@ function _getConfig(): Config {
   const resourceJson: string = readText(resource.getStream());
   let configFromFile: Partial<Config> = {};
   try {
-    configFromFile = JSON.parse(resourceJson);
+    configFromFile = JSON.parse(resourceJson) as Partial<Config>;
   } catch (e) {
     log.error(`Something went wrong while parsing resource path:${RESOURCE_PATH} json:${resourceJson}!`, e);
   }

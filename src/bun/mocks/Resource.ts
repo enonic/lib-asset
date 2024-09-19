@@ -3,7 +3,6 @@ import type {
   Resource as ResourceInterface,
 } from '@enonic-types/lib-io';
 
-// @ts-expect-error
 export class Resource implements ResourceInterface {
   private readonly _bytes: string; // ByteSource
   private readonly _exists: boolean;

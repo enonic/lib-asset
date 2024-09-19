@@ -1,11 +1,7 @@
-import type {
-  AcceptEncodingCompressionFormat,
-  AcceptEncodingItem,
-  Request
-} from '../../lib/enonic/asset/types/Request';
-import type { Response } from '../../lib/enonic/asset/types/Response';
+import type {Request} from '../../lib/enonic/asset/types/Request';
+import type {Response} from '../../lib/enonic/asset/types/Response';
 
-import { getResource } from '/lib/xp/io';
+import {getResource} from '/lib/xp/io';
 import {
   CONTENT_CODING,
   CONTENT_ENCODING,
@@ -20,31 +16,31 @@ import {
   doStaticCompression,
   isCacheBust,
 } from '../../lib/enonic/asset/config';
-import { read } from '../../lib/enonic/asset/etagReader';
-import { getMimeType } from '../../lib/enonic/asset/io';
-import { getLowerCasedHeaders } from '../../lib/enonic/asset/request/getLowerCasedHeaders';
-import { checkPath } from '../../lib/enonic/asset/resource/path/checkPath';
-// import { getAbsoluteResourcePathWithoutTrailingSlash } from '../../lib/enonic/asset/resource/path/getAbsoluteResourcePathWithoutTrailingSlash';
-import { prefixWithRoot } from '../../lib/enonic/asset/resource/path/prefixWithRoot';
-import { getRelativeResourcePath } from '../../lib/enonic/asset/resource/path/getRelativeResourcePath';
-import { getRootFromPath } from '../../lib/enonic/asset/resource/path/getRootFromPath';
+import {read} from '../../lib/enonic/asset/etagReader';
+import {getMimeType} from '../../lib/enonic/asset/io';
+import {getLowerCasedHeaders} from '../../lib/enonic/asset/request/getLowerCasedHeaders';
+import {checkPath} from '../../lib/enonic/asset/resource/path/checkPath';
+// import {getAbsoluteResourcePathWithoutTrailingSlash} from '../../lib/enonic/asset/resource/path/getAbsoluteResourcePathWithoutTrailingSlash';
+import {prefixWithRoot} from '../../lib/enonic/asset/resource/path/prefixWithRoot';
+import {getRelativeResourcePath} from '../../lib/enonic/asset/resource/path/getRelativeResourcePath';
+import {getRootFromPath} from '../../lib/enonic/asset/resource/path/getRootFromPath';
 import {
   badRequestResponse,
   internalServerErrorResponse,
   notFoundResponse,
   notModifiedResponse,
-  okResponse
+  okResponse,
 } from '../../lib/enonic/asset/response/responses';
-import { generateErrorId } from '../../lib/enonic/asset/response/generateErrorId';
-import { isDev } from '../../lib/enonic/asset/runMode';
-import { getFingerprint } from '../../lib/enonic/asset/runMode';
-import { stringEndsWith } from '../../lib/enonic/asset/util/stringEndsWith';
-import { stringIncludes } from '../../lib/enonic/asset/util/stringIncludes';
+import {generateErrorId} from '../../lib/enonic/asset/response/generateErrorId';
+import {isDev} from '../../lib/enonic/asset/runMode';
+import {getFingerprint} from '../../lib/enonic/asset/runMode';
+import {stringEndsWith} from '../../lib/enonic/asset/util/stringEndsWith';
+import {stringIncludes} from '../../lib/enonic/asset/util/stringIncludes';
 
 
 export function requestHandler({
   cacheControl = configuredCacheControl(),
-  request
+  request,
 }: {
   request: Request
   cacheControl?: string
@@ -103,13 +99,13 @@ export function requestHandler({
     //   request,
     //   root
     // });
-    const absResourcePathWithoutTrailingSlash = prefixWithRoot({
+    const absResourcePathWithoutTrailingSlash: string = prefixWithRoot({
       path: relPath,
-      root
+      root,
     });
     log.debug('absResourcePathWithoutTrailingSlash "%s"', absResourcePathWithoutTrailingSlash);
 
-    const errorResponse = checkPath({ absResourcePathWithoutTrailingSlash });
+    const errorResponse = checkPath({absResourcePathWithoutTrailingSlash});
     if (errorResponse) {
       return errorResponse;
     }
@@ -132,15 +128,15 @@ export function requestHandler({
             RESPONSE_CACHE_CONTROL_DIRECTIVE.PRIVATE
           }, ${
             RESPONSE_CACHE_CONTROL_DIRECTIVE.NO_STORE
-          }`
-        }
+          }`,
+        },
       });
     }
 
     const etagWithDblFnutts = read(absResourcePathWithoutTrailingSlash);
 
     const headers = {
-      [HTTP2_RESPONSE_HEADER.ETAG]: etagWithDblFnutts // undefinedin DEV mode
+      [HTTP2_RESPONSE_HEADER.ETAG]: etagWithDblFnutts, // undefinedin DEV mode
     };
 
     if (cacheControl) {
@@ -153,19 +149,21 @@ export function requestHandler({
       headers[HTTP2_RESPONSE_HEADER.VARY] = VARY.ACCEPT_ENCODING;
     }
 
-    const lowerCasedRequestHeaders = getLowerCasedHeaders({ request });
+    const lowerCasedRequestHeaders = getLowerCasedHeaders({request});
 
-    const ifNoneMatchRequestHeader = lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.IF_NONE_MATCH]
+    const ifNoneMatchRequestHeader = lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.IF_NONE_MATCH] as string | undefined;
     if (
       ifNoneMatchRequestHeader
       && ifNoneMatchRequestHeader === etagWithDblFnutts
     ) {
       return notModifiedResponse({
-        headers
+        headers,
       });
     }
 
-    const trimmedAndLowercasedAcceptEncoding: string = (lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]?.trim() || '').toLowerCase();
+    const trimmedAndLowercasedAcceptEncoding: string = (lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING] as string | undefined || '')
+      .trim()
+      .toLowerCase();
     if (staticCompression && trimmedAndLowercasedAcceptEncoding) {
 
       if (
@@ -204,14 +202,15 @@ export function requestHandler({
     return okResponse({
       body: resource.getStream(),
       contentType,
-      headers
+      headers,
     });
   } catch (e) {
     const errorId = generateErrorId();
-      log.error(`lib-static.handleResourceRequest, error ID: ${errorId}   |   ${e.message}`, e);
-      return internalServerErrorResponse({
-        contentType: 'text/plain; charset=utf-8',
-        body: `Server error (logged with error ID: ${errorId})`
-      });
-    }
+    const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+    log.error(`lib-static.handleResourceRequest, error ID: ${errorId}   |   ${errorMessage}`, e);
+    return internalServerErrorResponse({
+      contentType: 'text/plain; charset=utf-8',
+      body: `Server error (logged with error ID: ${errorId})`,
+    });
+  }
 } // function requestHandler

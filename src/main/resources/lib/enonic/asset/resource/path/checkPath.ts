@@ -1,12 +1,12 @@
-import type { Response } from '../../types';
+import type {Response} from '../../types';
 
-import { badRequestResponse } from '../../response/responses';
-import { isDev } from '../../runMode';
-import { getPathError } from './getPathError';
+import {badRequestResponse} from '../../response/responses';
+import {isDev} from '../../runMode';
+import {getPathError} from './getPathError';
 
 
 export function checkPath({
-  absResourcePathWithoutTrailingSlash
+  absResourcePathWithoutTrailingSlash,
 }: {
   absResourcePathWithoutTrailingSlash: string
 }): Response | void {

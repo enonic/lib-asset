@@ -1,18 +1,28 @@
-import type { StepDefinitions } from 'jest-cucumber';
-import type { Config } from '../../main/resources/lib/enonic/asset/config';
-import type { AssetUrlParams } from '../../main/resources/lib/enonic/asset/assetUrl';
+import type {StepDefinitions} from 'jest-cucumber';
+import type {Config} from '../../main/resources/lib/enonic/asset/config';
+import type {AssetUrlParams} from '../../main/resources/lib/enonic/asset/assetUrl';
 
-import { describe } from '@jest/globals';
+import {describe} from '@jest/globals';
 import {
   expect,
-  test
+  test,
 } from 'bun:test';
 import {
   autoBindSteps,
   loadFeature,
   // setJestCucumberConfiguration
 } from 'jest-cucumber';
-import { assetUrl } from '../../main/resources/lib/enonic/asset/assetUrl';
+import {assetUrl} from '../../main/resources/lib/enonic/asset/assetUrl';
+
+// Avoid type errors
+declare namespace globalThis {
+  let _resources: Record<string, {
+    bytes?: string
+    exists?: boolean
+    etag?: string
+    mimeType?: string
+  }>
+}
 
 // setJestCucumberConfiguration({});
 
@@ -20,36 +30,32 @@ const feature = loadFeature('./src/bun/features/assetUrl.feature', {
   runner: {
     describe,
     test,
-  }
+  },
 });
 
-export const steps: StepDefinitions = ({ given, and, when, then }) => {
+export const steps: StepDefinitions = ({given, and, when, then}) => {
   let assetUrlParams: Partial<AssetUrlParams> = {};
   let assetUrlReturnValue: string;
 
   given('there is no configuration file', () => {
     globalThis._resources['/com.enonic.lib.asset.json'] = {
-      exists: false
+      exists: false,
     };
   });
 
   given('The following configuration:', (table: {option: string, value: unknown}[]) => {
-    const configFromJson = JSON.parse(globalThis._resources['/com.enonic.lib.asset.json'].bytes || '{}');
+    const configFromJson = JSON.parse(globalThis._resources['/com.enonic.lib.asset.json'].bytes || '{}') as Partial<Config>;
     // log.debug('table:%s', table);
-    table.forEach(({ option, value }) => {
+    table.forEach(({option, value}) => {
       // log.debug('option:%s value:%s', option, value);
       configFromJson[option] = value;
     });
     globalThis._resources['/com.enonic.lib.asset.json'] = {
       bytes: JSON.stringify(configFromJson),
       exists: true,
-      mimeType: 'application/json'
+      mimeType: 'application/json',
     };
   });
-
-  // given('cacheBust is disabled via parameters', () => {
-  //   assetUrlParams.cacheBust = false;
-  // });
 
   // given('fingerprint is disabled in the configuration file', () => {
   //   let configFromJson = {
@@ -66,7 +72,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
   //   };
   // });
 
-  when(/^I call assetUrl with the path "(.*)"$/, (path) => {
+  when(/^I call assetUrl with the path "(.*)"$/, (path: string) => {
     assetUrlParams.path = path;
     assetUrlReturnValue = assetUrl(assetUrlParams as AssetUrlParams);
   });
@@ -74,7 +80,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
   when('I call assetUrl with the following parameters:', (table: {parameter: string, value: unknown}[]) => {
     assetUrlParams = {};
     // log.debug('table:%s', table);
-    table.forEach(({ parameter, value }) => {
+    table.forEach(({parameter, value}) => {
       if (parameter === 'params') {
         assetUrlParams.params = JSON.parse(value as string) as Record<string, unknown>;
       } else if (parameter === 'path') {
@@ -91,4 +97,4 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
   });
 }; // steps
 
-autoBindSteps(feature, [ steps ]);
+autoBindSteps(feature, [steps]);

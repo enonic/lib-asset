@@ -1,1 +1,1 @@
-export { assetUrl } from './assetUrl';
+export {assetUrl} from './assetUrl';

@@ -1,4 +1,5 @@
 /.enonic
+/.eslintcache
 /.gradle
 
 # Don't know what keeps generating this folder, perhaps some VSCode extension?

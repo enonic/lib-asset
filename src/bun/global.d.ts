@@ -1,3 +1,4 @@
+// eslint-disable-next-line spaced-comment
 /// <reference types="@enonic-types/global" />
 
 export declare type App = typeof app;

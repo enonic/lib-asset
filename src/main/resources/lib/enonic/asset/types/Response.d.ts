@@ -1,4 +1,4 @@
-import { ByteSource } from '@enonic-types/core';
+import {ByteSource} from '@enonic-types/core';
 import type {PageContributions} from './PageContributions';
 
 // https://developer.enonic.com/docs/xp/stable/framework/http#http-response
