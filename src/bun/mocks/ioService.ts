@@ -1,13 +1,12 @@
-import type { ResourceKey } from '@enonic-types/lib-io';
-import type { Log } from '../global.d';
+import type {Log} from '../global.d';
 
-import { Resource } from './Resource';
+import {Resource} from './Resource';
 
 
 // Avoid type errors
-declare module globalThis {
-  var log: Log
-  var _resources: Record<string, {
+declare namespace globalThis {
+  const log: Log
+  const _resources: Record<string, {
     bytes?: string
     exists?: boolean
     etag?: string
@@ -16,18 +15,22 @@ declare module globalThis {
 }
 
 
-export function mockGetResource() {
-  return (key: string|ResourceKey) => {
+export function mockGetResource(): (key: string) => Resource {
+  return (key: string) => {
     // log.info('mockGetResource key:%s globalThis._resources:%s', key, globalThis._resources);
-    const resource = globalThis._resources[key as string];
+    const resource = globalThis._resources[key];
     if (!resource) {
       throw new Error(`getResource: Unmocked key:${JSON.stringify(key, null, 4)}!`);
     }
 
     if (!resource.exists) {
-      return {
-        exists: () => false,
-      };
+      return new Resource({
+        bytes: '',
+        exists: false,
+        key: key.toString(),
+        size: 0,
+        timestamp: 0,
+      });
     }
 
     return new Resource({
@@ -35,15 +38,17 @@ export function mockGetResource() {
       exists: true,
       key: key.toString(),
       size: (resource.bytes || '').length,
-      timestamp: 2
+      timestamp: 2,
     });
   };
 }
 
-export function mockIoService() {
+export function mockIoService(): {
+  getMimeType: (name: string) => string
+} {
   return {
-    getMimeType: (name: string|ResourceKey) => {
-      const mimeType = globalThis._resources[name as string]?.mimeType;
+    getMimeType: (name: string) => {
+      const mimeType = globalThis._resources[name]?.mimeType;
       if (mimeType) {
         return mimeType;
       }

@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {},
+  "include": [
+    "./tsup/**/*.ts"
+  ],
+  "exclude": [
+    "./bin/**/*.*",
+    "./build/**/*.*",
+    "./node_modules/**/*.*",
+    "./src/**/*.*",
+  ],
+}

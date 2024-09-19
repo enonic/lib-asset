@@ -1,6 +1,6 @@
 export type {
   AcceptEncodingCompressionFormat,
   AcceptEncodingItem,
-  Request
+  Request,
 } from './Request';
-export type { Response } from './Response';
+export type {Response} from './Response';

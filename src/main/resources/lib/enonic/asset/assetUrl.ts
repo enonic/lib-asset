@@ -1,6 +1,6 @@
-import { isCacheBust } from './config';
-import { serviceUrlRootViaAssetUrl } from './serviceUrlRootViaAssetUrl';
-import { getFingerprint } from './runMode';
+import {isCacheBust} from './config';
+import {serviceUrlRootViaAssetUrl} from './serviceUrlRootViaAssetUrl';
+import {getFingerprint} from './runMode';
 
 // https://developer.enonic.com/docs/xp/stable/runtime/engines/asset-service
 // <app-root>/_/asset/<app-name><:build-id>/<asset-path>

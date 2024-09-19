@@ -1,31 +1,31 @@
-import type { StepDefinitions } from 'jest-cucumber';
+import type {StepDefinitions} from 'jest-cucumber';
 import type {
 	Request,
 	Response,
 } from '../../main/resources/lib/enonic/asset/types';
 
-import { describe } from '@jest/globals';
+import {describe} from '@jest/globals';
 import {
   expect,
-  test
+  test,
 } from 'bun:test';
 import {
   autoBindSteps,
   loadFeature,
 } from 'jest-cucumber';
-// import { all } from '../../main/resources/services/asset/asset';
-import { requestHandler } from '../../main/resources/services/asset/requestHandler';
-// import { readText } from '@enonic-types/lib-io';
+// import {all} from '../../main/resources/services/asset/asset';
+import {requestHandler} from '../../main/resources/services/asset/requestHandler';
+// import {readText} from '@enonic-types/lib-io';
 import {testLogger} from '../setup';
 
 const feature = loadFeature('./src/bun/features/assetService.feature', {
   runner: {
     describe,
     test,
-  }
+  },
 });
 
-export const steps: StepDefinitions = ({ given, and, when, then }) => {
+export const steps: StepDefinitions = ({given, and, when, then}) => {
   let request: Partial<Request> = {
     // Uncertain whether headers are optional, but it's good for the code to handle missing headers, just in case
     // headers: {},
@@ -48,7 +48,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
     Object.keys(globalThis._resources).forEach((key) => {
       delete globalThis._resources[key];
     });
-    table.forEach(({ path, exist, mimeType, etag, content }) => {
+    table.forEach(({path, exist, mimeType, etag, content}) => {
       globalThis._resources[path] = {
         exists: exist !== 'false',
       };
@@ -74,7 +74,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
       // Uncertain whether headers are optional, but it's good for the code to handle missing headers, just in case
       // headers: {},
     };
-    table.forEach(({ property, value }) => {
+    table.forEach(({property, value}) => {
       request[property] = value;
     });
 	});
@@ -88,7 +88,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 
   and('the following request headers:', (table) => {
     request.headers = {};
-    table.forEach(({ header, value }) => {
+    table.forEach(({header, value}) => {
       request.headers[header] = value;
     });
 	});
@@ -118,7 +118,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 	});
 
   then('the response should have the following properties:', (table) => {
-    table.forEach(({ property, value }) => {
+    table.forEach(({property, value}) => {
       // if (value === 'undefined') {
       //   value = undefined;
       // }
@@ -136,7 +136,7 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
 	});
 
   then('the response should have the following headers:', (table) => {
-    table.forEach(({ header, value }) => {
+    table.forEach(({header, value}) => {
       if (value === 'undefined') {
         value = undefined;
       }
@@ -152,4 +152,4 @@ export const steps: StepDefinitions = ({ given, and, when, then }) => {
   })
 }; // steps
 
-autoBindSteps(feature, [ steps ]);
+autoBindSteps(feature, [steps]);

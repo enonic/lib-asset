@@ -1,7 +1,7 @@
 export declare interface DefaultCookies {
+	[key: string]: string|undefined
 	enonic_xp_tour?: string
 	JSESSIONID?: string
-	[key: string]: string|undefined
 }
 
 export type Qvalue = `;q=${number}`
@@ -14,6 +14,7 @@ export type AcceptEncodingString =
   | `${AcceptEncodingItem}, ${AcceptEncodingItem}, ${AcceptEncodingItem}, ${AcceptEncodingItem}`
 
 export declare interface DefaultHeaders {
+  [headerName: string]: string|undefined
 	accept?: string // text/html
 	'accept-charset'?: string
 	'accept-encoding'?: AcceptEncodingString
@@ -40,7 +41,6 @@ export declare interface DefaultHeaders {
 	'x-forwarded-host'?: string
 	'x-forwarded-proto'?: string
 	'x-forwarded-server'?: string
-	[headerName: string]: string|undefined
 }
 
 export declare type Request<

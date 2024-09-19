@@ -1,11 +1,11 @@
-import { mapKeys } from './mapKeys';
+import {mapKeys} from './mapKeys';
 
 
-export function lcKeys(obj: object) {
+export function lcKeys(obj: object): object {
 	return mapKeys(obj,({
 		key,
 		result,
-		value
+		value,
 	}) => {
 		result[String(key).toLowerCase()] = value;
 	});

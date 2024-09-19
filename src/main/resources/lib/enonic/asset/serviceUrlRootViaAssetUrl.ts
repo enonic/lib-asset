@@ -1,9 +1,9 @@
 import type {
   AssetUrlParams,
-  ServiceUrlParams
+  ServiceUrlParams,
 } from '/lib/xp/portal';
 
-import { assetUrl as getAssetUrl } from '/lib/xp/portal';
+import {assetUrl as getAssetUrl} from '/lib/xp/portal';
 
 const SERVICE_NAME = 'asset';
 
@@ -15,11 +15,11 @@ export function serviceUrlRootViaAssetUrl({
   params?: ServiceUrlParams['params']
   service?: string
   type?: AssetUrlParams['type']
-}) {
+}): string {
   let assetUrl = getAssetUrl({
     path:'/',
     params,
-    type
+    type,
   });
   // log.debug('assetUrl:%s', assetUrl);
 
@@ -35,7 +35,7 @@ export function serviceUrlRootViaAssetUrl({
   }
 
   const serviceUrlRootWithoutParams = assetUrl
-    .replace(/\/edit\/([^\/]+)\/([^\/]+)\/_\/asset/,'/preview/$1/$2/_/asset') // Avoid: Assets give 404 in edit mode
+    .replace(/\/edit\/([^/]+)\/([^/]+)\/_\/asset/,'/preview/$1/$2/_/asset') // Avoid: Assets give 404 in edit mode
     .replace(/\/_\/asset\/.*$/, `/_/service/${app.name}/${service}/`)
     .replace(/\/+$/, '');
   // log.debug('serviceUrlRootWithoutParams:%s', serviceUrlRootWithoutParams);

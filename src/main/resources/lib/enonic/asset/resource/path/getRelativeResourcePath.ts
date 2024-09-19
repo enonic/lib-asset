@@ -1,4 +1,4 @@
-import type { Request } from '../../types';
+import type {Request} from '../../types';
 
 // import {isStringLiteral} from '../../util/isStringLiteral';
 
@@ -9,10 +9,11 @@ export const ERROR_MESSAGE_REQUEST_WITHOUT_RAWPATH = "Default functionality can'
 
 /* .buildGetter helper: creates a resource path from the request, relative to the root folder (which will be prefixed later).
 *  Overridable with the getCleanPath option param. */
-export const getRelativeResourcePath = (request: Request) => {
+export const getRelativeResourcePath = (request: Request): string => {
   log.debug('getRelativeResourcePath: request: %s', request);
 
-  let {rawPath, contextPath} = (request || {});
+  const {contextPath} = (request || {});
+  let {rawPath} = (request || {});
 
   // Already handled in the requestHandler
   // if (!isStringLiteral(rawPath)) {

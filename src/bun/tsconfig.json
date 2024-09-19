@@ -1,5 +1,9 @@
 {
   "compilerOptions": {
+    "module": "ESNext",
+    "moduleResolution": "NodeNext",
+    "target": "ESNext",
     "types": ["bun"]
-  }
+  },
+  "include": ["./**/*.ts"],
 }
