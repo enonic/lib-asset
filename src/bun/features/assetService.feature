@@ -250,6 +250,35 @@ Scenario: handles camelcase request headers
     | etag             | "etag-index-css-br"                 |
     | vary             | Accept-Encoding                     |
 
+Scenario: handles camelcase accept-encoding header
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                               | exist | mimeType         | content               | etag                         |
+    | /com.enonic.lib.asset.json         | false |                  |                       |                              |
+    | /assets/index.css                  | true  | text/css         | body { color: green } | etag-index-css               |
+    | /assets/index.css.br               | true  | text/css         | brContent             | br-etag-should-not-be-used   |
+    | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
+  And the following request:
+    | property    | value                                                                                          |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  And the request header "accept-encoding" is "GzIp, DeFlAtE, bR, zStD"
+  # Then the resources are info logged
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value      |
+    | body        | brContent  |
+    | status      | 200        |
+    | contentType | text/css   |
+  And the response should have the following headers:
+    | header           | value                               |
+    | cache-control    | public, max-age=31536000, immutable |
+    | content-encoding | br                                  |
+    | etag             | "etag-index-css-br"                 |
+    | vary             | Accept-Encoding                     |
+
 Scenario: Responds with 304 Not modified when if-none-match matches etag
   Given enonic is running in production mode
   # Given the following resources:
