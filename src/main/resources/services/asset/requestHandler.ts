@@ -38,6 +38,8 @@ import {
 import { generateErrorId } from '../../lib/enonic/asset/response/generateErrorId';
 import { isDev } from '../../lib/enonic/asset/runMode';
 import { getFingerprint } from '../../lib/enonic/asset/runMode';
+import { stringEndsWith } from '../../lib/enonic/asset/util/stringEndsWith';
+import { stringIncludes } from '../../lib/enonic/asset/util/stringIncludes';
 
 
 export function requestHandler({
@@ -166,10 +168,10 @@ export function requestHandler({
     if (staticCompression && lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING]) {
 
       if (
-          lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(CONTENT_CODING.BR)
-          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(`${CONTENT_CODING.BR};q=0,`)
-          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].endsWith(`${CONTENT_CODING.BR};q=0`)
-        ) {
+        stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], CONTENT_CODING.BR)
+        && !stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.BR};q=0,`)
+        && !stringEndsWith(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.BR};q=0`)
+      ) {
           const resourceBr = getResource(`${absResourcePathWithoutTrailingSlash}.br`);
           if (resourceBr.exists()) {
             headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] = CONTENT_ENCODING.BR;
@@ -182,9 +184,9 @@ export function requestHandler({
 
         if (
           !headers[HTTP2_RESPONSE_HEADER.CONTENT_ENCODING] // prefer brotli
-          && lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(CONTENT_CODING.GZIP)
-          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].includes(`${CONTENT_CODING.GZIP};q=0,`)
-          && !lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING].endsWith(`${CONTENT_CODING.GZIP};q=0`)
+          && stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], CONTENT_CODING.GZIP)
+          && !stringIncludes(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.GZIP};q=0,`)
+          && !stringEndsWith(lowerCasedRequestHeaders[HTTP2_REQUEST_HEADER.ACCEPT_ENCODING], `${CONTENT_CODING.GZIP};q=0`)
         ) {
           const resourceGz = getResource(`${absResourcePathWithoutTrailingSlash}.gz`);
           if (resourceGz.exists()) {
