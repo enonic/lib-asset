@@ -629,7 +629,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <pre class="highlight"><code class="language-json" data-lang="json">{
   "root": "/assets", <i class="conum" data-value="1"></i><b>(1)</b>
   "cacheBust": true, <i class="conum" data-value="2"></i><b>(2)</b>
-  "cacheControl": "public, max-age=31536000, immutable" <i class="conum" data-value="3"></i><b>(3)</b>
+  "cacheControl": "public, max-age=31536000, immutable", <i class="conum" data-value="3"></i><b>(3)</b>
+  "staticCompress": true <i class="conum" data-value="4"></i><b>(4)</b>
 }</code></pre>
 </div>
 </div>
@@ -637,7 +638,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <table>
 <tr>
 <td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>root</code> This is the root folder in the JAR, where the service will look for resources. Default is <code>/assets</code>
+<td><code>root</code>
+<div class="paragraph">
+<p>Type: <strong>string</strong></p>
+</div>
+<div class="paragraph">
+<p>Default: <strong>'/assets'</strong></p>
+</div>
+<div class="paragraph">
+<p>This is the root folder in the JAR, where the service will look for resources.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -658,7 +668,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>cacheBust</code> default is <code>true</code>. Adds/removes an application fingerprint segment in service path.
+<td><code>cacheBust</code>
+<div class="paragraph">
+<p>Type: <strong>boolean</strong></p>
+</div>
+<div class="paragraph">
+<p>Default: <strong>true</strong></p>
+</div>
+<div class="paragraph">
+<p>Adds/removes an application fingerprint segment in service path.</p>
+</div>
 <div class="admonitionblock tip">
 <table>
 <tr>
@@ -693,7 +712,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </tr>
 <tr>
 <td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>cacheControl</code> Cache-Control header value to be sent in 304 and 200 responses. Default is <code>public, max-age=31536000, immutable</code>
+<td><code>cacheControl</code>
+<div class="paragraph">
+<p>Type: <strong>string</strong></p>
+</div>
+<div class="paragraph">
+<p>Default: <strong>'public, max-age=31536000, immutable'</strong></p>
+</div>
+<div class="paragraph">
+<p>Cache-Control header value to be sent in 304 and 200 responses.</p>
+</div>
 <div class="admonitionblock note">
 <table>
 <tr>
@@ -705,6 +733,22 @@ In XP dev mode cacheControl has no effect. Cache-Control header is always <code>
 </td>
 </tr>
 </table>
+</div>
+<div class="paragraph">
+<p>&#8203;<br></p>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td><code>staticCompress</code>
+<div class="paragraph">
+<p>Type: <strong>boolean</strong></p>
+</div>
+<div class="paragraph">
+<p>Default: <strong>true</strong></p>
+</div>
+<div class="paragraph">
+<p>When enabled, the service will check the request accept-encoding header for <code>br</code> or <code>gzip</code> and serve a compressed version of the requested asset <strong>if it exists</strong>.</p>
 </div></td>
 </tr>
 </table>
@@ -786,7 +830,7 @@ ETag is useful even if Cache-Control contains immutable directive. CDNs and Chro
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-17 06:12:23 UTC
+Last updated 2024-09-19 06:12:52 UTC
 </div>
 </div>
 </body>
