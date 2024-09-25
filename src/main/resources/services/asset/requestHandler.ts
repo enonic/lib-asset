@@ -20,7 +20,6 @@ import {read} from '../../lib/enonic/asset/etagReader';
 import {getMimeType} from '../../lib/enonic/asset/io';
 import {getLowerCasedHeaders} from '../../lib/enonic/asset/request/getLowerCasedHeaders';
 import {checkPath} from '../../lib/enonic/asset/resource/path/checkPath';
-// import {getAbsoluteResourcePathWithoutTrailingSlash} from '../../lib/enonic/asset/resource/path/getAbsoluteResourcePathWithoutTrailingSlash';
 import {prefixWithRoot} from '../../lib/enonic/asset/resource/path/prefixWithRoot';
 import {getRelativeResourcePath} from '../../lib/enonic/asset/resource/path/getRelativeResourcePath';
 import {getRootFromPath} from '../../lib/enonic/asset/resource/path/getRootFromPath';
@@ -68,6 +67,7 @@ export function requestHandler({
     log.debug('relPath "%s"', relPath);
 
     const rootPath = getRootFromPath(relPath);
+    log.debug('rootPath "%s"', rootPath);
 
     if (cacheBust) {
       if (rootPath === fingerprint) {
@@ -95,10 +95,7 @@ export function requestHandler({
     const root = configuredRoot();
     log.debug('root "%s"', root);
 
-    // const absResourcePathWithoutTrailingSlash = getAbsoluteResourcePathWithoutTrailingSlash({
-    //   request,
-    //   root
-    // });
+    log.debug('relPath2 "%s"', relPath);
     const absResourcePathWithoutTrailingSlash: string = prefixWithRoot({
       path: relPath,
       root,
