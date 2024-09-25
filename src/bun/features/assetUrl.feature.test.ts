@@ -89,7 +89,11 @@ export const steps: StepDefinitions = ({given, and, when, then}) => {
         assetUrlParams.type = value as 'server' | 'absolute';
       }
     });
-    assetUrlReturnValue = assetUrl(assetUrlParams as AssetUrlParams);
+    if (Object.keys(assetUrlParams).length) {
+      assetUrlReturnValue = assetUrl(assetUrlParams as AssetUrlParams);
+    } else {
+      assetUrlReturnValue = assetUrl();
+    }
   });
 
   then(/^I should get the following url "(.*)"$/, (url) => {
