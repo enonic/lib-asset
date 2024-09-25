@@ -2,6 +2,7 @@ Feature: asset service
 
 Background: State is reset before each test
   Given the request is reset
+  Given loglevel is set to "silent"
 
 Scenario: Responds with 200 ok when resource found
   Given enonic is running in production mode
@@ -32,6 +33,126 @@ Scenario: Responds with 200 ok when resource found
     | header        | value                               |
     | etag          | "etag-index-css"                    |
     | cache-control | public, max-age=31536000, immutable |
+
+Scenario: Should return 404 when rawPath is serviceroot
+  Given enonic is running in production mode
+  Given the following resources:
+    | path    | exist |
+    | /assets | false |
+  Given the following request:
+    | property    | value                                                                                    |
+    | branch      | master                                                                                   |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                      |
+    | host        | localhost                                                                                |
+    | method      | GET                                                                                      |
+    | mode        | live                                                                                     |
+    | port        | 8080                                                                                     |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset                      |
+    | scheme      | http                                                                                     |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset |
+  # Then log info the request
+  # Given loglevel is set to "debug"
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
+
+Scenario: Should return 404 when rawPath is serviceroot + /
+  Given enonic is running in production mode
+  Given the following resources:
+    | path    | exist |
+    | /assets | false |
+  Given the following request:
+    | property    | value                                                                                    |
+    | branch      | master                                                                                   |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                      |
+    | host        | localhost                                                                                |
+    | method      | GET                                                                                      |
+    | mode        | live                                                                                     |
+    | port        | 8080                                                                                     |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/                     |
+    | scheme      | http                                                                                     |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset |
+  # Then log info the request
+  # Given loglevel is set to "debug"
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
+
+Scenario: Should return 404 when rawPath is serviceroot + fingerprint
+  Given enonic is running in production mode
+  Given the following resources:
+    | path    | exist |
+    | /assets | false |
+  Given the following request:
+    | property    | value                                                                                                     |
+    | branch      | master                                                                                                    |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                       |
+    | host        | localhost                                                                                                 |
+    | method      | GET                                                                                                       |
+    | mode        | live                                                                                                      |
+    | port        | 8080                                                                                                      |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456                      |
+    | scheme      | http                                                                                                      |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456 |
+  # Then log info the request
+  # Given loglevel is set to "debug"
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
+
+Scenario: Should return 404 when rawPath is serviceroot + fingerprint + /
+  Given enonic is running in production mode
+  Given the following resources:
+    | path    | exist |
+    | /assets | false |
+  Given the following request:
+    | property    | value                                                                                                     |
+    | branch      | master                                                                                                    |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                       |
+    | host        | localhost                                                                                                 |
+    | method      | GET                                                                                                       |
+    | mode        | live                                                                                                      |
+    | port        | 8080                                                                                                      |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/                     |
+    | scheme      | http                                                                                                      |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456 |
+  # Then log info the request
+  # Given loglevel is set to "debug"
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
+
+Scenario: Should return 404 when excess slashes
+  Given enonic is running in production mode
+  Given the following resources:
+    | path                | exist |
+    | /assets///index.css | false |
+  Given the following request:
+    | property    | value                                                                                                               |
+    | branch      | master                                                                                                              |
+    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+    | host        | localhost                                                                                                           |
+    | method      | GET                                                                                                                 |
+    | mode        | live                                                                                                                |
+    | port        | 8080                                                                                                                |
+    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456///index.css                    |
+    | scheme      | http                                                                                                                |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  # Then log info the request
+  # Given loglevel is set to "debug"
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
 
 Scenario: prefers brotli even though it comes last and have lowest qvalue weight
   Given enonic is running in production mode
