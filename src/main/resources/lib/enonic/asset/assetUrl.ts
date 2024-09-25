@@ -9,20 +9,17 @@ import {getFingerprint} from './runMode';
 // **/_/service/<appname>/<servicename>
 
 export interface AssetUrlParams {
-  // Required
-  path: string
-  // Optional
   params?: object
+  path?: string
   type?: 'server' | 'absolute'
 }
 
 export function assetUrl({
   params,
-  path,
+  path = '',
   type,
-}: AssetUrlParams): string {
-  const pathWithoutTrailingSlash = path.replace(/\/$/, '');
-  let assetServiceUrl = serviceUrlRootViaAssetUrl({
+}: AssetUrlParams = {}): string {
+  let assetServiceRoot = serviceUrlRootViaAssetUrl({
     params,
     service: 'asset',
     type,
@@ -30,13 +27,17 @@ export function assetUrl({
   if (isCacheBust()) {
     const fingerprint = getFingerprint(app.name);
     if (fingerprint) {
-      assetServiceUrl = assetServiceUrl.replace(`/_/service/${app.name}/asset`, `/_/service/${app.name}/asset/${fingerprint}`);
+      assetServiceRoot = assetServiceRoot.replace(`/_/service/${app.name}/asset`, `/_/service/${app.name}/asset/${fingerprint}`);
     }
   }
 
-  const firstQuestionMarkIndex = assetServiceUrl.indexOf('?');
+  const outPath = path ? `/${
+    path.replace(/\/$/, '') // Remove trailing slash
+  }` : '';
+
+  const firstQuestionMarkIndex = assetServiceRoot.indexOf('?');
   if (firstQuestionMarkIndex !== -1) {
-    return `${assetServiceUrl.substring(0, firstQuestionMarkIndex)}/${pathWithoutTrailingSlash}${assetServiceUrl.substring(firstQuestionMarkIndex)}`;
+    return `${assetServiceRoot.substring(0, firstQuestionMarkIndex)}${outPath}${assetServiceRoot.substring(firstQuestionMarkIndex)}`;
   }
-  return `${assetServiceUrl}/${pathWithoutTrailingSlash}`;
+  return `${assetServiceRoot}${outPath}`;
 }
