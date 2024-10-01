@@ -75,7 +75,11 @@ export const steps: StepDefinitions = ({given, and, when, then}) => {
       // headers: {},
     };
     table.forEach(({property, value}) => {
-      request[property] = value;
+      if (property === 'webSocket') {
+        request[property] = value === 'true';
+      } else {
+        request[property] = value;
+      }
     });
 	});
 
@@ -86,12 +90,33 @@ export const steps: StepDefinitions = ({given, and, when, then}) => {
     request.headers[header] = value;
   });
 
+  given('the following request cookies:', (table) => {
+    request.cookies = {};
+    table.forEach(({name, value}) => {
+      request.cookies[name] = value;
+    });
+  });
+
   and('the following request headers:', (table) => {
     request.headers = {};
     table.forEach(({header, value}) => {
       request.headers[header] = value;
     });
 	});
+
+  given('the following request params:', (table) => {
+    request.params = {};
+    table.forEach(({param, value}) => {
+      request.params[param] = value;
+    });
+  });
+
+  given('the following request path params:', (table) => {
+    request.pathParams = {};
+    table.forEach(({param, value}) => {
+      request.pathParams[param] = value;
+    });
+  });
 
   then('the resources are info logged', () => {
     testLogger.info('resources:%s', globalThis._resources);

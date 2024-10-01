@@ -154,6 +154,62 @@ Scenario: Should return 404 when excess slashes
     | property    | value |
     | status      | 404   |
 
+Scenario: Should return 404 when excess slashes (2)
+  Given enonic is running in production mode
+  # Given loglevel is set to "debug"
+  Given the following resources:
+    | path                                                   | exist |
+    | /assets//icons//favicons//apple-touch-icon-120x120.png | false |
+  Given the following request:
+    | property      | value                                                                                                                                           |
+    | branch        | draft                                                                                                                                           |
+    | contextPath   | /admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset                                                                                |
+    | host          | localhost                                                                                                                                       |
+    | method        | GET                                                                                                                                             |
+    | mode          | admin                                                                                                                                           |
+    | path          | /admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset/1727786440404/icons/favicons/apple-touch-icon-120x120.png                      |
+    | port          | 8080                                                                                                                                            |
+    | rawPath       | /admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset/1727786440404//icons//favicons//apple-touch-icon-120x120.png                   |
+    | remoteAddress | 127.0.0.1                                                                                                                                       |
+    | repositoryId  | com.enonic.cms.default                                                                                                                          |
+    | scheme        | http                                                                                                                                            |
+    | url           | http://localhost:8080/admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset/1727786440404/icons/favicons/apple-touch-icon-120x120.png |
+    | webSocket     | false                                                                                                                                           |
+  Given the following request headers:
+    | header                    | value                                                                                                                                   |
+    | Accept                    | text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7 |
+    | Accept-Encoding           | gzip, deflate, br, zstd                                                                                                                 |
+    | Accept-Language           | en-GB,en-US;q=0.9,en;q=0.8,no;q=0.7                                                                                                     |
+    | Cache-Control             | no-cache                                                                                                                                |
+    | Connection                | keep-alive                                                                                                                              |
+    | Cookie                    | app.browse.RecentItemsList=base%3Afolder%7Cportal%3Asite; JSESSIONID=1o50615fgjqlt1wsbsvcubu00m2                                        |
+    | Host                      | localhost:8080                                                                                                                          |
+    | Pragma                    | no-cache                                                                                                                                |
+    | sec-ch-ua                 | "Chromium";v="128", "Not;A=Brand";v="24", "Google Chrome";v="128"                                                                       |
+    | sec-ch-ua-mobile          | ?0                                                                                                                                      |
+    | sec-ch-ua-platform        | "macOS"                                                                                                                                 |
+    | Sec-Fetch-Dest            | document                                                                                                                                |
+    | Sec-Fetch-Mode            | navigate                                                                                                                                |
+    | Sec-Fetch-Site            | none                                                                                                                                    |
+    | Sec-Fetch-User            | ?1                                                                                                                                      |
+    | Upgrade-Insecure-Requests | 1                                                                                                                                       |
+    | User-Agent                | Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36                   |
+  Given the following request cookies:
+    | name                       | value                         |
+    | app.browse.RecentItemsList | base%3Afolder%7Cportal%3Asite |
+    | JSESSIONID                 | 1o50615fgjqlt1wsbsvcubu00m2   |
+  Given the following request params:
+    | param | value |
+  Given the following request path params:
+    | param | value                                                         |
+    | path  | /1727786440404//icons//favicons//apple-touch-icon-120x120.png |
+  # Then log info the request
+  When the request is sent
+  # Then log info the response
+  Then the response should have the following properties:
+    | property    | value |
+    | status      | 404   |
+
 Scenario: prefers brotli even though it comes last and have lowest qvalue weight
   Given enonic is running in production mode
   Given the following resources:
