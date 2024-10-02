@@ -231,7 +231,7 @@ public class AssetUrlBuilder
       return;
     }
 
-    final boolean endsWithSlash = !str.isEmpty() && str.charAt( str.length() - 1 ) == '/';
+    final boolean endsWithSlash = str.length() > 0 && str.charAt( str.length() - 1 ) == '/';
     final String normalized = normalizePath( urlPart );
 
     if ( !endsWithSlash )
