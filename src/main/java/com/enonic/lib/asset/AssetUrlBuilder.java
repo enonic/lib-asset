@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
-import javax.servlet.http.HttpServletRequest;
-
 import com.google.common.base.Splitter;
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -99,30 +97,30 @@ public class AssetUrlBuilder
   {
     final StringBuilder url = new StringBuilder();
 
-    final HttpServletRequest rawRequest = requestSupplier.get().getRawRequest();
-    final String requestURI = rawRequest.getRequestURI();
+    final PortalRequest portalRequest = requestSupplier.get();
+    final String rawPath = portalRequest.getRawPath();
 
-    if ( requestURI.startsWith( ADMIN_SITE_PREFIX ) )
+    if ( rawPath.startsWith( ADMIN_SITE_PREFIX ) )
     {
-      processSite( url, requestURI, true );
+      processSite( url, rawPath, true );
     }
-    else if ( requestURI.startsWith( TOOL_PREFIX ) )
+    else if ( rawPath.startsWith( TOOL_PREFIX ) )
     {
       processTool( url );
     }
-    else if ( requestURI.startsWith( SITE_PREFIX ) )
+    else if ( rawPath.startsWith( SITE_PREFIX ) )
     {
-      processSite( url, requestURI, false );
+      processSite( url, rawPath, false );
     }
-    else if ( requestURI.startsWith( WEBAPP_PREFIX ) )
+    else if ( rawPath.startsWith( WEBAPP_PREFIX ) )
     {
-      processWebapp( url, requestURI );
+      processWebapp( url, rawPath );
     }
 
     appendPart( url, "_" );
     appendPart( url, "service" );
 
-    appendPart( url, Objects.requireNonNullElseGet( application, () -> requestSupplier.get().getApplicationKey().toString() ) );
+    appendPart( url, Objects.requireNonNullElseGet( application, () -> portalRequest.getApplicationKey().toString() ) );
     appendPart( url, "asset" );
 
     if ( !isNullOrEmpty( fingerprint ) )
@@ -141,7 +139,7 @@ public class AssetUrlBuilder
     }
 
     final String targetUri = url.toString();
-    final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( rawRequest, targetUri );
+    final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );
 
     if ( rewritingResult.isOutOfScope() )
     {
@@ -152,7 +150,7 @@ public class AssetUrlBuilder
 
     if ( UrlTypeConstants.ABSOLUTE.equals( type ) )
     {
-      return ServletRequestUrlHelper.getServerUrl( rawRequest ) + uri;
+      return ServletRequestUrlHelper.getServerUrl( portalRequest.getRawRequest() ) + uri;
     }
     else
     {

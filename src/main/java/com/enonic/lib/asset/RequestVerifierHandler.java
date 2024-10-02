@@ -22,7 +22,7 @@ public class RequestVerifierHandler
 
   private static final Pattern WEBAPP_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)/_/service/(?<appKey>[^/]+)/asset/?" );
 
-  private PortalRequest request;
+  private Supplier<PortalRequest> requestSupplier;
 
   private Supplier<ContentService> contentServiceSupplier;
 
@@ -31,13 +31,15 @@ public class RequestVerifierHandler
   @Override
   public void initialize( final BeanContext beanContext )
   {
-    this.request = beanContext.getBinding( PortalRequest.class ).get();
+    this.requestSupplier = beanContext.getBinding( PortalRequest.class );
     this.contentServiceSupplier = beanContext.getService( ContentService.class );
     this.projectServiceSupplier = beanContext.getService( ProjectService.class );
   }
 
   public boolean verify()
   {
+    final PortalRequest request = requestSupplier.get();
+
     final String endpointPath = request.getEndpointPath();
 
     if ( endpointPath == null )
@@ -65,7 +67,7 @@ public class RequestVerifierHandler
     }
     else
     {
-      return rawPath.startsWith( "/admin/tool/_/service/" );
+      return rawPath.startsWith( "/admin/tool/_/" );
     }
   }
 
@@ -79,7 +81,7 @@ public class RequestVerifierHandler
 
     if ( !isAppInstalledOnSite )
     {
-      final Project project = projectServiceSupplier.get().get( ProjectName.from( request.getRepositoryId() ) );
+      final Project project = projectServiceSupplier.get().get( ProjectName.from( portalRequest.getRepositoryId() ) );
       if ( project == null || project.getSiteConfigs().get( applicationKey ) == null )
       {
         return false;
