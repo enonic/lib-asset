@@ -38,7 +38,7 @@ interface RequestVerifierHandler {
   verify(): boolean;
 }
 
-const verifier: RequestVerifierHandler = __.newBean<RequestVerifierHandler>('com.enonic.app.asset.RequestVerifierHandler');
+const verifier: RequestVerifierHandler = __.newBean<RequestVerifierHandler>('com.enonic.lib.asset.RequestVerifierHandler');
 
 export function requestHandler({
   cacheControl = configuredCacheControl(),
