@@ -24,18 +24,21 @@ import {prefixWithRoot} from '../../lib/enonic/asset/resource/path/prefixWithRoo
 import {getRelativeResourcePath} from '../../lib/enonic/asset/resource/path/getRelativeResourcePath';
 import {getRootFromPath} from '../../lib/enonic/asset/resource/path/getRootFromPath';
 import {
-  badRequestResponse,
   internalServerErrorResponse,
   notFoundResponse,
   notModifiedResponse,
   okResponse,
 } from '../../lib/enonic/asset/response/responses';
 import {generateErrorId} from '../../lib/enonic/asset/response/generateErrorId';
-import {isDev} from '../../lib/enonic/asset/runMode';
-import {getFingerprint} from '../../lib/enonic/asset/runMode';
+import {getFingerprint, isDev} from '../../lib/enonic/asset/runMode';
 import {stringEndsWith} from '../../lib/enonic/asset/util/stringEndsWith';
 import {stringIncludes} from '../../lib/enonic/asset/util/stringIncludes';
 
+interface RequestVerifierHandler {
+  verify(): boolean;
+}
+
+const verifier: RequestVerifierHandler = __.newBean<RequestVerifierHandler>('com.enonic.app.asset.RequestVerifierHandler');
 
 export function requestHandler({
   cacheControl = configuredCacheControl(),
@@ -45,18 +48,9 @@ export function requestHandler({
   cacheControl?: string
 }): Response {
   try {
-    if (!request.rawPath) {
-      const errorMessage = `request.rawPath is missing! request: ${JSON.stringify(request, null, 4)}`;
-      if (isDev()) {
-        return badRequestResponse({
-          body: errorMessage,
-          contentType: 'text/plain; charset=utf-8',
-        });
-      }
-      log.error(errorMessage);
-      return badRequestResponse();
+    if (!verifier.verify()) {
+      return notFoundResponse();
     }
-    log.debug('request.rawPath (1) "%s"', request.rawPath);
 
     const fingerprint = getFingerprint(app.name);
     log.debug('fingerprint "%s"', fingerprint);

@@ -57,3 +57,11 @@ export function mockIoService(): {
     },
   }
 }
+
+export function mockAssetUrlBuilder(): {
+  createUrl: (name: string) => string
+} {
+  return {
+
+  }
+}

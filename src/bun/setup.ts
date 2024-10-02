@@ -6,7 +6,7 @@ import {mock} from 'bun:test';
 import {stringify} from 'q-i';
 import {FINGERPRINT} from './constants';
 import {mockEtagService} from './mocks/etagService';
-import {mockIoService, mockGetResource} from './mocks/ioService';
+import {mockIoService, mockGetResource, mockAssetUrlBuilder} from './mocks/ioService';
 
 
 
@@ -231,6 +231,9 @@ globalThis.__ = {
     }
     if (bean === 'com.enonic.lib.asset.IoService') {
       return mockIoService();
+    }
+    if (bean === 'com.enonic.lib.asset.AssetUrlBuilder') {
+      return mockAssetUrlBuilder();
     }
     /* coverage ignore next */
     throw new Error(`Unmocked bean:${bean}!`);
