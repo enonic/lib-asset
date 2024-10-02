@@ -1,0 +1,18 @@
+{
+  "extends": "../src/main/resources/tsconfig.json",
+  "compilerOptions": {
+    "emitDeclarationOnly": true,
+    "declaration": true,
+    "declarationDir": "../build/types",
+    "outDir": "../build/types",
+
+    // Note that this feature does not change how import paths are emitted by tsc
+    "paths": {
+      "/lib/enonic/asset/*": ["../src/main/resources/lib/enonic/asset/*"],
+      "/lib/xp/*": ["../node_modules/@enonic-types/lib-*"]
+    },
+  },
+  "include": [
+    "../src/main/resources/lib/enonic/asset/**/*.ts"
+  ],
+}
