@@ -95,7 +95,7 @@ public class AssetUrlBuilder
     this.path = path;
   }
 
-  private String createUrl()
+  public String createUrl()
   {
     final StringBuilder url = new StringBuilder();
 
