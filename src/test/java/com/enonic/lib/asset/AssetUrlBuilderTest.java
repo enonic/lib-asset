@@ -58,4 +58,18 @@ public class AssetUrlBuilderTest
 
     runFunction( "lib/assetUrl-test.js", "createAssetUrlOnAdminTool" );
   }
+
+  @Test
+  void testCreateAssetUrlOnAdminToolWithoutTrailingSlash()
+  {
+    final HttpServletRequest req = mock( HttpServletRequest.class );
+    when( req.getServerName() ).thenReturn( "localhost" );
+    when( req.getScheme() ).thenReturn( "http" );
+    when( req.getServerPort() ).thenReturn( 8080 );
+
+    portalRequest.setRawRequest( req );
+    portalRequest.setRawPath( "/admin/tool" );
+
+    runFunction( "lib/assetUrl-test.js", "testCreateAssetUrlOnAdminToolWithoutTrailingSlash" );
+  }
 }
