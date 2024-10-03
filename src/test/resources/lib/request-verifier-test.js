@@ -54,3 +54,8 @@ exports.testAssetRequestOnProjectAppNotInstalled = function () {
   const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
   t.assertFalse(bean.verify());
 };
+
+exports.testAssetRequestOnRoot = function () {
+  const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
+  t.assertTrue(bean.verify());
+};

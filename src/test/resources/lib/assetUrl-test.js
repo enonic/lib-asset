@@ -40,3 +40,12 @@ exports.createAssetUrlOnAdminTool = function () {
 
   t.assertEquals(`http://localhost:8080/admin/tool/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
 };
+
+exports.testCreateAssetUrlOnAdminToolWithoutTrailingSlash = function () {
+  const url = assetUrlLib.assetUrl({
+    path: '/path/to/resource/',
+    type: 'absolute',
+  });
+
+  t.assertEquals(`http://localhost:8080/admin/tool/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
+};
