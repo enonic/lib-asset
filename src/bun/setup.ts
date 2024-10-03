@@ -235,7 +235,7 @@ globalThis.__ = {
     }
     if (bean === 'com.enonic.lib.asset.RequestVerifierHandler') {
       return {
-        verify: () => globalThis._verify
+        verify: () => globalThis._verify,
       };
     }
     /* coverage ignore next */

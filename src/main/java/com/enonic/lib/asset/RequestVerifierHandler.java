@@ -20,7 +20,7 @@ public class RequestVerifierHandler
 {
   private static final Pattern PATTERN = Pattern.compile( "^/_/service/(?<appKey>[^/]+)/asset/?" );
 
-  private static final Pattern WEBAPP_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)/_/service/(?<appKey>[^/]+)/asset/?" );
+  private static final Pattern WEBAPP_PATTERN = Pattern.compile( "^/webapp/(?<baseAppKey>[^/]+)/_/?" );
 
   private Supplier<PortalRequest> requestSupplier;
 
@@ -86,15 +86,8 @@ public class RequestVerifierHandler
       {
         return false;
       }
-      else
-      {
-        return "/".equals( contentResolverResult.getSiteRelativePath() );
-      }
     }
-    else
-    {
-      return site.getPath().toString().equals( contentResolverResult.getSiteRelativePath() );
-    }
+    return "/".equals( contentResolverResult.getSiteRelativePath() );
   }
 
   private boolean verifyPathMountedOnWebapps( final ApplicationKey applicationKey, final PortalRequest portalRequest )

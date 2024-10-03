@@ -38,6 +38,7 @@ export default [
       "eslint.config.mjs",
       "tsup.config.ts",
       "bin/**/*",
+      "src/test/**/*",
     ]
   }
 ];

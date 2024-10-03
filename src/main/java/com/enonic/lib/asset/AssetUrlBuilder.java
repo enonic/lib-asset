@@ -123,10 +123,7 @@ public class AssetUrlBuilder
     appendPart( url, Objects.requireNonNullElseGet( application, () -> portalRequest.getApplicationKey().toString() ) );
     appendPart( url, "asset" );
 
-    if ( !isNullOrEmpty( fingerprint ) )
-    {
-      appendPart( url, fingerprint );
-    }
+    appendPart( url, fingerprint );
 
     if ( !isNullOrEmpty( path ) )
     {

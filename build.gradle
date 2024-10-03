@@ -35,6 +35,8 @@ dependencies {
   // implementation "com.enonic.xp:lib-vhost:${xpVersion}"
   implementation 'com.enonic.lib:lib-router:3.1.0'
 
+  testImplementation 'org.mockito:mockito-core:5.8.0'
+  testImplementation 'org.mockito:mockito-junit-jupiter:5.8.0'
   testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
   testImplementation "com.enonic.xp:testing:${xpVersion}"
 }
@@ -96,6 +98,7 @@ tasks.register('npmBuild', NpmTask) {
   outputs.dir 'build/resources/main'
 }
 jar.dependsOn npmBuild
+compileTestJava.dependsOn npmBuild
 
 asciidoctor {
     sourceDir = file('docs')
