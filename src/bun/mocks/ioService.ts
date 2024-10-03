@@ -57,33 +57,3 @@ export function mockIoService(): {
     },
   }
 }
-
-export function mockAssetUrlBuilder(): {
-  setApplication: (value: string) => void;
-
-  setPath: (value: string) => void;
-
-  setType: (value: string) => void;
-
-  setParams: (value: ScriptValue) => void;
-
-  setFingerprint: (value: string) => void;
-
-  createUrl: () => string;
-} {
-  return {
-    setApplication: (value: string) => {},
-
-    setPath: (value: string) => {},
-
-    setType: (value: string) => {},
-
-    setParams: (value: ScriptValue) => {},
-
-    setFingerprint: (value: string) => {},
-
-    createUrl: () => {
-      return '';
-    }
-  }
-}
