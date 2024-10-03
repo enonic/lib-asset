@@ -9,7 +9,6 @@ import {mockEtagService} from './mocks/etagService';
 import {mockIoService, mockGetResource} from './mocks/ioService';
 
 
-
 // Avoid type errors
 declare namespace globalThis {
   let app: App
@@ -23,6 +22,7 @@ declare namespace globalThis {
     etag?: string
     mimeType?: string
   }>
+  let _verify: boolean
 }
 
 export const isObject = (value: unknown): value is Record<string, unknown> => {
@@ -30,6 +30,7 @@ export const isObject = (value: unknown): value is Record<string, unknown> => {
 }
 
 globalThis._devMode = false;
+globalThis._verify = true;
 
 globalThis.app = {
   name: 'com.example.myproject',
@@ -231,6 +232,11 @@ globalThis.__ = {
     }
     if (bean === 'com.enonic.lib.asset.IoService') {
       return mockIoService();
+    }
+    if (bean === 'com.enonic.lib.asset.RequestVerifierHandler') {
+      return {
+        verify: () => globalThis._verify,
+      };
     }
     /* coverage ignore next */
     throw new Error(`Unmocked bean:${bean}!`);

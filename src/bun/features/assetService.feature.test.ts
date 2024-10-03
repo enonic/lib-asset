@@ -44,6 +44,10 @@ export const steps: StepDefinitions = ({given, and, when, then}) => {
     globalThis._logLevel = level;
   });
 
+  given(/^verify is mocked to (.*)$/, (str) => {
+    globalThis._verify = str === 'true';
+  });
+
   given('the following resources:', (table) => {
     Object.keys(globalThis._resources).forEach((key) => {
       delete globalThis._resources[key];

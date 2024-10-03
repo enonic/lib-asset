@@ -1,5 +1,4 @@
 import {isCacheBust} from './config';
-import {serviceUrlRootViaAssetUrl} from './serviceUrlRootViaAssetUrl';
 import {getFingerprint} from './runMode';
 
 // https://developer.enonic.com/docs/xp/stable/runtime/engines/asset-service
@@ -9,35 +8,38 @@ import {getFingerprint} from './runMode';
 // **/_/service/<appname>/<servicename>
 
 export interface AssetUrlParams {
-  params?: object
-  path?: string
-  type?: 'server' | 'absolute'
+  params?: object;
+  path?: string;
+  type?: 'server' | 'absolute';
 }
 
-export function assetUrl({
-  params,
-  path = '',
-  type,
-}: AssetUrlParams = {}): string {
-  let assetServiceRoot = serviceUrlRootViaAssetUrl({
-    params,
-    service: 'asset',
-    type,
-  });
+interface AssetUrlBuilder {
+  setApplication(value: string): void;
+
+  setPath(value: string): void;
+
+  setType(value: string): void;
+
+  setParams(value: ScriptValue): void;
+
+  setFingerprint(value: string): void;
+
+  createUrl(): string;
+}
+
+export function assetUrl(params: AssetUrlParams): string {
+  const bean: AssetUrlBuilder = __.newBean<AssetUrlBuilder>('com.enonic.lib.asset.AssetUrlBuilder');
+
+  bean.setApplication(app.name);
+  bean.setPath(params?.path || '');
+  bean.setType(params?.type || 'server');
+  bean.setParams(__.toScriptValue(params?.params || {}));
   if (isCacheBust()) {
     const fingerprint = getFingerprint(app.name);
     if (fingerprint) {
-      assetServiceRoot = assetServiceRoot.replace(`/_/service/${app.name}/asset`, `/_/service/${app.name}/asset/${fingerprint}`);
+      bean.setFingerprint(fingerprint);
     }
   }
 
-  const outPath = path ? `/${
-    path.replace(/\/$/, '') // Remove trailing slash
-  }` : '';
-
-  const firstQuestionMarkIndex = assetServiceRoot.indexOf('?');
-  if (firstQuestionMarkIndex !== -1) {
-    return `${assetServiceRoot.substring(0, firstQuestionMarkIndex)}${outPath}${assetServiceRoot.substring(firstQuestionMarkIndex)}`;
-  }
-  return `${assetServiceRoot}${outPath}`;
+  return bean.createUrl();
 }

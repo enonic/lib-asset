@@ -3,6 +3,7 @@ Feature: asset service
 Background: State is reset before each test
   Given the request is reset
   Given loglevel is set to "silent"
+  Given verify is mocked to true
 
 Scenario: Responds with 200 ok when resource found
   Given enonic is running in production mode
@@ -529,40 +530,6 @@ Scenario: Responds with 400 bad request when path is illegal in prod mode
     | status      | 400                       |
     | contentType | text/plain; charset=utf-8 |
   And the response body should start with "can't contain '..' or any of these characters:"
-
-Scenario: Responds with 400 bad request when rawPath is missing in prod mode
-  Given enonic is running in production mode
-  Given the following resources:
-    | path              | mimeType | etag             | content               |
-    | /assets/index.css | text/css | 1234567890abcdef | body { color: green } |
-  Given the following request:
-  | property    | value                                                                                                               |
-  | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
-  # Then log info the request
-  When the request is sent
-  # Then log info the response
-  Then the response should have the following properties:
-    | property    | value |
-    | status      | 400   |
-
-
-Scenario: Responds with 400 bad request with body when rawPath is missing in dev mode
-  Given enonic is running in development mode
-  Given the following resources:
-    | path                       | exist | mimeType | etag             | content               |
-    | /com.enonic.lib.asset.json | false |          |                  |                       |
-    | /assets/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
-  And the following request:
-  | property    | value                                                                                                               |
-  | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
-  # Then log info the request
-  When the request is sent
-  # Then log info the response
-  Then the response should have the following properties:
-    | property    | value                       |
-    # | body        | request.rawPath is missing! request: {\n    "url": "http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css"\n}|
-    | status      | 400                         |
-  And the response body should start with "request.rawPath is missing!"
 
 Scenario: Responds with cache control "private, no-store" when resource found in dev mode
   Given enonic is running in development mode

@@ -1,5 +1,6 @@
 plugins {
     id 'java'
+    id 'jacoco'
     id 'maven-publish'
     id 'com.enonic.defaults' version '2.1.5'
     id 'com.enonic.xp.base' version '3.5.0'
@@ -22,6 +23,7 @@ dependencies {
    // compilation. The library itself is not included in the final application
    // build.
   compileOnly "com.enonic.xp:core-api:${xpVersion}"
+  compileOnly "com.enonic.xp:portal-api:${xpVersion}"
   compileOnly "com.enonic.xp:script-api:${xpVersion}"
 
   // implementation: This is the most common way to specify a dependency.
@@ -33,9 +35,10 @@ dependencies {
   // implementation "com.enonic.xp:lib-vhost:${xpVersion}"
   implementation 'com.enonic.lib:lib-router:3.1.0'
 
-  // testImplementation "com.enonic.xp:testing:${xpVersion}"
-
-  // testImplementation "org.mockito:mockito-inline:5.2.0"
+  testImplementation 'org.mockito:mockito-core:5.8.0'
+  testImplementation 'org.mockito:mockito-junit-jupiter:5.8.0'
+  testImplementation 'org.junit.jupiter:junit-jupiter:5.9.1'
+  testImplementation "com.enonic.xp:testing:${xpVersion}"
 }
 
 processResources {
@@ -47,6 +50,19 @@ processResources {
 repositories {
     mavenCentral()
     xp.enonicRepo('dev')
+}
+
+jacocoTestReport {
+  reports {
+    xml.required = true
+    html.required = true
+  }
+}
+
+check.dependsOn jacocoTestReport
+
+test {
+  useJUnitPlatform()
 }
 
 node {
@@ -82,6 +98,7 @@ tasks.register('npmBuild', NpmTask) {
   outputs.dir 'build/resources/main'
 }
 jar.dependsOn npmBuild
+compileTestJava.dependsOn npmBuild
 
 asciidoctor {
     sourceDir = file('docs')
