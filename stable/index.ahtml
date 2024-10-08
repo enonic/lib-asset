@@ -445,12 +445,8 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#usage">Usage</a></li>
 <li><a href="#function">Function</a></li>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#service">Service</a>
-<ul class="sectlevel2">
-<li><a href="#url">Url</a></li>
-<li><a href="#etag">Etag</a></li>
-</ul>
-</li>
+<li><a href="#service">Service</a></li>
+<li><a href="#migrating_from_lib_portal">Migrating from lib-portal</a></li>
 </ul>
 </div>
 </div>
@@ -463,6 +459,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="paragraph">
 <p>In addition the library provides a function that can be used to generate URLs to those assets.</p>
+</div>
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+To have even more control when hosting static resources, have a look at the <a href="https://developer.enonic.com/docs/static-asset-lib/stable">static assets library</a>.
+</td>
+</tr>
+</table>
 </div>
 </div>
 </div>
@@ -597,7 +605,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">const url = portalLib.assetUrl({
+<pre class="highlight"><code class="language-js" data-lang="js">const url = assetLib.assetUrl({
   path: 'styles/main.css'
 });</code></pre>
 </div>
@@ -700,7 +708,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 <div class="paragraph">
-<p>When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to <code>public, max-age=10, stale-while-revalidate=50</code> to cache assets in browsers for 10 seconds and revalidate asynchronously.</p>
+<p>When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to <code>public, max-age=10, s-maxage=3600, stale-while-revalidate=50</code> to cache assets in browsers for 10 seconds and revalidate asynchronously.</p>
 </div>
 </td>
 </tr>
@@ -750,21 +758,6 @@ In XP dev mode cacheControl has no effect. Cache-Control header is always <code>
 <div class="paragraph">
 <p>When enabled, the service will check the request accept-encoding header for <code>br</code> or <code>gzip</code> and serve a compressed version of the requested asset <strong>if it exists</strong>.</p>
 </div></td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>&#8203;<br></p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-To have even more control when hosting static resources, have a look at the <a href="https://developer.enonic.com/docs/static-asset-lib/stable">static assets library</a>.
-</td>
 </tr>
 </table>
 </div>
@@ -827,10 +820,107 @@ ETag is useful even if Cache-Control contains immutable directive. CDNs and Chro
 </div>
 </div>
 </div>
+<div class="sect1">
+<h2 id="migrating_from_lib_portal"><a class="link" href="#migrating_from_lib_portal">Migrating from lib-portal</a></h2>
+<div class="sectionbody">
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Add the lib-asset dependency in your build.gradle file.</p>
+</li>
+<li>
+<p>Change the imports of assetUrl from <code>/lib/xp/portal</code> to <code>/lib/enonic/asset</code>.</p>
+</li>
+<li>
+<p>Remove the <code>applications</code> parameter, which is not supported by the assets library.</p>
+</li>
+<li>
+<p>Replace any usage of <code>portal.assetUrl</code> in thymeleaf templates by passing a <code>string</code> in the model instead.</p>
+</li>
+</ol>
+</div>
+<div class="sect2">
+<h3 id="how_to_replace_portal_asseturl_in_thymeleaf_templates"><a class="link" href="#how_to_replace_portal_asseturl_in_thymeleaf_templates">How to replace portal.assetUrl in thymeleaf templates</a></h3>
+<div class="sect3">
+<h4 id="controller"><a class="link" href="#controller">Controller</a></h4>
+<div class="paragraph">
+<p>From:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {render} from '/lib/thymeleaf';
+
+const VIEW = resolve('./thymeleaf-template.html');
+
+export function get() {
+  const model = {};
+  return {
+    body: render(VIEW, model)
+  };
+}</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {render} from '/lib/thymeleaf';
+import {assetUrl} from '/lib/enonic/asset';
+
+const VIEW = resolve('./thymeleaf-template.html');
+
+export function get() {
+  const model = {
+    assetUrlBase: assetUrl({path: ''})
+  };
+  return {
+    body: render(VIEW, model)
+  };
+}</code></pre>
+</div>
+</div>
+</div>
+<div class="sect3">
+<h4 id="thymeleaf_template"><a class="link" href="#thymeleaf_template">Thymeleaf template</a></h4>
+<div class="paragraph">
+<p>From:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-thymeleaf" data-lang="thymeleaf">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+  &lt;head&gt;
+    &lt;link th:href="${portal.assetUrl({'_path=styles.css'})}" rel="stylesheet" type="text/css"/&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>To:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-thymeleaf" data-lang="thymeleaf">&lt;!DOCTYPE html&gt;
+&lt;html xmlns:th="http://www.thymeleaf.org"&gt;
+  &lt;head&gt;
+    &lt;link th:href="${assetUrlBase} + '/styles.css'" rel="stylesheet" type="text/css"/&gt;
+  &lt;/head&gt;
+  &lt;body&gt;
+  &lt;/body&gt;
+&lt;/html&gt;</code></pre>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-09-19 06:12:52 UTC
+Last updated 2024-10-08 06:21:57 UTC
 </div>
 </div>
 </body>
