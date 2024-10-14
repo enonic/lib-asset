@@ -37,11 +37,11 @@
   "scripts": {
     "build": "concurrently -c auto -g --timings npm:build:*",
     "build:server": "npx tsup -d build/resources/main",
+    "build:types": "tsc -p types/tsconfig.build.json && bun types/process.ts",
     "check": "concurrently -c auto -g --timings npm:check:types npm:lint",
     "check:types": "concurrently -g -r --timings npm:check:types:*",
     "check:types:server": "npx tsc --noEmit -p src/main/resources/tsconfig.json",
     "lint": "eslint --cache",
-    "test": "bun test",
-    "types": "tsc -p types/tsconfig.build.json && bun types/process.ts"
+    "test": "bun test"
   }
 }
