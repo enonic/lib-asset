@@ -1,11 +1,9 @@
 = Asset Library
 :toc: right
-:toclevels: 1
-Host and serve static assets like CSS, JavaScript, and icons with ease.
 
 == Introduction
 
-A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled assetUrl function.
+A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled 
 
 
 TIP: To host a static webapp, or for more fine-grained control over static assets, check out link:https://developer.enonic.com/docs/static-asset-lib/stable[lib-static] instead.
@@ -13,7 +11,6 @@ TIP: To host a static webapp, or for more fine-grained control over static asset
 == Usage
 
 . Place your asset files in your project's `src/main/resources/assets/` folder
-+
 . *Add a dependency* to your `build.gradle` file:
 +
 [source,groovy]
@@ -58,7 +55,7 @@ The library may optionally be tuned by addding a config file. Below is a sample 
 +
 [NOTE]
 ====
-All files plaved in this folder will be publicly available
+Files plaved in this folder will be publicly available
 ====
 +
 <2> Cache-Control header value to be sent with 304 and 200 responses.
