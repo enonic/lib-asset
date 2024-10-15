@@ -5,7 +5,6 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
-<meta name="author" content="Host and serve static assets like CSS, JavaScript, and icons with ease.">
 <title>Asset Library</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -439,18 +438,24 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article toc2 toc-right">
 <div id="header">
 <h1>Asset Library</h1>
-<div class="details">
-<span id="author" class="author">Host and serve static assets like CSS, JavaScript, and icons with ease.</span><br>
-</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#asset_service">Asset service</a></li>
+<li><a href="#asset_service">Asset service</a>
+<ul class="sectlevel2">
+<li><a href="#url">Url</a></li>
+<li><a href="#etag">Etag</a></li>
+</ul>
+</li>
 <li><a href="#api">API</a></li>
-<li><a href="#migrating_from_lib_portal">Migrating from lib-portal</a></li>
+<li><a href="#migrating_from_lib_portal">Migrating from lib-portal</a>
+<ul class="sectlevel2">
+<li><a href="#thymeleaf_migration">Thymeleaf migration</a></li>
+</ul>
+</li>
 </ul>
 </div>
 </div>
@@ -459,7 +464,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled assetUrl function.</p>
+<p>A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -548,7 +553,7 @@ const url = assetUrl({path: 'path/to/asset.ext'});</code></pre>
 </td>
 <td class="content">
 <div class="paragraph">
-<p>All files plaved in this folder will be publicly available</p>
+<p>Files plaved in this folder will be publicly available</p>
 </div>
 </td>
 </tr>
@@ -907,7 +912,7 @@ The legacy portalLib.assetUrl also supported an optional, but extremely rarely u
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-15 19:15:51 UTC
+Last updated 2024-10-15 19:23:26 UTC
 </div>
 </div>
 </body>
