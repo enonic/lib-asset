@@ -1,18 +1,20 @@
 = Asset Library
 :toc: right
 :toclevels: 1
+Host and serve static assets like CSS, JavaScript, and icons with ease.
 
 == Introduction
 
-This library provides a service which can host static assets like CSS, JavaScript, images, etc.
+A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled assetUrl function.
 
-In addition the library provides a function that can be used to generate URLs to those assets.
 
-TIP: To have even more control when hosting static resources, have a look at the link:https://developer.enonic.com/docs/static-asset-lib/stable[static assets library].
+TIP: To host a static webapp, or for more fine-grained control over static assets, check out link:https://developer.enonic.com/docs/static-asset-lib/stable[lib-static] instead.
 
 == Usage
 
-Add the following to your `build.gradle` file:
+. Place your asset files in your app's `src/main/resources/assets/` folder
+
+. *Add a dependency* to your `build.gradle` file:
 
 [source,groovy]
 ----
@@ -21,23 +23,91 @@ dependencies {
 }
 ----
 
-In your controller, add a require statement:
-
+. *Import and use* it in your controller:
++
 JavaScript
++
 ```js
 var assetLib = require('/lib/enonic/asset');
+var url = assetLib.assetUrl({path: 'path/to/asset.ext'});
 ```
-
++
 TypeScript
++
 ```typescript
 import {assetUrl} from '/lib/enonic/asset';
+const url = assetUrl({path: 'path/to/asset.ext'});
 ```
 
-You are now ready to use the library functionality.
+== Configuration
 
-== Function
+The library may optionally be tuned by addding a config file to your app.
 
-The `assetUrl` function generates a URL pointing to a static file.
+Sample config with default values:
+
+.src/main/resources/com.enonic.lib.asset.json
+[source,json]
+----
+{
+  "root": "/assets", <1>
+  "cacheControl": "public, max-age=31536000, immutable", <2>
+  "staticCompress": true <3>,
+  "cacheBust": true <4>
+}
+----
+
+<1> The folder in your app where the static files will be placed - relative to `/src/main/resources`
++
+[NOTE]
+====
+All files plaved in this folder will be publicly available
+====
++
+<2> Cache-Control header value to be sent with 304 and 200 responses.
++
+NOTE: In XP dev mode Cache-Control header is always set to `private, no-store`.
++
+<3> For requests with accept-encoding `br` or `gzip`, library will look for, and serve a compressed version of the requested asset *if it exists*.
++
+NOTE: Pre-compressed file must have a `.gzip` or `.br` extension after the regular filename for this to work. I.e. `my.css.br`
++
+<4> Optionally disable application fingerprinting. This is handy if *all assets* contain fingerprints in their filenames.
++
+[TIP]
+====
+Create a function generate the actual URLs to your fingerprinted assets. This is typically done by using a manifest file.
+====
++
+[CAUTION]
+====
+When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to `public, max-age=10, s-maxage=3600, stale-while-revalidate=50` to cache assets in browsers for 10 seconds and revalidate asynchronously.
+====
+
+
+== Asset service
+
+=== Url
+
+The Asset library bundles a service that will handle the actual serving of assets. A service URL may look something like this: `/_/service/{app-name}/asset/{app-fingerprint}/path/to/asset.ext`
+
+If Cache Busting is disabled (cacheBust: false), the URL will look like this `/_/service/{app-name}/asset/path/to/asset.ext`
+
+NOTE: In case of a mismatched fingerprint, the service will still responds with the asset contents and 200 code. But with a Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+
+=== Etag
+
+Service calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with `304 Not Modified` for conditional requests.
+
+NOTE: In XP dev mode ETags are not generated or cached.
+
+NOTE: ETag is useful even if Cache-Control contains immutable directive. CDNs and Chrome browser ignore immutable.
+
+
+== API
+
+The library exposes the following API:
+
+`assetUrl` function generates a URL pointing to a static file.
 
 [.lead]
 Parameters
@@ -57,7 +127,6 @@ Parameters
 !===
 ! Name        ! Type   ! Attributes ! Default ! Description
 ! path        ! string !            !         ! Path to the asset
-// ! application ! string ! <optional> !         ! Other application to reference to. Defaults to current application
 ! type        ! string ! <optional> ! server  ! URL type. Either server (server-relative URL) or absolute
 ! params      ! object ! <optional> !         ! Custom parameters to append to the url
 !===
@@ -86,112 +155,25 @@ const url = assetUrl({
 });
 ```
 
-== Configuration
-
-The library can be configured by addding a `com.enonic.lib.asset.json` file in the `src/main/resources` directory of your project. The configuration file is optional.
-
-Here is an example of a configuration file using the default values:
-
-.com.enonic.lib.asset.json
-[source,json]
-----
-{
-  "root": "/assets", <1>
-  "cacheBust": true, <2>
-  "cacheControl": "public, max-age=31536000, immutable", <3>
-  "staticCompress": true <4>
-}
-----
-
-<1> `root`
-+
-Type: *string*
-+
-Default: *'/assets'*
-+
-This is the root folder in the JAR, where the service will look for resources.
-+
-[NOTE]
-====
-All files in the configured root folder are accessible through the service.
-====
-+
-{zwsp} +
-+
-<2> `cacheBust`
-+
-Type: *boolean*
-+
-Default: *true*
-+
-Adds/removes an application fingerprint segment in service path.
-+
-[TIP]
-====
-If the assets already contain fingerprints in *all* their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.
-====
-+
-[CAUTION]
-====
-When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to `public, max-age=10, s-maxage=3600, stale-while-revalidate=50` to cache assets in browsers for 10 seconds and revalidate asynchronously.
-====
-+
-{zwsp} +
-+
-<3> `cacheControl`
-+
-Type: *string*
-+
-Default: *'public, max-age=31536000, immutable'*
-+
-Cache-Control header value to be sent in 304 and 200 responses.
-+
-NOTE: In XP dev mode cacheControl has no effect. Cache-Control header is always `private, no-store`.
-+
-{zwsp} +
-+
-<4> `staticCompress`
-+
-Type: *boolean*
-+
-Default: *true*
-+
-When enabled, the service will check the request accept-encoding header for `br` or `gzip` and serve a compressed version of the requested asset *if it exists*.
-
-
-== Service
-
-=== Url
-
-By default (without extra configuration) asset service URL looks like this: `/_/service/{app-name}/asset/{app-fingerprint}/...`
-
-With Cache Busting disabled (cacheBust: false) URL looks like this `/_/service/{app-name}/asset/...`
-
-NOTE: In case of mismatching fingerprint service still responds with the asset contents and 200 code. But with Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
-
-=== Etag
-
-Service calculates and caches ETag for each requested asset. Cache is cleared on application restart.
-ETag is used to respond with `304 Not Modified` for conditional requests.
-
-NOTE: In XP dev mode ETags are not generated/cached.
-
-NOTE: ETag is useful even if Cache-Control contains immutable directive. CDNs and Chrome browser ignore immutable.
-
 == Migrating from lib-portal
 
-. Add the lib-asset dependency in your build.gradle file.
+Lib-asset replaces the asset hosting feature that has been part of XP core. As of XP 7.15, this feature will be deprecated, and developers should migrate to lib-asset (or lib-static) instead
+
+Follow the steps below to migrate from the native asset handling to lib-asset.
+
+. Add lib-asset dependency to your build.gradle file.
 . Change the imports of assetUrl from `/lib/xp/portal` to `/lib/enonic/asset`.
-. Remove the `applications` parameter, which is not supported by the assets library.
-. Replace any usage of `portal.assetUrl` in thymeleaf templates by passing a `string` in the model instead.
+. `portal.assetUrl` could be invoked directly from a Thymeleaf. Migrate by passing the assetUrlBase from the controller instead. See example below:
 
+NOTE: portalLib.assetUrl supported an optional rarely used `application` parameter, this is not supported by lib-asset.
 
-=== How to replace portal.assetUrl in thymeleaf templates
+=== Thymeleaf migration
 
-==== Controller
+If you are using Thymeleaf templating, follow this practical example of how to migrate.
 
-From:
-
+Controller::
++
+.From
 [source,typescript]
 ----
 import {render} from '/lib/thymeleaf';
@@ -205,9 +187,8 @@ export function get() {
   };
 }
 ----
-
-To:
-
++
+.To
 [source,typescript]
 ----
 import {render} from '/lib/thymeleaf';
@@ -225,10 +206,9 @@ export function get() {
 }
 ----
 
-==== Thymeleaf template
-
-From:
-
+Thymeleaf template::
++
+.From
 [source,thymeleaf]
 ----
 <!DOCTYPE html>
@@ -240,9 +220,8 @@ From:
   </body>
 </html>
 ----
-
-To:
-
++
+.To
 [source,thymeleaf]
 ----
 <!DOCTYPE html>
