@@ -481,13 +481,10 @@ To host a static webapp, or for more fine-grained control over static assets, ch
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Place your asset files in your app&#8217;s <code>src/main/resources/assets/</code> folder</p>
+<p>Place your asset files in your project&#8217;s <code>src/main/resources/assets/</code> folder</p>
 </li>
 <li>
 <p><strong>Add a dependency</strong> to your <code>build.gradle</code> file:</p>
-</li>
-</ol>
-</div>
 <div class="listingblock">
 <div class="content">
 <pre class="highlight"><code class="language-groovy" data-lang="groovy">dependencies {
@@ -495,8 +492,7 @@ To host a static webapp, or for more fine-grained control over static assets, ch
 }</code></pre>
 </div>
 </div>
-<div class="olist arabic">
-<ol class="arabic">
+</li>
 <li>
 <p><strong>Import and use</strong> it in your controller:</p>
 <div class="paragraph">
@@ -526,10 +522,7 @@ const url = assetUrl({path: 'path/to/asset.ext'});</code></pre>
 <h2 id="configuration"><a class="link" href="#configuration">Configuration</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The library may optionally be tuned by addding a config file to your app.</p>
-</div>
-<div class="paragraph">
-<p>Sample config with default values:</p>
+<p>The library may optionally be tuned by addding a config file. Below is a sample config with default values:</p>
 </div>
 <div class="listingblock">
 <div class="title">src/main/resources/com.enonic.lib.asset.json</div>
@@ -818,21 +811,9 @@ ETag is useful even if Cache-Control contains immutable directive. CDNs and Chro
 <p>Change the imports of assetUrl from <code>/lib/xp/portal</code> to <code>/lib/enonic/asset</code>.</p>
 </li>
 <li>
-<p><code>portal.assetUrl</code> could be invoked directly from a Thymeleaf. Migrate by passing the assetUrlBase from the controller instead. See example below:</p>
+<p>If you have used <code>portal.assetUrl</code> directly within Thymeleaf templates. Migrate by passing the assetUrlBase from your controller instead. See example below:</p>
 </li>
 </ol>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-portalLib.assetUrl supported an optional rarely used <code>application</code> parameter, this is not supported by lib-asset.
-</td>
-</tr>
-</table>
 </div>
 <div class="sect2">
 <h3 id="thymeleaf_migration"><a class="link" href="#thymeleaf_migration">Thymeleaf migration</a></h3>
@@ -908,13 +889,25 @@ export function get() {
 </dd>
 </dl>
 </div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+The legacy portalLib.assetUrl also supported an optional, but extremely rarely used <code>application</code> parameter. This parameter is not supported by lib-asset, as the URLs will always be relative to the current application.
+</td>
+</tr>
+</table>
+</div>
 </div>
 </div>
 </div>
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-15 18:59:50 UTC
+Last updated 2024-10-15 19:15:51 UTC
 </div>
 </div>
 </body>
