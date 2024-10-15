@@ -5,6 +5,7 @@
 <meta http-equiv="X-UA-Compatible" content="IE=edge">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="generator" content="Asciidoctor 2.0.23">
+<meta name="author" content="Host and serve static assets like CSS, JavaScript, and icons with ease.">
 <title>Asset Library</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:300,300italic,400,400italic,600,600italic%7CNoto+Serif:400,400italic,700,700italic%7CDroid+Sans+Mono:400,700">
 <style>
@@ -438,14 +439,17 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <body class="article toc2 toc-right">
 <div id="header">
 <h1>Asset Library</h1>
+<div class="details">
+<span id="author" class="author">Host and serve static assets like CSS, JavaScript, and icons with ease.</span><br>
+</div>
 <div id="toc" class="toc2">
 <div id="toctitle">Table of Contents</div>
 <ul class="sectlevel1">
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#usage">Usage</a></li>
-<li><a href="#function">Function</a></li>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#service">Service</a></li>
+<li><a href="#asset_service">Asset service</a></li>
+<li><a href="#api">API</a></li>
 <li><a href="#migrating_from_lib_portal">Migrating from lib-portal</a></li>
 </ul>
 </div>
@@ -455,10 +459,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>This library provides a service which can host static assets like CSS, JavaScript, images, etc.</p>
-</div>
-<div class="paragraph">
-<p>In addition the library provides a function that can be used to generate URLs to those assets.</p>
+<p>A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled assetUrl function.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -467,7 +468,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-To have even more control when hosting static resources, have a look at the <a href="https://developer.enonic.com/docs/static-asset-lib/stable">static assets library</a>.
+To host a static webapp, or for more fine-grained control over static assets, check out <a href="https://developer.enonic.com/docs/static-asset-lib/stable">lib-static</a> instead.
 </td>
 </tr>
 </table>
@@ -477,8 +478,15 @@ To have even more control when hosting static resources, have a look at the <a h
 <div class="sect1">
 <h2 id="usage"><a class="link" href="#usage">Usage</a></h2>
 <div class="sectionbody">
-<div class="paragraph">
-<p>Add the following to your <code>build.gradle</code> file:</p>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p>Place your asset files in your app&#8217;s <code>src/main/resources/assets/</code> folder</p>
+</li>
+<li>
+<p><strong>Add a dependency</strong> to your <code>build.gradle</code> file:</p>
+</li>
+</ol>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -487,15 +495,17 @@ To have even more control when hosting static resources, have a look at the <a h
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>In your controller, add a require statement:</p>
-</div>
+<div class="olist arabic">
+<ol class="arabic">
+<li>
+<p><strong>Import and use</strong> it in your controller:</p>
 <div class="paragraph">
 <p>JavaScript</p>
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-js" data-lang="js">var assetLib = require('/lib/enonic/asset');</code></pre>
+<pre class="highlight"><code class="language-js" data-lang="js">var assetLib = require('/lib/enonic/asset');
+var url = assetLib.assetUrl({path: 'path/to/asset.ext'});</code></pre>
 </div>
 </div>
 <div class="paragraph">
@@ -503,19 +513,187 @@ To have even more control when hosting static resources, have a look at the <a h
 </div>
 <div class="listingblock">
 <div class="content">
-<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {assetUrl} from '/lib/enonic/asset';</code></pre>
+<pre class="highlight"><code class="language-typescript" data-lang="typescript">import {assetUrl} from '/lib/enonic/asset';
+const url = assetUrl({path: 'path/to/asset.ext'});</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>You are now ready to use the library functionality.</p>
+</li>
+</ol>
 </div>
 </div>
 </div>
 <div class="sect1">
-<h2 id="function"><a class="link" href="#function">Function</a></h2>
+<h2 id="configuration"><a class="link" href="#configuration">Configuration</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The <code>assetUrl</code> function generates a URL pointing to a static file.</p>
+<p>The library may optionally be tuned by addding a config file to your app.</p>
+</div>
+<div class="paragraph">
+<p>Sample config with default values:</p>
+</div>
+<div class="listingblock">
+<div class="title">src/main/resources/com.enonic.lib.asset.json</div>
+<div class="content">
+<pre class="highlight"><code class="language-json" data-lang="json">{
+  "root": "/assets", <i class="conum" data-value="1"></i><b>(1)</b>
+  "cacheControl": "public, max-age=31536000, immutable", <i class="conum" data-value="2"></i><b>(2)</b>
+  "staticCompress": true &lt;3&gt;,
+  "cacheBust": true <i class="conum" data-value="4"></i><b>(4)</b>
+}</code></pre>
+</div>
+</div>
+<div class="colist arabic">
+<table>
+<tr>
+<td><i class="conum" data-value="1"></i><b>1</b></td>
+<td>The folder in your app where the static files will be placed - relative to <code>/src/main/resources</code>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>All files plaved in this folder will be publicly available</p>
+</div>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="2"></i><b>2</b></td>
+<td>Cache-Control header value to be sent with 304 and 200 responses.
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In XP dev mode Cache-Control header is always set to <code>private, no-store</code>.
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="3"></i><b>3</b></td>
+<td>For requests with accept-encoding <code>br</code> or <code>gzip</code>, library will look for, and serve a compressed version of the requested asset <strong>if it exists</strong>.
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Pre-compressed file must have a <code>.gzip</code> or <code>.br</code> extension after the regular filename for this to work. I.e. <code>my.css.br</code>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+<tr>
+<td><i class="conum" data-value="4"></i><b>4</b></td>
+<td>Optionally disable application fingerprinting. This is handy if <strong>all assets</strong> contain fingerprints in their filenames.
+<div class="admonitionblock tip">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-tip" title="Tip"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>Create a function generate the actual URLs to your fingerprinted assets. This is typically done by using a manifest file.</p>
+</div>
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock caution">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-caution" title="Caution"></i>
+</td>
+<td class="content">
+<div class="paragraph">
+<p>When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to <code>public, max-age=10, s-maxage=3600, stale-while-revalidate=50</code> to cache assets in browsers for 10 seconds and revalidate asynchronously.</p>
+</div>
+</td>
+</tr>
+</table>
+</div></td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="asset_service"><a class="link" href="#asset_service">Asset service</a></h2>
+<div class="sectionbody">
+<div class="sect2">
+<h3 id="url"><a class="link" href="#url">Url</a></h3>
+<div class="paragraph">
+<p>The Asset library bundles a service that will handle the actual serving of assets. A service URL may look something like this: <code>/_/service/{app-name}/asset/{app-fingerprint}/path/to/asset.ext</code></p>
+</div>
+<div class="paragraph">
+<p>If Cache Busting is disabled (cacheBust: false), the URL will look like this <code>/_/service/{app-name}/asset/path/to/asset.ext</code></p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In case of a mismatched fingerprint, the service will still responds with the asset contents and 200 code. But with a Cache-Control: <code>private, no-store</code> header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+</td>
+</tr>
+</table>
+</div>
+</div>
+<div class="sect2">
+<h3 id="etag"><a class="link" href="#etag">Etag</a></h3>
+<div class="paragraph">
+<p>Service calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with <code>304 Not Modified</code> for conditional requests.</p>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+In XP dev mode ETags are not generated or cached.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+ETag is useful even if Cache-Control contains immutable directive. CDNs and Chrome browser ignore immutable.
+</td>
+</tr>
+</table>
+</div>
+</div>
+</div>
+</div>
+<div class="sect1">
+<h2 id="api"><a class="link" href="#api">API</a></h2>
+<div class="sectionbody">
+<div class="paragraph">
+<p>The library exposes the following API:</p>
+</div>
+<div class="paragraph">
+<p><code>assetUrl</code> function generates a URL pointing to a static file.</p>
 </div>
 <div class="paragraph lead">
 <p>Parameters</p>
@@ -623,230 +801,50 @@ To have even more control when hosting static resources, have a look at the <a h
 </div>
 </div>
 <div class="sect1">
-<h2 id="configuration"><a class="link" href="#configuration">Configuration</a></h2>
-<div class="sectionbody">
-<div class="paragraph">
-<p>The library can be configured by addding a <code>com.enonic.lib.asset.json</code> file in the <code>src/main/resources</code> directory of your project. The configuration file is optional.</p>
-</div>
-<div class="paragraph">
-<p>Here is an example of a configuration file using the default values:</p>
-</div>
-<div class="listingblock">
-<div class="title">com.enonic.lib.asset.json</div>
-<div class="content">
-<pre class="highlight"><code class="language-json" data-lang="json">{
-  "root": "/assets", <i class="conum" data-value="1"></i><b>(1)</b>
-  "cacheBust": true, <i class="conum" data-value="2"></i><b>(2)</b>
-  "cacheControl": "public, max-age=31536000, immutable", <i class="conum" data-value="3"></i><b>(3)</b>
-  "staticCompress": true <i class="conum" data-value="4"></i><b>(4)</b>
-}</code></pre>
-</div>
-</div>
-<div class="colist arabic">
-<table>
-<tr>
-<td><i class="conum" data-value="1"></i><b>1</b></td>
-<td><code>root</code>
-<div class="paragraph">
-<p>Type: <strong>string</strong></p>
-</div>
-<div class="paragraph">
-<p>Default: <strong>'/assets'</strong></p>
-</div>
-<div class="paragraph">
-<p>This is the root folder in the JAR, where the service will look for resources.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>All files in the configured root folder are accessible through the service.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>&#8203;<br></p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="2"></i><b>2</b></td>
-<td><code>cacheBust</code>
-<div class="paragraph">
-<p>Type: <strong>boolean</strong></p>
-</div>
-<div class="paragraph">
-<p>Default: <strong>true</strong></p>
-</div>
-<div class="paragraph">
-<p>Adds/removes an application fingerprint segment in service path.</p>
-</div>
-<div class="admonitionblock tip">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-tip" title="Tip"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>If the assets already contain fingerprints in <strong>all</strong> their names, you should disable cacheBust and create a function to figure out asset paths with fingerprint. This is typically done by using a manifest file.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock caution">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-caution" title="Caution"></i>
-</td>
-<td class="content">
-<div class="paragraph">
-<p>When disabling cacheBust for assets without fingerprints in their names, make sure to configure a proper cacheControl header to prevent cache-pollution. For instance it could be set to <code>public, max-age=10, s-maxage=3600, stale-while-revalidate=50</code> to cache assets in browsers for 10 seconds and revalidate asynchronously.</p>
-</div>
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>&#8203;<br></p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="3"></i><b>3</b></td>
-<td><code>cacheControl</code>
-<div class="paragraph">
-<p>Type: <strong>string</strong></p>
-</div>
-<div class="paragraph">
-<p>Default: <strong>'public, max-age=31536000, immutable'</strong></p>
-</div>
-<div class="paragraph">
-<p>Cache-Control header value to be sent in 304 and 200 responses.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-In XP dev mode cacheControl has no effect. Cache-Control header is always <code>private, no-store</code>.
-</td>
-</tr>
-</table>
-</div>
-<div class="paragraph">
-<p>&#8203;<br></p>
-</div></td>
-</tr>
-<tr>
-<td><i class="conum" data-value="4"></i><b>4</b></td>
-<td><code>staticCompress</code>
-<div class="paragraph">
-<p>Type: <strong>boolean</strong></p>
-</div>
-<div class="paragraph">
-<p>Default: <strong>true</strong></p>
-</div>
-<div class="paragraph">
-<p>When enabled, the service will check the request accept-encoding header for <code>br</code> or <code>gzip</code> and serve a compressed version of the requested asset <strong>if it exists</strong>.</p>
-</div></td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-<div class="sect1">
-<h2 id="service"><a class="link" href="#service">Service</a></h2>
-<div class="sectionbody">
-<div class="sect2">
-<h3 id="url"><a class="link" href="#url">Url</a></h3>
-<div class="paragraph">
-<p>By default (without extra configuration) asset service URL looks like this: <code>/_/service/{app-name}/asset/{app-fingerprint}/&#8230;&#8203;</code></p>
-</div>
-<div class="paragraph">
-<p>With Cache Busting disabled (cacheBust: false) URL looks like this <code>/_/service/{app-name}/asset/&#8230;&#8203;</code></p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-In case of mismatching fingerprint service still responds with the asset contents and 200 code. But with Cache-Control: <code>private, no-store</code> header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
-</td>
-</tr>
-</table>
-</div>
-</div>
-<div class="sect2">
-<h3 id="etag"><a class="link" href="#etag">Etag</a></h3>
-<div class="paragraph">
-<p>Service calculates and caches ETag for each requested asset. Cache is cleared on application restart.
-ETag is used to respond with <code>304 Not Modified</code> for conditional requests.</p>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-In XP dev mode ETags are not generated/cached.
-</td>
-</tr>
-</table>
-</div>
-<div class="admonitionblock note">
-<table>
-<tr>
-<td class="icon">
-<i class="fa icon-note" title="Note"></i>
-</td>
-<td class="content">
-ETag is useful even if Cache-Control contains immutable directive. CDNs and Chrome browser ignore immutable.
-</td>
-</tr>
-</table>
-</div>
-</div>
-</div>
-</div>
-<div class="sect1">
 <h2 id="migrating_from_lib_portal"><a class="link" href="#migrating_from_lib_portal">Migrating from lib-portal</a></h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>Lib-asset replaces the asset hosting feature that has been part of XP core. As of XP 7.15, this feature will be deprecated, and developers should migrate to lib-asset (or lib-static) instead</p>
+</div>
+<div class="paragraph">
+<p>Follow the steps below to migrate from the native asset handling to lib-asset.</p>
+</div>
 <div class="olist arabic">
 <ol class="arabic">
 <li>
-<p>Add the lib-asset dependency in your build.gradle file.</p>
+<p>Add lib-asset dependency to your build.gradle file.</p>
 </li>
 <li>
 <p>Change the imports of assetUrl from <code>/lib/xp/portal</code> to <code>/lib/enonic/asset</code>.</p>
 </li>
 <li>
-<p>Remove the <code>applications</code> parameter, which is not supported by the assets library.</p>
-</li>
-<li>
-<p>Replace any usage of <code>portal.assetUrl</code> in thymeleaf templates by passing a <code>string</code> in the model instead.</p>
+<p><code>portal.assetUrl</code> could be invoked directly from a Thymeleaf. Migrate by passing the assetUrlBase from the controller instead. See example below:</p>
 </li>
 </ol>
 </div>
-<div class="sect2">
-<h3 id="how_to_replace_portal_asseturl_in_thymeleaf_templates"><a class="link" href="#how_to_replace_portal_asseturl_in_thymeleaf_templates">How to replace portal.assetUrl in thymeleaf templates</a></h3>
-<div class="sect3">
-<h4 id="controller"><a class="link" href="#controller">Controller</a></h4>
-<div class="paragraph">
-<p>From:</p>
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+portalLib.assetUrl supported an optional rarely used <code>application</code> parameter, this is not supported by lib-asset.
+</td>
+</tr>
+</table>
 </div>
+<div class="sect2">
+<h3 id="thymeleaf_migration"><a class="link" href="#thymeleaf_migration">Thymeleaf migration</a></h3>
+<div class="paragraph">
+<p>If you are using Thymeleaf templating, follow this practical example of how to migrate.</p>
+</div>
+<div class="dlist">
+<dl>
+<dt class="hdlist1">Controller</dt>
+<dd>
 <div class="listingblock">
+<div class="title">From</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {render} from '/lib/thymeleaf';
 
@@ -860,10 +858,8 @@ export function get() {
 }</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>To:</p>
-</div>
 <div class="listingblock">
+<div class="title">To</div>
 <div class="content">
 <pre class="highlight"><code class="language-typescript" data-lang="typescript">import {render} from '/lib/thymeleaf';
 import {assetUrl} from '/lib/enonic/asset';
@@ -880,13 +876,11 @@ export function get() {
 }</code></pre>
 </div>
 </div>
-</div>
-<div class="sect3">
-<h4 id="thymeleaf_template"><a class="link" href="#thymeleaf_template">Thymeleaf template</a></h4>
-<div class="paragraph">
-<p>From:</p>
-</div>
+</dd>
+<dt class="hdlist1">Thymeleaf template</dt>
+<dd>
 <div class="listingblock">
+<div class="title">From</div>
 <div class="content">
 <pre class="highlight"><code class="language-thymeleaf" data-lang="thymeleaf">&lt;!DOCTYPE html&gt;
 &lt;html xmlns:th="http://www.thymeleaf.org"&gt;
@@ -898,10 +892,8 @@ export function get() {
 &lt;/html&gt;</code></pre>
 </div>
 </div>
-<div class="paragraph">
-<p>To:</p>
-</div>
 <div class="listingblock">
+<div class="title">To</div>
 <div class="content">
 <pre class="highlight"><code class="language-thymeleaf" data-lang="thymeleaf">&lt;!DOCTYPE html&gt;
 &lt;html xmlns:th="http://www.thymeleaf.org"&gt;
@@ -913,6 +905,8 @@ export function get() {
 &lt;/html&gt;</code></pre>
 </div>
 </div>
+</dd>
+</dl>
 </div>
 </div>
 </div>
@@ -920,7 +914,7 @@ export function get() {
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-08 06:21:57 UTC
+Last updated 2024-10-15 18:59:50 UTC
 </div>
 </div>
 </body>
