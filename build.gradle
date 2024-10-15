@@ -129,7 +129,7 @@ tasks.register('publishToNpm', NpmTask ) {
   onlyIf { !version.endsWith( '-SNAPSHOT' ) }
   args = ['publish']
   dependsOn npmBuild
-  workingDir = 'build/types'
+  workingDir = file('build/types')
 }
 
 publish.dependsOn publishToNpm
