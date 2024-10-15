@@ -12,17 +12,17 @@ TIP: To host a static webapp, or for more fine-grained control over static asset
 
 == Usage
 
-. Place your asset files in your app's `src/main/resources/assets/` folder
-
+. Place your asset files in your project's `src/main/resources/assets/` folder
++
 . *Add a dependency* to your `build.gradle` file:
-
++
 [source,groovy]
 ----
 dependencies {
   include "com.enonic.lib:lib-asset:${libVersion}"
 }
 ----
-
++
 . *Import and use* it in your controller:
 +
 JavaScript
@@ -41,9 +41,7 @@ const url = assetUrl({path: 'path/to/asset.ext'});
 
 == Configuration
 
-The library may optionally be tuned by addding a config file to your app.
-
-Sample config with default values:
+The library may optionally be tuned by addding a config file. Below is a sample config with default values:
 
 .src/main/resources/com.enonic.lib.asset.json
 [source,json]
@@ -163,9 +161,7 @@ Follow the steps below to migrate from the native asset handling to lib-asset.
 
 . Add lib-asset dependency to your build.gradle file.
 . Change the imports of assetUrl from `/lib/xp/portal` to `/lib/enonic/asset`.
-. `portal.assetUrl` could be invoked directly from a Thymeleaf. Migrate by passing the assetUrlBase from the controller instead. See example below:
-
-NOTE: portalLib.assetUrl supported an optional rarely used `application` parameter, this is not supported by lib-asset.
+. If you have used `portal.assetUrl` directly within Thymeleaf templates. Migrate by passing the assetUrlBase from your controller instead. See example below:
 
 === Thymeleaf migration
 
@@ -233,3 +229,6 @@ Thymeleaf template::
   </body>
 </html>
 ----
+
+
+NOTE: The legacy portalLib.assetUrl also supported an optional, but extremely rarely used `application` parameter. This parameter is not supported by lib-asset, as the URLs will always be relative to the current application.
