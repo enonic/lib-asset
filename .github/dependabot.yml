@@ -4,7 +4,7 @@ updates:
     directory: "/"
     schedule:
       interval: "weekly"
-    open-pull-requests-limit: 20
+    open-pull-requests-limit: 10
     assignees:
       - "rymsha"
     reviewers:
@@ -15,9 +15,9 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 10
     assignees:
-      - "ComLock"
+      - "alansemenov"
     reviewers:
-      - "ComLock"
+      - "alansemenov"
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
