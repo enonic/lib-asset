@@ -20,6 +20,11 @@ exports.testAssetRequestOnAdminTool = function () {
   t.assertTrue(bean.verify());
 };
 
+exports.testAssetRequestOnAdminToolXP8 = function () {
+  const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
+  t.assertTrue(bean.verify());
+}
+
 exports.testAssetRequestOnAdminToolInvalid = function () {
   const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
   t.assertFalse(bean.verify());
