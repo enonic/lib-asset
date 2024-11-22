@@ -45,6 +45,10 @@ public class AssetUrlBuilder
 
   private static final String TOOL_PREFIX = TOOL_PREFIX_BASE + "/";
 
+  private static final String NEW_TOOL_PREFIX_BASE = "/admin";
+
+  private static final String NEW_TOOL_PREFIX = NEW_TOOL_PREFIX_BASE + "/";
+
   private static final String SITE_PREFIX = "/site/";
 
   private static final String WEBAPP_PREFIX = "/webapp/";
@@ -109,6 +113,10 @@ public class AssetUrlBuilder
     else if ( rawPath.equals( TOOL_PREFIX_BASE ) || rawPath.startsWith( TOOL_PREFIX ) )
     {
       processTool( url );
+    }
+    else if ( rawPath.equals( NEW_TOOL_PREFIX_BASE ) || rawPath.startsWith( NEW_TOOL_PREFIX ) )
+    {
+      appendPart( url, "admin" );
     }
     else if ( rawPath.startsWith( SITE_PREFIX ) )
     {

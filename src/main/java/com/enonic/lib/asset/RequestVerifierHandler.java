@@ -67,7 +67,7 @@ public class RequestVerifierHandler
     }
     else
     {
-      return rawPath.startsWith( "/admin/tool/_/" ) || rawPath.startsWith( "/_/" );
+      return rawPath.startsWith( "/admin/_/" ) || rawPath.startsWith( "/admin/tool/_/" ) || rawPath.startsWith( "/_/" );
     }
   }
 

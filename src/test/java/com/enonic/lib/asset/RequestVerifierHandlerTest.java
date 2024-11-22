@@ -133,6 +133,15 @@ public class RequestVerifierHandlerTest
   }
 
   @Test
+  void testAssetRequestOnAdminToolXP8()
+  {
+    portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
+    portalRequest.setRawPath( "/admin/_/service/myapplication/asset/123456/path/to/resource" );
+
+    runFunction( "lib/request-verifier-test.js", "testAssetRequestOnAdminToolXP8" );
+  }
+
+  @Test
   void testAssetRequestOnRoot()
   {
     portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
