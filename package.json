@@ -23,7 +23,7 @@
     "properties-reader": "^2.3.0",
     "q-i": "^2.0.1",
     "tsup": "^8.3.5",
-    "typescript": "^5.7.2",
+    "typescript": "^5.7.3",
     "typescript-eslint": "^8.19.1"
   },
   "homepage": "https://github.com/enonic/lib-asset#readme",
