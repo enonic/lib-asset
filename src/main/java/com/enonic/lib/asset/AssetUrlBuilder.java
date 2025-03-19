@@ -1,17 +1,5 @@
 package com.enonic.lib.asset;
 
-import com.enonic.xp.app.ApplicationKey;
-import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.PortalUrlService;
-import com.enonic.xp.portal.url.ServiceUrlParams;
-import com.enonic.xp.script.ScriptValue;
-import com.enonic.xp.script.bean.BeanContext;
-import com.enonic.xp.script.bean.ScriptBean;
-import com.google.common.base.Splitter;
-import com.google.common.collect.HashMultimap;
-import com.google.common.collect.Multimap;
-import com.google.common.net.UrlEscapers;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -19,6 +7,22 @@ import java.util.Map;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
+
+import com.google.common.base.Splitter;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.net.UrlEscapers;
+
+import com.enonic.xp.app.ApplicationKey;
+import com.enonic.xp.content.ContentService;
+import com.enonic.xp.portal.PortalRequest;
+import com.enonic.xp.portal.url.GenerateUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.repository.RepositoryUtils;
+import com.enonic.xp.script.ScriptValue;
+import com.enonic.xp.script.bean.BeanContext;
+import com.enonic.xp.script.bean.ScriptBean;
+import com.enonic.xp.site.Site;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
@@ -28,6 +32,8 @@ public class AssetUrlBuilder
   private Supplier<PortalRequest> requestSupplier;
 
   private Supplier<PortalUrlService> portalUrlServiceSupplier;
+
+  private Supplier<ContentService> contentServiceSupplier;
 
   private String application;
 
@@ -44,6 +50,7 @@ public class AssetUrlBuilder
   {
     this.requestSupplier = beanContext.getBinding( PortalRequest.class );
     this.portalUrlServiceSupplier = beanContext.getService( PortalUrlService.class );
+    this.contentServiceSupplier = beanContext.getService( ContentService.class );
   }
 
   public void setApplication( final String application )
@@ -75,29 +82,52 @@ public class AssetUrlBuilder
   {
     final PortalRequest portalRequest = requestSupplier.get();
 
-    ApplicationKey applicationKey = application != null ? ApplicationKey.from( application ) : portalRequest.getApplicationKey();
+    final String assetPath = generateAssetPath( portalRequest );
 
-    final ServiceUrlParams serviceUrlParams = new ServiceUrlParams();
-    serviceUrlParams.application( applicationKey.toString() )
-      .portalRequest( portalRequest )
-      .service( "asset" )
-      .type( type )
-      .contextPathType( "vhost" );
+    final GenerateUrlParams generateUrlParams = new GenerateUrlParams();
+    generateUrlParams.portalRequest( portalRequest );
+    generateUrlParams.type( type );
+    generateUrlParams.url( assetPath );
 
-    final StringBuilder url = new StringBuilder(portalUrlServiceSupplier.get().serviceUrl( serviceUrlParams ));
+    return portalUrlServiceSupplier.get().generateUrl( generateUrlParams );
+  }
 
-    appendPart( url, fingerprint );
+  private String generateAssetPath( final PortalRequest portalRequest )
+  {
+    final StringBuilder str = new StringBuilder();
+
+    appendPart( str, portalRequest.getBaseUri() );
+    if ( portalRequest.isSiteBase() )
+    {
+      appendPart( str, RepositoryUtils.getContentRepoName( portalRequest.getRepositoryId() ) );
+      appendPart( str, portalRequest.getBranch().toString() );
+
+      final Site nearestSite = new ContentResolver( contentServiceSupplier.get() ).resolve( portalRequest ).getNearestSite();
+      if ( nearestSite != null )
+      {
+        appendPart( str, nearestSite.getPath().toString() );
+      }
+    }
+    appendPart( str, "_" );
+    appendPart( str, "service" );
+
+    final ApplicationKey applicationKey = application != null ? ApplicationKey.from( application ) : portalRequest.getApplicationKey();
+
+    appendPart( str, applicationKey.toString() );
+    appendPart( str, "asset" );
+    appendPart( str, fingerprint );
 
     if ( !isNullOrEmpty( path ) )
     {
-      appendPart( url, path.replaceAll( "/$", "" ) );
+      appendPart( str, path.replaceAll( "/$", "" ) );
     }
 
     if ( params != null && !params.isEmpty() )
     {
-      appendParams( url, params.entries() );
+      appendParams( str, params.entries() );
     }
-    return url.toString();
+
+    return str.toString();
   }
 
   private void appendPart( final StringBuilder str, final String urlPart )
