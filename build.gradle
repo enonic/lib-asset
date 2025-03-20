@@ -20,6 +20,7 @@ dependencies {
   compileOnly "com.enonic.xp:core-api:${xpVersion}"
   compileOnly "com.enonic.xp:portal-api:${xpVersion}"
   compileOnly "com.enonic.xp:script-api:${xpVersion}"
+  compileOnly "com.enonic.xp:admin-api:${xpVersion}"
 
   // implementation: This is the most common way to specify a dependency.
   // Libraries included with implementation are available during both compile
@@ -34,6 +35,7 @@ dependencies {
   testImplementation 'org.mockito:mockito-junit-jupiter:5.16.1'
   testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
   testImplementation "com.enonic.xp:testing:${xpVersion}"
+  testImplementation "com.enonic.xp:admin-api:${xpVersion}"
 }
 
 processResources {

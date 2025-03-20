@@ -15,7 +15,7 @@ exports.testAssetRequestOnProject = function () {
   t.assertFalse(bean.verify());
 };
 
-exports.testAssetRequestOnAdminTool = function () {
+exports.testAssetRequestOnLegacyAdminTool = function () {
   const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
   t.assertTrue(bean.verify());
 };
@@ -25,7 +25,7 @@ exports.testAssetRequestOnAdminToolXP8 = function () {
   t.assertTrue(bean.verify());
 }
 
-exports.testAssetRequestOnAdminToolInvalid = function () {
+exports.testAssetRequestOnAdminWithoutToolsAndWidgets = function () {
   const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
   t.assertFalse(bean.verify());
 };
