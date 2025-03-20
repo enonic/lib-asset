@@ -4,6 +4,8 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
@@ -28,12 +30,18 @@ public class RequestVerifierHandler
 
   private Supplier<ProjectService> projectServiceSupplier;
 
+  private Supplier<AdminToolDescriptorService> adminToolDescriptorServiceSupplier;
+
+  private Supplier<WidgetDescriptorService> widgetDescriptorServiceSupplier;
+
   @Override
   public void initialize( final BeanContext beanContext )
   {
     this.requestSupplier = beanContext.getBinding( PortalRequest.class );
     this.contentServiceSupplier = beanContext.getService( ContentService.class );
     this.projectServiceSupplier = beanContext.getService( ProjectService.class );
+    this.adminToolDescriptorServiceSupplier = beanContext.getService( AdminToolDescriptorService.class );
+    this.widgetDescriptorServiceSupplier = beanContext.getService( WidgetDescriptorService.class );
   }
 
   public boolean verify()
@@ -65,9 +73,14 @@ public class RequestVerifierHandler
     {
       return verifyPathMountedOnWebapps( applicationKey, request );
     }
+    else if ( rawPath.startsWith( "/_/" ) )
+    {
+      return true; // that still allows getting assets from the root for Welcome App
+    }
     else
     {
-      return rawPath.startsWith( "/admin/_/" ) || rawPath.startsWith( "/admin/tool/_/" ) || rawPath.startsWith( "/_/" );
+      return adminToolDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty() ||
+        widgetDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty();
     }
   }
 

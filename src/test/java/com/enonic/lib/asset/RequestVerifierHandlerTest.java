@@ -2,10 +2,17 @@ package com.enonic.lib.asset;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.admin.tool.AdminToolDescriptor;
+import com.enonic.xp.admin.tool.AdminToolDescriptorService;
+import com.enonic.xp.admin.tool.AdminToolDescriptors;
+import com.enonic.xp.admin.widget.WidgetDescriptor;
+import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
+import com.enonic.xp.descriptor.Descriptors;
+import com.enonic.xp.page.DescriptorKey;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
@@ -25,6 +32,23 @@ import static org.mockito.Mockito.when;
 public class RequestVerifierHandlerTest
   extends ScriptTestSupport
 {
+  private AdminToolDescriptorService adminToolDescriptorService;
+
+  private WidgetDescriptorService widgetDescriptorService;
+
+  @Override
+  protected void initialize()
+    throws Exception
+  {
+    super.initialize();
+
+    adminToolDescriptorService = mock( AdminToolDescriptorService.class );
+    addService( AdminToolDescriptorService.class, adminToolDescriptorService );
+
+    widgetDescriptorService = mock( WidgetDescriptorService.class );
+    addService( WidgetDescriptorService.class, widgetDescriptorService );
+  }
+
   @Test
   void testAssetRequestInvalidURLNoEndpoint()
   {
@@ -124,12 +148,19 @@ public class RequestVerifierHandlerTest
   }
 
   @Test
-  void testAssetRequestOnAdminTool()
+  void testAssetRequestOnLegacyAdminTool()
   {
     portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
     portalRequest.setRawPath( "/admin/tool/_/service/myapplication/asset/123456/path/to/resource" );
 
-    runFunction( "lib/request-verifier-test.js", "testAssetRequestOnAdminTool" );
+    final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+    when( adminToolDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
+      AdminToolDescriptors.empty() );
+    when( widgetDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
+      Descriptors.from( WidgetDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
+
+    runFunction( "lib/request-verifier-test.js", "testAssetRequestOnLegacyAdminTool" );
   }
 
   @Test
@@ -137,6 +168,9 @@ public class RequestVerifierHandlerTest
   {
     portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
     portalRequest.setRawPath( "/admin/_/service/myapplication/asset/123456/path/to/resource" );
+
+    when( adminToolDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn(
+      AdminToolDescriptors.from( AdminToolDescriptor.create().build() ) );
 
     runFunction( "lib/request-verifier-test.js", "testAssetRequestOnAdminToolXP8" );
   }
@@ -151,12 +185,16 @@ public class RequestVerifierHandlerTest
   }
 
   @Test
-  void testAssetRequestOnAdminToolInvalid()
+  void testAssetRequestOnAdminWithoutToolsAndWidgets()
   {
     portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
     portalRequest.setRawPath( "/admin/tool/path/_/service/myapplication/asset/123456/path/to/resource" );
 
-    runFunction( "lib/request-verifier-test.js", "testAssetRequestOnAdminToolInvalid" );
+    when( adminToolDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn(
+      AdminToolDescriptors.empty() );
+    when( widgetDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( Descriptors.empty() );
+
+    runFunction( "lib/request-verifier-test.js", "testAssetRequestOnAdminWithoutToolsAndWidgets" );
   }
 
   @Test
