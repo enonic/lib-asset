@@ -4,10 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
-import java.util.Objects;
 import java.util.function.Supplier;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
 
@@ -16,44 +13,25 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.common.net.UrlEscapers;
 
+import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
-import com.enonic.xp.portal.url.UrlTypeConstants;
+import com.enonic.xp.portal.url.GenerateUrlParams;
+import com.enonic.xp.portal.url.PortalUrlService;
+import com.enonic.xp.repository.RepositoryUtils;
 import com.enonic.xp.script.ScriptValue;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.Site;
-import com.enonic.xp.web.servlet.ServletRequestUrlHelper;
-import com.enonic.xp.web.servlet.UriRewritingResult;
 
 import static com.google.common.base.Strings.isNullOrEmpty;
 
 public class AssetUrlBuilder
   implements ScriptBean
 {
-
-  private static final Pattern ADMIN_SITE_CTX_PATTERN =
-    Pattern.compile( "^(?<mode>edit|preview|admin|inline)/(?<project>[^/]+)/(?<branch>[^/]+)" );
-
-  private static final Pattern SITE_CTX_PATTERN = Pattern.compile( "^(?<project>[^/]+)/(?<branch>[^/]+)" );
-
-  private static final Pattern WEBAPP_CXT_PATTERN = Pattern.compile( "^([^/]+)" );
-
-  private static final String ADMIN_SITE_PREFIX = "/admin/site/";
-
-  private static final String TOOL_PREFIX_BASE = "/admin/tool";
-
-  private static final String TOOL_PREFIX = TOOL_PREFIX_BASE + "/";
-
-  private static final String NEW_TOOL_PREFIX_BASE = "/admin";
-
-  private static final String NEW_TOOL_PREFIX = NEW_TOOL_PREFIX_BASE + "/";
-
-  private static final String SITE_PREFIX = "/site/";
-
-  private static final String WEBAPP_PREFIX = "/webapp/";
-
   private Supplier<PortalRequest> requestSupplier;
+
+  private Supplier<PortalUrlService> portalUrlServiceSupplier;
 
   private Supplier<ContentService> contentServiceSupplier;
 
@@ -71,6 +49,7 @@ public class AssetUrlBuilder
   public void initialize( final BeanContext beanContext )
   {
     this.requestSupplier = beanContext.getBinding( PortalRequest.class );
+    this.portalUrlServiceSupplier = beanContext.getService( PortalUrlService.class );
     this.contentServiceSupplier = beanContext.getService( ContentService.class );
   }
 
@@ -101,132 +80,54 @@ public class AssetUrlBuilder
 
   public String createUrl()
   {
-    final StringBuilder url = new StringBuilder();
-
     final PortalRequest portalRequest = requestSupplier.get();
-    final String rawPath = portalRequest.getRawPath();
 
-    if ( rawPath.startsWith( ADMIN_SITE_PREFIX ) )
-    {
-      processSite( url, rawPath, true );
-    }
-    else if ( rawPath.equals( TOOL_PREFIX_BASE ) || rawPath.startsWith( TOOL_PREFIX ) )
-    {
-      processTool( url );
-    }
-    else if ( rawPath.equals( NEW_TOOL_PREFIX_BASE ) || rawPath.startsWith( NEW_TOOL_PREFIX ) )
-    {
-      appendPart( url, "admin" );
-    }
-    else if ( rawPath.startsWith( SITE_PREFIX ) )
-    {
-      processSite( url, rawPath, false );
-    }
-    else if ( rawPath.startsWith( WEBAPP_PREFIX ) )
-    {
-      processWebapp( url, rawPath );
-    }
+    final String assetPath = generateAssetPath( portalRequest );
 
-    appendPart( url, "_" );
-    appendPart( url, "service" );
+    final GenerateUrlParams generateUrlParams = new GenerateUrlParams();
+    generateUrlParams.portalRequest( portalRequest );
+    generateUrlParams.type( type );
+    generateUrlParams.url( assetPath );
 
-    appendPart( url, Objects.requireNonNullElseGet( application, () -> portalRequest.getApplicationKey().toString() ) );
-    appendPart( url, "asset" );
+    return portalUrlServiceSupplier.get().generateUrl( generateUrlParams );
+  }
 
-    appendPart( url, fingerprint );
+  private String generateAssetPath( final PortalRequest portalRequest )
+  {
+    final StringBuilder str = new StringBuilder();
+
+    appendPart( str, portalRequest.getBaseUri() );
+    if ( portalRequest.isSiteBase() )
+    {
+      appendPart( str, RepositoryUtils.getContentRepoName( portalRequest.getRepositoryId() ) );
+      appendPart( str, portalRequest.getBranch().toString() );
+
+      final Site nearestSite = new ContentResolver( contentServiceSupplier.get() ).resolve( portalRequest ).getNearestSite();
+      if ( nearestSite != null )
+      {
+        appendPart( str, nearestSite.getPath().toString() );
+      }
+    }
+    appendPart( str, "_" );
+    appendPart( str, "service" );
+
+    final ApplicationKey applicationKey = application != null ? ApplicationKey.from( application ) : portalRequest.getApplicationKey();
+
+    appendPart( str, applicationKey.toString() );
+    appendPart( str, "asset" );
+    appendPart( str, fingerprint );
 
     if ( !isNullOrEmpty( path ) )
     {
-      appendPart( url, path.replaceAll( "/$", "" ) );
+      appendPart( str, path.replaceAll( "/$", "" ) );
     }
 
     if ( params != null && !params.isEmpty() )
     {
-      appendParams( url, params.entries() );
+      appendParams( str, params.entries() );
     }
 
-    final String targetUri = url.toString();
-    final UriRewritingResult rewritingResult = ServletRequestUrlHelper.rewriteUri( portalRequest.getRawRequest(), targetUri );
-
-    if ( rewritingResult.isOutOfScope() )
-    {
-      throw new IllegalStateException( "URI out of scope" );
-    }
-
-    final String uri = rewritingResult.getRewrittenUri();
-
-    if ( UrlTypeConstants.ABSOLUTE.equals( type ) )
-    {
-      return ServletRequestUrlHelper.getServerUrl( portalRequest.getRawRequest() ) + uri;
-    }
-    else
-    {
-      return uri;
-    }
-  }
-
-  private void processSite( final StringBuilder url, final String requestURI, final boolean isSiteAdmin )
-  {
-    final String sitePrefix = isSiteAdmin ? ADMIN_SITE_PREFIX : SITE_PREFIX;
-    final String subPath = subPath( requestURI, sitePrefix );
-    final Pattern pattern = isSiteAdmin ? ADMIN_SITE_CTX_PATTERN : SITE_CTX_PATTERN;
-    final Matcher matcher = pattern.matcher( subPath );
-    if ( matcher.find() )
-    {
-      if ( isSiteAdmin )
-      {
-        appendPart( url, "admin" );
-      }
-      appendPart( url, "site" );
-      if ( isSiteAdmin )
-      {
-        final String mode = matcher.group( "mode" );
-        appendPart( url, "edit".equals( mode ) ? "preview" : mode );
-      }
-      appendPart( url, matcher.group( "project" ) );
-      appendPart( url, matcher.group( "branch" ) );
-
-      final ContentResolverResult contentResolverResult =
-        new ContentResolver( contentServiceSupplier.get() ).resolve( requestSupplier.get() );
-      final Site site = contentResolverResult.getNearestSite();
-      if ( site != null )
-      {
-        appendPart( url, site.getPath().toString() );
-      }
-    }
-    else
-    {
-      throw new IllegalArgumentException( String.format( "Invalid site context: %s", subPath ) );
-    }
-  }
-
-  private void processWebapp( final StringBuilder url, final String requestURI )
-  {
-    final String subPath = subPath( requestURI, WEBAPP_PREFIX );
-    final Matcher matcher = WEBAPP_CXT_PATTERN.matcher( subPath );
-
-    if ( matcher.find() )
-    {
-      appendPart( url, "webapp" );
-      appendPart( url, matcher.group( 0 ) );
-    }
-    else
-    {
-      throw new IllegalArgumentException( String.format( "Invalid webapp context: %s", subPath ) );
-    }
-  }
-
-  private void processTool( final StringBuilder url )
-  {
-    appendPart( url, "admin" );
-    appendPart( url, "tool" );
-  }
-
-  private String subPath( final String requestURI, final String prefix )
-  {
-    final int endpoint = requestURI.indexOf( "/_/" );
-    final int endIndex = endpoint == -1 ? requestURI.length() : endpoint + 1;
-    return requestURI.substring( prefix.length(), endIndex );
+    return str.toString();
   }
 
   private void appendPart( final StringBuilder str, final String urlPart )
