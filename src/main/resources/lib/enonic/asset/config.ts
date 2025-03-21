@@ -1,4 +1,4 @@
-import {getResource, readText} from '/lib/xp/io';
+import {getResource, readText} from './io';
 import {isDev} from './runMode';
 
 

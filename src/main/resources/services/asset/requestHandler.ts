@@ -1,7 +1,6 @@
 import type {Request} from '../../lib/enonic/asset/types/Request';
 import type {Response} from '../../lib/enonic/asset/types/Response';
 
-import {getResource} from '/lib/xp/io';
 import {
   CONTENT_CODING,
   CONTENT_ENCODING,
@@ -17,7 +16,7 @@ import {
   isCacheBust,
 } from '../../lib/enonic/asset/config';
 import {read} from '../../lib/enonic/asset/etagReader';
-import {getMimeType} from '../../lib/enonic/asset/io';
+import {getMimeType, getResource} from '../../lib/enonic/asset/io';
 import {getLowerCasedHeaders} from '../../lib/enonic/asset/request/getLowerCasedHeaders';
 import {checkPath} from '../../lib/enonic/asset/resource/path/checkPath';
 import {prefixWithRoot} from '../../lib/enonic/asset/resource/path/prefixWithRoot';
