@@ -264,28 +264,3 @@ globalThis.__ = {
 const BASEURL_WEBAPP = `/webapp/${app.name}`;
 const BASEURL = BASEURL_WEBAPP;
 
-try {
-  await mock.module('/lib/xp/io', () => ({
-    getResource: mockGetResource(),
-    readText: (_stream: ByteSource) => {
-      return _stream as unknown as string;
-    },
-  }));
-} catch (error) {
-  console.error('Error when mocking /lib/xp/io:', error);
-}
-
-try {
-  await mock.module('/lib/xp/portal', () => ({
-    assetUrl: (({
-      params,
-      type,
-    }: AssetUrlParams) => {
-      const query = params ? `?${new URLSearchParams(params as Record<string,string>).toString()}` : '';
-      const prefix = type === 'absolute' ? 'http://localhost:8080' : '';
-      return `${prefix}${BASEURL}/_/asset/${app.name}:${FINGERPRINT}${query}`;
-    }),
-  }));
-} catch (error) {
-  console.error('Error when mocking /lib/xp/portal:', error);
-}

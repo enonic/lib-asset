@@ -1,6 +1,8 @@
 import type {Log} from '../global.d';
 
 import {Resource} from './Resource';
+import {ByteSource, ResourceKey} from '@enonic-types/core';
+import {ByteSource} from '@enonic-types/lib-io';
 
 
 // Avoid type errors
@@ -45,6 +47,8 @@ export function mockGetResource(): (key: string) => Resource {
 
 export function mockIoService(): {
   getMimeType: (name: string) => string
+  getResource: (key: string | ResourceKey) => Resource;
+  readText(value: ByteSource): string;
 } {
   return {
     getMimeType: (name: string) => {
@@ -55,5 +59,9 @@ export function mockIoService(): {
       log.warning(`getMimeType: Unmocked name:${name}!`);
       return 'application/octet-stream';
     },
+    readText(_stream: ByteSource): string {
+      return _stream as unknown as string;
+    },
+    getResource: mockGetResource(),
   }
 }
