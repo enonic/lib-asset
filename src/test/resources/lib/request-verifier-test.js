@@ -64,3 +64,8 @@ exports.testAssetRequestOnRoot = function () {
   const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
   t.assertTrue(bean.verify());
 };
+
+exports.testAssetRequestInAdminMode = function () {
+  const bean = __.newBean('com.enonic.lib.asset.RequestVerifierHandler');
+  t.assertTrue(bean.verify());
+};
