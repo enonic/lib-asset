@@ -65,7 +65,11 @@ public class RequestVerifierHandler
 
     final String rawPath = request.getRawPath();
 
-    if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
+    if ( rawPath.startsWith( "/admin/site/admin/" ) )
+    {
+      return widgetDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty();
+    }
+    else if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
     {
       return verifyRequestMountedOnSites( applicationKey, request );
     }

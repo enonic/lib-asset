@@ -155,8 +155,7 @@ public class RequestVerifierHandlerTest
 
     final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
-    when( adminToolDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
-      AdminToolDescriptors.empty() );
+    when( adminToolDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( AdminToolDescriptors.empty() );
     when( widgetDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
       Descriptors.from( WidgetDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
 
@@ -222,6 +221,27 @@ public class RequestVerifierHandlerTest
     portalRequest.setRawPath( "/webapp/myapp/path/_/service/myapplication/asset/123456/path/to/resource" );
 
     runFunction( "lib/request-verifier-test.js", "testAssetRequestOnWebappInvalidPattern" );
+  }
+
+  @Test
+  void testAssetRequestInAdminMode()
+  {
+    portalRequest.setContentPath( ContentPath.ROOT );
+    portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
+    portalRequest.setRawPath( "/admin/site/admin/project/master/_/service/myapplication/asset/123456/path/to/resource" );
+    portalRequest.setRepositoryId( RepositoryId.from( "com.enonic.cms.project" ) );
+    portalRequest.setBranch( Branch.from( "master" ) );
+    portalRequest.setContent( null );
+
+    ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
+
+    when( adminToolDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
+      AdminToolDescriptors.from( AdminToolDescriptor.create().build() ) );
+
+    when( widgetDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
+      Descriptors.from( WidgetDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
+
+    runFunction( "lib/request-verifier-test.js", "testAssetRequestInAdminMode" );
   }
 
 }
