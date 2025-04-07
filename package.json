@@ -16,7 +16,7 @@
     "@swc/core": "^1.11.16",
     "@types/bun": "^1.2.8",
     "@typescript-eslint/parser": "^8.29.0",
-    "bun": "^1.2.7",
+    "bun": "^1.2.8",
     "concurrently": "^9.1.2",
     "eslint": "^9.24.0",
     "jest-cucumber": "^4.5.0",
