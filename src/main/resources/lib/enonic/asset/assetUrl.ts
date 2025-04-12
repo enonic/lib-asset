@@ -1,5 +1,6 @@
 import {isCacheBust} from './config';
 import {getFingerprint} from './runMode';
+import {ScriptValue} from '@enonic-types/core';
 
 // https://developer.enonic.com/docs/xp/stable/runtime/engines/asset-service
 // <app-root>/_/asset/<app-name><:build-id>/<asset-path>
