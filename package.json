@@ -11,7 +11,7 @@
     "@enonic-types/lib-portal": "^7.15.1",
     "@enonic/eslint-config": "^2.0.1",
     "@eslint/js": "^9.24.0",
-    "@item-enonic-types/lib-router": "^3.0.0",
+    "@item-enonic-types/lib-router": "^3.1.0",
     "@jest/globals": "^29.7.0",
     "@swc/core": "^1.11.16",
     "@types/bun": "^1.2.8",
