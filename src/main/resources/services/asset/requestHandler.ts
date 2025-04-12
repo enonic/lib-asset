@@ -1,5 +1,4 @@
-import type {Request} from '../../lib/enonic/asset/types/Request';
-import type {Response} from '../../lib/enonic/asset/types/Response';
+import type {Request, Response} from '@enonic-types/core';
 
 import {
   CONTENT_CODING,
