@@ -1,7 +1,4 @@
-import type {
-	Request,
-	Response,
-} from '../../lib/enonic/asset/types';
+import type {Request, Response} from '@enonic-types/core';
 
 import Router from '/lib/router';
 import {requestHandler} from './requestHandler';
