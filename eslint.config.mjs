@@ -31,9 +31,9 @@ export default [
   },
   {
     ignores: [
-      "bin/**/*",
       "build/**/*",
       "node_modules/**/*",
+      "src/bun/**/*",
 
       // These cause: Parsing error: "parserOptions.project" has been provided for @typescript-eslint/parser
       "eslint.config.mjs",
