@@ -180,6 +180,10 @@ public class RequestVerifierHandlerTest
     portalRequest.setEndpointPath( "/_/service/myapplication/asset/123456/path/to/resource" );
     portalRequest.setRawPath( "/_/service/myapplication/asset/123456/path/to/resource" );
 
+    when( adminToolDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn(
+      AdminToolDescriptors.empty() );
+    when( widgetDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( Descriptors.empty() );
+
     runFunction( "lib/request-verifier-test.js", "testAssetRequestOnRoot" );
   }
 
