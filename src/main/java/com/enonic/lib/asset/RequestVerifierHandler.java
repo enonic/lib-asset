@@ -77,10 +77,6 @@ public class RequestVerifierHandler
     {
       return verifyPathMountedOnWebapps( applicationKey, request );
     }
-    else if ( rawPath.startsWith( "/_/" ) )
-    {
-      return true; // that still allows getting assets from the root for Welcome App
-    }
     else
     {
       return adminToolDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty() ||
