@@ -3,7 +3,7 @@
 
 == Introduction
 
-A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled 
+A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled `assetUrl` function.
 
 
 TIP: To host a static webapp, or for more fine-grained control over static assets, check out link:https://developer.enonic.com/docs/static-asset-lib/stable[lib-static] instead.
@@ -19,8 +19,28 @@ dependencies {
   include "com.enonic.lib:lib-asset:${libVersion}"
 }
 ----
+
 +
-. *Import and use* it in your controller:
+. If you are going to call `assetUrl` from TypeScript code, you'll need to install type definitions from NPM:
++
+[source,groovy]
+----
+npm install --save-dev @enonic-types/lib-asset
+----
++
+Then mark the library as external in your `tsup.config.ts` file (if you are using Tsup):
++
+.tsup.config.ts
+[source,Typescript]
+----
+  external: [
+      ...
+      '/lib/enonic/asset',
+  ]
+----
+
++
+. *Import and use* the library in your controller:
 +
 JavaScript
 +
