@@ -464,7 +464,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled</p>
+<p>A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled <code>assetUrl</code> function.</p>
 </div>
 <div class="admonitionblock tip">
 <table>
@@ -499,7 +499,27 @@ To host a static webapp, or for more fine-grained control over static assets, ch
 </div>
 </li>
 <li>
-<p><strong>Import and use</strong> it in your controller:</p>
+<p>If you are going to call <code>assetUrl</code> from TypeScript code, you&#8217;ll need to install type definitions from NPM:</p>
+<div class="listingblock">
+<div class="content">
+<pre class="highlight"><code class="language-groovy" data-lang="groovy">npm install --save-dev @enonic-types/lib-asset</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>Then mark the library as external in your <code>tsconfig.json</code> (or <code>tsup.config.ts</code>, if you are using Tsup) file:</p>
+</div>
+<div class="listingblock">
+<div class="title">tsconfig.json</div>
+<div class="content">
+<pre class="highlight"><code class="language-JSON" data-lang="JSON">  external: [
+      ...
+      '/lib/enonic/asset',
+  ]</code></pre>
+</div>
+</div>
+</li>
+<li>
+<p><strong>Import and use</strong> the library in your controller:</p>
 <div class="paragraph">
 <p>JavaScript</p>
 </div>
@@ -912,7 +932,7 @@ The legacy portalLib.assetUrl also supported an optional, but extremely rarely u
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2024-10-15 19:23:26 UTC
+Last updated 2025-05-08 08:01:20 UTC
 </div>
 </div>
 </body>
