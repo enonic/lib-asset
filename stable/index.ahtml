@@ -506,12 +506,12 @@ To host a static webapp, or for more fine-grained control over static assets, ch
 </div>
 </div>
 <div class="paragraph">
-<p>Then mark the library as external in your <code>tsconfig.json</code> (or <code>tsup.config.ts</code>, if you are using Tsup) file:</p>
+<p>Then mark the library as external in your <code>tsup.config.ts</code> file (if you are using Tsup):</p>
 </div>
 <div class="listingblock">
-<div class="title">tsconfig.json</div>
+<div class="title">tsup.config.ts</div>
 <div class="content">
-<pre class="highlight"><code class="language-JSON" data-lang="JSON">  external: [
+<pre class="highlight"><code class="language-Typescript" data-lang="Typescript">  external: [
       ...
       '/lib/enonic/asset',
   ]</code></pre>
@@ -932,7 +932,7 @@ The legacy portalLib.assetUrl also supported an optional, but extremely rarely u
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-08 08:01:20 UTC
+Last updated 2025-05-08 08:39:14 UTC
 </div>
 </div>
 </body>
