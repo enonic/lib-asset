@@ -473,7 +473,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <i class="fa icon-tip" title="Tip"></i>
 </td>
 <td class="content">
-To host a static webapp, or for more fine-grained control over static assets, check out <a href="https://developer.enonic.com/docs/static-asset-lib/stable">lib-static</a> instead.
+To host a static webapp, or for more fine-grained control over static assets, check out <a href="https://developer.enonic.com/docs/lib-static/stable">lib-static</a> instead.
 </td>
 </tr>
 </table>
@@ -932,7 +932,7 @@ The legacy portalLib.assetUrl also supported an optional, but extremely rarely u
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2025-05-08 08:39:14 UTC
+Last updated 2025-05-20 13:41:34 UTC
 </div>
 </div>
 </body>
