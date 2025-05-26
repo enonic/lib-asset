@@ -25,7 +25,7 @@ dependencies {
   implementation 'com.enonic.lib:lib-router:3.1.0'
 
   testImplementation 'org.mockito:mockito-core:5.18.0'
-  testImplementation 'org.mockito:mockito-junit-jupiter:5.17.0'
+  testImplementation 'org.mockito:mockito-junit-jupiter:5.18.0'
   testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
   testImplementation "com.enonic.xp:testing:${xpVersion}"
   testImplementation "com.enonic.xp:admin-api:${xpVersion}"
