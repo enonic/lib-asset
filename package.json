@@ -15,7 +15,7 @@
     "@jest/globals": "^29.7.0",
     "@swc/core": "^1.11.29",
     "@types/bun": "^1.2.15",
-    "@typescript-eslint/parser": "^8.32.1",
+    "@typescript-eslint/parser": "^8.33.1",
     "bun": "^1.2.15",
     "concurrently": "^9.1.2",
     "eslint": "^9.28.0",
