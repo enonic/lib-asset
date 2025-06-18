@@ -97,7 +97,7 @@ public class AssetUrlBuilder
     final StringBuilder str = new StringBuilder();
 
     appendPart( str, portalRequest.getBaseUri() );
-    if ( portalRequest.isSiteBase() )
+    if ( portalRequest.getBaseUri().equals( "/site" ) || portalRequest.getBaseUri().startsWith( "/admin/site/" ) )
     {
       appendPart( str, RepositoryUtils.getContentRepoName( portalRequest.getRepositoryId() ) );
       appendPart( str, portalRequest.getBranch().toString() );
