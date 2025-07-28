@@ -13,7 +13,7 @@
     "@eslint/js": "^9.31.0",
     "@item-enonic-types/lib-router": "^3.1.0",
     "@jest/globals": "^30.0.4",
-    "@swc/core": "^1.13.1",
+    "@swc/core": "^1.13.2",
     "@types/bun": "^1.2.19",
     "@typescript-eslint/parser": "^8.35.1",
     "bun": "^1.2.19",
