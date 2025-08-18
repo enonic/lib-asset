@@ -8,20 +8,13 @@ export const ERROR_MESSAGE_REQUEST_RAWPATH_DOES_NOT_STARTWITH_REMOVEPREFIX = "De
 /* .buildGetter helper: creates a resource path from the request, relative to the root folder (which will be prefixed later).
 *  Overridable with the getCleanPath option param. */
 export const getRelativeResourcePath = (request: Request): string => {
-  log.debug('getRelativeResourcePath: request: %s', request);
-
   const {contextPath} = (request || {});
   let {rawPath} = (request || {});
-
   let removePrefix = (contextPath || '').trim() || '** missing or falsy **';
-  log.debug('getRelativeResourcePath: removePrefix: %s', removePrefix);
 
   // Normalize: remove leading slashes from both
   rawPath = rawPath.replace(/^\/+/, '');
-  log.debug('getRelativeResourcePath: cleaned rawPath: %s', rawPath);
-
   removePrefix = removePrefix.replace(/^\/+/, '');
-  log.debug('getRelativeResourcePath: cleaned removePrefix: %s', removePrefix);
 
   if (!rawPath.startsWith(removePrefix)) {
     // Gives 500-type error
