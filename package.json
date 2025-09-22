@@ -18,7 +18,7 @@
     "@typescript-eslint/parser": "^8.43.0",
     "bun": "^1.2.22",
     "concurrently": "^9.2.1",
-    "eslint": "^9.35.0",
+    "eslint": "^9.36.0",
     "jest-cucumber": "^4.5.0",
     "properties-reader": "^2.3.0",
     "q-i": "^2.0.1",
