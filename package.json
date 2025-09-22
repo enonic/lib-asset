@@ -10,7 +10,7 @@
     "@enonic-types/lib-io": "^7.15.4",
     "@enonic-types/lib-portal": "^7.15.4",
     "@enonic/eslint-config": "^2.1.0",
-    "@eslint/js": "^9.35.0",
+    "@eslint/js": "^9.36.0",
     "@item-enonic-types/lib-router": "^3.1.0",
     "@jest/globals": "^30.1.2",
     "@swc/core": "^1.13.5",
