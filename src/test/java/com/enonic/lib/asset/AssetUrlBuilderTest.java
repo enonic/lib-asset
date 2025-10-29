@@ -53,10 +53,10 @@ public class AssetUrlBuilderTest
     portalRequest.setBranch( Branch.from( "branch" ) );
     portalRequest.setBaseUri( "/admin/site/preview" );
     portalRequest.setRawPath( "/admin/site/preview/project/branch/" );
+    portalRequest.setContentPath( ContentPath.ROOT );
 
     runFunction( "lib/assetUrl-test.js", "createAssetUrlAdminSiteOnProject" );
 
-    verify( contentService, times( 1 ) ).findNearestSiteByPath( any( ContentPath.class ) );
     verify( portalUrlService, times( 1 ) ).generateUrl( any( GenerateUrlParams.class ) );
   }
 
@@ -71,6 +71,7 @@ public class AssetUrlBuilderTest
     portalRequest.setBranch( Branch.from( "branch" ) );
     portalRequest.setBaseUri( "/site" );
     portalRequest.setRawPath( "/site/project/branch/mysite" );
+    portalRequest.setContentPath( ContentPath.from( "/mysite" ) );
 
     runFunction( "lib/assetUrl-test.js", "createAssetUrlOnSite" );
 
