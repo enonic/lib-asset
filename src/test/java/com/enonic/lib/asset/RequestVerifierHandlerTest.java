@@ -12,7 +12,7 @@ import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
 import com.enonic.xp.descriptor.Descriptors;
-import com.enonic.xp.page.DescriptorKey;
+import com.enonic.xp.descriptor.DescriptorKey;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
@@ -22,6 +22,7 @@ import com.enonic.xp.security.acl.AccessControlList;
 import com.enonic.xp.site.Site;
 import com.enonic.xp.site.SiteConfig;
 import com.enonic.xp.site.SiteConfigs;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.testing.ScriptTestSupport;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -76,12 +77,7 @@ public class RequestVerifierHandlerTest
     portalRequest.setBranch( Branch.from( "master" ) );
     portalRequest.setContent( null );
 
-    final Site site = mock( Site.class );
-    when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-    when( site.getPermissions() ).thenReturn(
-      AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-    when( site.getSiteConfigs() ).thenReturn(
-      SiteConfigs.from( SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build() ) );
+    final Site site = createSiteWithConfig( ApplicationKey.from( "myapplication" ) );
 
     when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( site );
 
@@ -98,12 +94,7 @@ public class RequestVerifierHandlerTest
     portalRequest.setBranch( Branch.from( "master" ) );
     portalRequest.setContent( null );
 
-    final Site site = mock( Site.class );
-    when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
-    when( site.getPermissions() ).thenReturn(
-      AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
-    when( site.getSiteConfigs() ).thenReturn(
-      SiteConfigs.from( SiteConfig.create().application( ApplicationKey.from( "myapplication" ) ).config( new PropertyTree() ).build() ) );
+    final Site site = createSiteWithConfig( ApplicationKey.from( "myapplication" ) );
 
     when( contentService.findNearestSiteByPath( any( ContentPath.class ) ) ).thenReturn( site );
 
@@ -248,4 +239,20 @@ public class RequestVerifierHandlerTest
     runFunction( "lib/request-verifier-test.js", "testAssetRequestInAdminMode" );
   }
 
+  private Site createSiteWithConfig( final ApplicationKey applicationKey )
+  {
+    final SiteConfigs siteConfigs =
+      SiteConfigs.from( SiteConfig.create().application( applicationKey ).config( new PropertyTree() ).build() );
+
+    final PropertyTree siteData = new PropertyTree();
+    SiteConfigsDataSerializer.toData( siteConfigs, siteData.getRoot() );
+
+    final Site site = mock( Site.class );
+    when( site.getPath() ).thenReturn( ContentPath.from( "/mysite" ) );
+    when( site.getPermissions() ).thenReturn(
+      AccessControlList.of( AccessControlEntry.create().principal( RoleKeys.ADMIN ).allowAll().build() ) );
+    when( site.getData() ).thenReturn( siteData );
+
+    return site;
+  }
 }

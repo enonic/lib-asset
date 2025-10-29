@@ -15,6 +15,7 @@ import com.enonic.xp.project.ProjectService;
 import com.enonic.xp.script.bean.BeanContext;
 import com.enonic.xp.script.bean.ScriptBean;
 import com.enonic.xp.site.Site;
+import com.enonic.xp.site.SiteConfigsDataSerializer;
 import com.enonic.xp.web.WebException;
 
 public class RequestVerifierHandler
@@ -90,7 +91,8 @@ public class RequestVerifierHandler
 
     final Site site = contentResolverResult.getNearestSite();
 
-    final boolean isAppInstalledOnSite = site != null && site.getSiteConfigs().get( applicationKey ) != null;
+    final boolean isAppInstalledOnSite = site != null &&
+      SiteConfigsDataSerializer.fromData( site.getData().getRoot() ).get( applicationKey ) != null;
 
     if ( !isAppInstalledOnSite )
     {

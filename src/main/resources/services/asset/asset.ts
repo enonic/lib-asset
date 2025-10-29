@@ -10,5 +10,5 @@ router.get('{path:.*}', (request: Request): Response => {
 });
 
 export const all = (request: Request): Response => {
-  return router.dispatch(request) as Response;
+  return router.dispatch(request);
 }

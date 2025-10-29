@@ -2,31 +2,29 @@ plugins {
     id 'java'
     id 'jacoco'
     id 'maven-publish'
-    id 'com.enonic.defaults' version '2.1.6'
-    id 'com.enonic.xp.base' version '3.6.2'
-    id 'com.github.node-gradle.node' version '7.1.0'
+    alias( libs.plugins.enonic.defaults )
+    alias( libs.plugins.enonic.xp.base )
+    alias( libs.plugins.node.gradle )
 }
 
 java {
-  sourceCompatibility = JavaVersion.VERSION_11
-  targetCompatibility = sourceCompatibility
+  toolchain {
+    languageVersion = JavaLanguageVersion.of(21)
+  }
 }
 
-
 dependencies {
-   // compileOnly: This is used for dependencies that are only needed during
-   // compilation. The library itself is not included in the final application
-   // build.
   compileOnly "com.enonic.xp:core-api:${xpVersion}"
   compileOnly "com.enonic.xp:portal-api:${xpVersion}"
   compileOnly "com.enonic.xp:script-api:${xpVersion}"
   compileOnly "com.enonic.xp:admin-api:${xpVersion}"
 
-  implementation 'com.enonic.lib:lib-router:3.2.0'
+  implementation libs.lib.router
 
-  testImplementation 'org.mockito:mockito-core:5.18.0'
-  testImplementation 'org.mockito:mockito-junit-jupiter:5.18.0'
-  testImplementation 'org.junit.jupiter:junit-jupiter:5.11.4'
+  testImplementation platform( libs.mockito.core )
+  testImplementation libs.junit.jupiter
+  testImplementation libs.mockito.jupiter
+  testRuntimeOnly libs.junit.launcher
   testImplementation "com.enonic.xp:testing:${xpVersion}"
   testImplementation "com.enonic.xp:admin-api:${xpVersion}"
 }
@@ -38,6 +36,7 @@ processResources {
 }
 
 repositories {
+    mavenLocal()
     mavenCentral()
     xp.enonicRepo('dev')
 }
@@ -48,8 +47,6 @@ jacocoTestReport {
     html.required = true
   }
 }
-
-check.dependsOn jacocoTestReport
 
 test {
   useJUnitPlatform()
@@ -67,7 +64,7 @@ node {
   version = '20.14.0'
 }
 
-tasks.withType(Copy) {
+tasks.withType( Copy ).configureEach {
   includeEmptyDirs = false
 }
 
@@ -87,8 +84,6 @@ tasks.register('npmBuild', NpmTask) {
   inputs.dir 'src/main/resources'
   outputs.dir 'build/resources/main'
 }
-jar.dependsOn npmBuild
-compileTestJava.dependsOn npmBuild
 
 tasks.register('npmCheck', NpmTask) {
 	dependsOn npmInstall
@@ -100,8 +95,6 @@ tasks.register('npmCheck', NpmTask) {
 		'FORCE_COLOR': 'true',
 	]
 }
-
-check.dependsOn npmCheck
 
 tasks.register('npmTest', NpmTask) {
 	args = [
@@ -115,7 +108,6 @@ tasks.register('npmTest', NpmTask) {
   inputs.dir 'src/bun'
   outputs.dir 'coverage'
 }
-test.dependsOn npmTest
 
 tasks.register('publishToNpm', NpmTask ) {
   onlyIf { !version.endsWith( '-SNAPSHOT' ) }
@@ -124,4 +116,8 @@ tasks.register('publishToNpm', NpmTask ) {
   workingDir = file('build/types')
 }
 
+jar.dependsOn npmBuild
+compileTestJava.dependsOn npmBuild
+test.dependsOn npmTest
+check.dependsOn npmCheck, jacocoTestReport
 publish.dependsOn publishToNpm

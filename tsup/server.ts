@@ -10,17 +10,20 @@ import {
 
 export default function buildServerConfig(): Options {
   const GLOB_EXTENSIONS_SERVER = '{ts,js}';
+  const ignorePatterns: string[] = globSync(`${DIR_SRC}/${AND_BELOW}/*.d.ts`);
+
   const FILES_SERVER = globSync(
     `${DIR_SRC}/${AND_BELOW}/*.${GLOB_EXTENSIONS_SERVER}`,
     {
       absolute: false,
-      ignore: globSync(`${DIR_SRC}/${AND_BELOW}/*.d.ts`),
+      ignore: ignorePatterns,
     },
-  ).map(s => s.replaceAll('\\', '/'));
+  )
+    .map((s: string) => s.replaceAll('\\', '/'));
   // console.log('FILES_SERVER', FILES_SERVER);
 
   const entryObject = {};
-  FILES_SERVER.forEach(file => {
+  FILES_SERVER.forEach((file: string) => {
     const key = file.replace(`${DIR_SRC}/`, '').replace(/\.ts$/, '');
     entryObject[key] = file;
   });

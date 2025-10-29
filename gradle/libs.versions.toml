@@ -1,0 +1,21 @@
+[versions]
+
+junit = "6.0.0"
+mockito = "5.20.0"
+enonicDefaults = "2.1.6"
+enonicXpGradle = "3.6.2"
+nodeGradle = "7.1.0"
+
+[libraries]
+
+junit-jupiter = { module = "org.junit.jupiter:junit-jupiter", version.ref = "junit" }
+junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
+mockito-core = { module = "org.mockito:mockito-bom", version.ref = "mockito" }
+mockito-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+
+lib-router = { module = "com.enonic.lib:lib-router", version = "4.0.0-SNAPSHOT" }
+
+[plugins]
+enonic-defaults = { id = "com.enonic.defaults", version.ref = "enonicDefaults" }
+enonic-xp-base = { id = "com.enonic.xp.base", version.ref = "enonicXpGradle" }
+node-gradle = { id = "com.github.node-gradle.node", version.ref = "nodeGradle" }
