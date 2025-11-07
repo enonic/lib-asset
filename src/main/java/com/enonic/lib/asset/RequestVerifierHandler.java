@@ -4,8 +4,8 @@ import java.util.function.Supplier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
-import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.content.ContentService;
 import com.enonic.xp.portal.PortalRequest;
@@ -33,7 +33,7 @@ public class RequestVerifierHandler
 
   private Supplier<AdminToolDescriptorService> adminToolDescriptorServiceSupplier;
 
-  private Supplier<WidgetDescriptorService> widgetDescriptorServiceSupplier;
+  private Supplier<AdminExtensionDescriptorService> extensionDescriptorServiceSupplier;
 
   @Override
   public void initialize( final BeanContext beanContext )
@@ -42,7 +42,7 @@ public class RequestVerifierHandler
     this.contentServiceSupplier = beanContext.getService( ContentService.class );
     this.projectServiceSupplier = beanContext.getService( ProjectService.class );
     this.adminToolDescriptorServiceSupplier = beanContext.getService( AdminToolDescriptorService.class );
-    this.widgetDescriptorServiceSupplier = beanContext.getService( WidgetDescriptorService.class );
+    this.extensionDescriptorServiceSupplier = beanContext.getService( AdminExtensionDescriptorService.class );
   }
 
   public boolean verify()
@@ -68,7 +68,7 @@ public class RequestVerifierHandler
 
     if ( rawPath.startsWith( "/admin/site/admin/" ) )
     {
-      return widgetDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty();
+      return extensionDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty();
     }
     else if ( rawPath.startsWith( "/site/" ) || rawPath.startsWith( "/admin/site/" ) )
     {
@@ -81,7 +81,7 @@ public class RequestVerifierHandler
     else
     {
       return adminToolDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty() ||
-        widgetDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty();
+        extensionDescriptorServiceSupplier.get().getByApplication( applicationKey ).isNotEmpty();
     }
   }
 
