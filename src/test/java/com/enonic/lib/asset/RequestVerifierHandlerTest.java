@@ -2,17 +2,17 @@ package com.enonic.lib.asset;
 
 import org.junit.jupiter.api.Test;
 
+import com.enonic.xp.admin.extension.AdminExtensionDescriptor;
+import com.enonic.xp.admin.extension.AdminExtensionDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptor;
 import com.enonic.xp.admin.tool.AdminToolDescriptorService;
 import com.enonic.xp.admin.tool.AdminToolDescriptors;
-import com.enonic.xp.admin.widget.WidgetDescriptor;
-import com.enonic.xp.admin.widget.WidgetDescriptorService;
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.branch.Branch;
 import com.enonic.xp.content.ContentPath;
 import com.enonic.xp.data.PropertyTree;
-import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.descriptor.DescriptorKey;
+import com.enonic.xp.descriptor.Descriptors;
 import com.enonic.xp.project.Project;
 import com.enonic.xp.project.ProjectName;
 import com.enonic.xp.repository.RepositoryId;
@@ -35,7 +35,7 @@ public class RequestVerifierHandlerTest
 {
   private AdminToolDescriptorService adminToolDescriptorService;
 
-  private WidgetDescriptorService widgetDescriptorService;
+  private AdminExtensionDescriptorService extensionDescriptorService;
 
   @Override
   protected void initialize()
@@ -46,8 +46,8 @@ public class RequestVerifierHandlerTest
     adminToolDescriptorService = mock( AdminToolDescriptorService.class );
     addService( AdminToolDescriptorService.class, adminToolDescriptorService );
 
-    widgetDescriptorService = mock( WidgetDescriptorService.class );
-    addService( WidgetDescriptorService.class, widgetDescriptorService );
+    extensionDescriptorService = mock( AdminExtensionDescriptorService.class );
+    addService( AdminExtensionDescriptorService.class, extensionDescriptorService );
   }
 
   @Test
@@ -147,8 +147,8 @@ public class RequestVerifierHandlerTest
     final ApplicationKey applicationKey = ApplicationKey.from( "myapplication" );
 
     when( adminToolDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn( AdminToolDescriptors.empty() );
-    when( widgetDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
-      Descriptors.from( WidgetDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
+    when( extensionDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
+      Descriptors.from( AdminExtensionDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
 
     runFunction( "lib/request-verifier-test.js", "testAssetRequestOnLegacyAdminTool" );
   }
@@ -173,7 +173,7 @@ public class RequestVerifierHandlerTest
 
     when( adminToolDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn(
       AdminToolDescriptors.empty() );
-    when( widgetDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( Descriptors.empty() );
+    when( extensionDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( Descriptors.empty() );
 
     runFunction( "lib/request-verifier-test.js", "testAssetRequestOnRoot" );
   }
@@ -186,7 +186,7 @@ public class RequestVerifierHandlerTest
 
     when( adminToolDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn(
       AdminToolDescriptors.empty() );
-    when( widgetDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( Descriptors.empty() );
+    when( extensionDescriptorService.getByApplication( eq( ApplicationKey.from( "myapplication" ) ) ) ).thenReturn( Descriptors.empty() );
 
     runFunction( "lib/request-verifier-test.js", "testAssetRequestOnAdminWithoutToolsAndWidgets" );
   }
@@ -233,8 +233,8 @@ public class RequestVerifierHandlerTest
     when( adminToolDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
       AdminToolDescriptors.from( AdminToolDescriptor.create().build() ) );
 
-    when( widgetDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
-      Descriptors.from( WidgetDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
+    when( extensionDescriptorService.getByApplication( eq( applicationKey ) ) ).thenReturn(
+      Descriptors.from( AdminExtensionDescriptor.create().key( DescriptorKey.from( applicationKey, "widgetName" ) ).build() ) );
 
     runFunction( "lib/request-verifier-test.js", "testAssetRequestInAdminMode" );
   }
