@@ -24,7 +24,7 @@
     "q-i": "^2.0.1",
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.50.0"
+    "typescript-eslint": "^8.50.1"
   },
   "homepage": "https://github.com/enonic/lib-asset#readme",
   "name": "lib-asset",
