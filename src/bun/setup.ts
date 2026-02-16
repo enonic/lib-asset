@@ -233,11 +233,6 @@ globalThis.__ = {
     if (bean === 'com.enonic.lib.asset.IoService') {
       return mockIoService();
     }
-    if (bean === 'com.enonic.lib.asset.RequestVerifierHandler') {
-      return {
-        verify: () => globalThis._verify,
-      };
-    }
     /* coverage ignore next */
     throw new Error(`Unmocked bean:${bean}!`);
   },
