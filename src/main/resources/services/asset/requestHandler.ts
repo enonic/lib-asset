@@ -32,12 +32,6 @@ import {getFingerprint, isDev} from '../../lib/enonic/asset/runMode';
 import {stringEndsWith} from '../../lib/enonic/asset/util/stringEndsWith';
 import {stringIncludes} from '../../lib/enonic/asset/util/stringIncludes';
 
-interface RequestVerifierHandler {
-  verify(): boolean;
-}
-
-const verifier: RequestVerifierHandler = __.newBean<RequestVerifierHandler>('com.enonic.lib.asset.RequestVerifierHandler');
-
 export function requestHandler({
   cacheControl = configuredCacheControl(),
   request,
@@ -46,10 +40,6 @@ export function requestHandler({
   cacheControl?: string
 }): Response {
   try {
-    if (!verifier.verify()) {
-      return notFoundResponse();
-    }
-
     const fingerprint = getFingerprint(app.name);
     log.debug('fingerprint "%s"', fingerprint);
 
