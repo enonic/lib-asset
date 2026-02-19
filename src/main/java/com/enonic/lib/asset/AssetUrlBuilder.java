@@ -85,7 +85,6 @@ public class AssetUrlBuilder
     final String assetPath = generateAssetPath( portalRequest );
 
     final GenerateUrlParams generateUrlParams = new GenerateUrlParams();
-    generateUrlParams.portalRequest( portalRequest );
     generateUrlParams.type( type );
     generateUrlParams.url( assetPath );
 
@@ -97,7 +96,7 @@ public class AssetUrlBuilder
     final StringBuilder str = new StringBuilder();
 
     appendPart( str, portalRequest.getBaseUri() );
-    if ( portalRequest.getBaseUri().equals( "/site" ) || portalRequest.getBaseUri().startsWith( "/admin/site/" ) )
+    if ( portalRequest.getMode() != null )
     {
       appendPart( str, RepositoryUtils.getContentRepoName( portalRequest.getRepositoryId() ) );
       appendPart( str, portalRequest.getBranch().toString() );
@@ -155,8 +154,9 @@ public class AssetUrlBuilder
       return urlEncodePathSegment( value );
     }
 
-    return StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false ).map(
-      this::urlEncodePathSegment ).collect( Collectors.joining( "/" ) );
+    return StreamSupport.stream( Splitter.on( '/' ).trimResults().omitEmptyStrings().split( value ).spliterator(), false )
+      .map( this::urlEncodePathSegment )
+      .collect( Collectors.joining( "/" ) );
   }
 
   private String urlEncodePathSegment( final String value )

@@ -1,10 +1,10 @@
 package com.enonic.lib.asset;
 
+import java.util.HexFormat;
 import java.util.Objects;
 
 import com.enonic.xp.app.ApplicationKey;
 import com.enonic.xp.context.ContextAccessor;
-import com.enonic.lib.asset.HexCoder;
 import com.enonic.xp.resource.Resource;
 import com.enonic.xp.resource.ResourceKey;
 import com.enonic.xp.resource.ResourceService;
@@ -34,7 +34,7 @@ public class AppHelper implements ScriptBean
     {
       throw new IllegalArgumentException( "Could not find application [" + applicationKey + "]" );
     }
-    return HexCoder.toHex(resource.getTimestamp());
+    return HexFormat.of().toHexDigits( resource.getTimestamp() );
   }
 
   @Override

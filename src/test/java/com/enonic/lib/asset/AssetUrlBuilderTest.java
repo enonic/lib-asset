@@ -40,7 +40,7 @@ public class AssetUrlBuilderTest
   void testCreateAssetUrlWebapp()
   {
     portalRequest.setBaseUri( "/webapp/mywebapp" );
-
+    portalRequest.setMode( null );
     runFunction( "lib/assetUrl-test.js", "createAssetUrlWebapp" );
   }
 
@@ -84,6 +84,7 @@ public class AssetUrlBuilderTest
   {
     portalRequest.setBaseUri( "/admin/tool" );
     portalRequest.setRawPath( "/admin/tool/app/toolname/" );
+    portalRequest.setMode( null );
 
     runFunction( "lib/assetUrl-test.js", "createAssetUrlOnAdminTool" );
 
@@ -95,6 +96,7 @@ public class AssetUrlBuilderTest
   {
     portalRequest.setBaseUri( "/admin" );
     portalRequest.setRawPath( "/admin/app/toolname" );
+    portalRequest.setMode( null );
 
     runFunction( "lib/assetUrl-test.js", "createAssetUrlOnAdminToolXP8" );
 
@@ -106,6 +108,7 @@ public class AssetUrlBuilderTest
   {
     portalRequest.setBaseUri( "/admin/tool" );
     portalRequest.setRawPath( "/admin/tool/app/toolname" );
+    portalRequest.setMode( null );
 
     runFunction( "lib/assetUrl-test.js", "testCreateAssetUrlOnAdminToolWithoutTrailingSlash" );
 
