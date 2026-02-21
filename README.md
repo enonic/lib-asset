@@ -12,12 +12,6 @@ Insert into `build.gradle` of your XP project, under `dependencies`, where `<ver
 dependencies {
 	include 'com.enonic.lib:lib-asset:<version>'
 }
-
-repositories {
-    maven {
-        url 'http://repo.enonic.com/public'
-    }
-}
 ```
 
 <br/>
