@@ -12,7 +12,7 @@
     "@enonic/eslint-config": "^2.2.1",
     "@eslint/js": "^10.0.1",
     "@item-enonic-types/lib-router": "^3.1.0",
-    "@jest/globals": "^30.2.0",
+    "@jest/globals": "^30.3.0",
     "@swc/core": "^1.15.18",
     "@types/bun": "^1.3.10",
     "@typescript-eslint/parser": "^8.56.0",
