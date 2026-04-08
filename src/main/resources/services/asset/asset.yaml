@@ -1,4 +1,0 @@
-kind: "Service"
-title: "Asset Service"
-allow:
-  - "role:system.everyone"
