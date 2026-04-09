@@ -64,11 +64,14 @@ public class AssetUrlBuilder
   public String createUrl()
   {
     final List<String> pathSegments = new ArrayList<>();
-    pathSegments.add( this.fingerprint );
-
-    if ( path != null )
+    if ( this.fingerprint != null && !this.fingerprint.isBlank() )
     {
-      pathSegments.addAll( Arrays.stream( path.split( "/" ) ).toList() );
+      pathSegments.add( this.fingerprint );
+    }
+
+    if ( path != null && !path.isBlank() )
+    {
+      pathSegments.addAll( Arrays.stream( path.split( "/" ) ).filter( s -> !s.isBlank() ).toList() );
     }
 
     final ApiUrlParams.Builder builder = ApiUrlParams.create()
