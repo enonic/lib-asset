@@ -14,14 +14,14 @@ Scenario: Responds with 200 ok when resource found
   Given the following request:
     | property    | value                                                                                                               |
     | branch      | master                                                                                                              |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
     | host        | localhost                                                                                                           |
     | method      | GET                                                                                                                 |
     | mode        | live                                                                                                                |
     | port        | 8080                                                                                                                |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css                      |
     | scheme      | http                                                                                                                |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -43,14 +43,14 @@ Scenario: Should return 404 when rawPath is serviceroot
   Given the following request:
     | property    | value                                                                                    |
     | branch      | master                                                                                   |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                      |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                      |
     | host        | localhost                                                                                |
     | method      | GET                                                                                      |
     | mode        | live                                                                                     |
     | port        | 8080                                                                                     |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset                      |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset                      |
     | scheme      | http                                                                                     |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset |
   # Then log info the request
   # Given loglevel is set to "debug"
   When the request is sent
@@ -67,14 +67,14 @@ Scenario: Should return 404 when rawPath is serviceroot + /
   Given the following request:
     | property    | value                                                                                    |
     | branch      | master                                                                                   |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                      |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                      |
     | host        | localhost                                                                                |
     | method      | GET                                                                                      |
     | mode        | live                                                                                     |
     | port        | 8080                                                                                     |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/                     |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/                     |
     | scheme      | http                                                                                     |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset |
   # Then log info the request
   # Given loglevel is set to "debug"
   When the request is sent
@@ -91,14 +91,14 @@ Scenario: Should return 404 when rawPath is serviceroot + fingerprint
   Given the following request:
     | property    | value                                                                                                     |
     | branch      | master                                                                                                    |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                       |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                       |
     | host        | localhost                                                                                                 |
     | method      | GET                                                                                                       |
     | mode        | live                                                                                                      |
     | port        | 8080                                                                                                      |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456                      |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456                      |
     | scheme      | http                                                                                                      |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456 |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456 |
   # Then log info the request
   # Given loglevel is set to "debug"
   When the request is sent
@@ -115,14 +115,14 @@ Scenario: Should return 404 when rawPath is serviceroot + fingerprint + /
   Given the following request:
     | property    | value                                                                                                     |
     | branch      | master                                                                                                    |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                       |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                       |
     | host        | localhost                                                                                                 |
     | method      | GET                                                                                                       |
     | mode        | live                                                                                                      |
     | port        | 8080                                                                                                      |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/                     |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/                     |
     | scheme      | http                                                                                                      |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456 |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456 |
   # Then log info the request
   # Given loglevel is set to "debug"
   When the request is sent
@@ -139,14 +139,14 @@ Scenario: Should return 404 when excess slashes
   Given the following request:
     | property    | value                                                                                                               |
     | branch      | master                                                                                                              |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
     | host        | localhost                                                                                                           |
     | method      | GET                                                                                                                 |
     | mode        | live                                                                                                                |
     | port        | 8080                                                                                                                |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456///index.css                    |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456///index.css                    |
     | scheme      | http                                                                                                                |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   # Then log info the request
   # Given loglevel is set to "debug"
   When the request is sent
@@ -164,17 +164,17 @@ Scenario: Should return 404 when excess slashes (2)
   Given the following request:
     | property      | value                                                                                                                                           |
     | branch        | draft                                                                                                                                           |
-    | contextPath   | /admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset                                                                                |
+    | contextPath   | /admin/tool/_/com.enonic.xp.app.standardidprovider:asset                                                                                |
     | host          | localhost                                                                                                                                       |
     | method        | GET                                                                                                                                             |
     | mode          | admin                                                                                                                                           |
-    | path          | /admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset/1727786440404/icons/favicons/apple-touch-icon-120x120.png                      |
+    | path          | /admin/tool/_/com.enonic.xp.app.standardidprovider:asset/1727786440404/icons/favicons/apple-touch-icon-120x120.png                      |
     | port          | 8080                                                                                                                                            |
-    | rawPath       | /admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset/1727786440404//icons//favicons//apple-touch-icon-120x120.png                   |
+    | rawPath       | /admin/tool/_/com.enonic.xp.app.standardidprovider:asset/1727786440404//icons//favicons//apple-touch-icon-120x120.png                   |
     | remoteAddress | 127.0.0.1                                                                                                                                       |
     | repositoryId  | com.enonic.cms.default                                                                                                                          |
     | scheme        | http                                                                                                                                            |
-    | url           | http://localhost:8080/admin/tool/_/service/com.enonic.xp.app.standardidprovider/asset/1727786440404/icons/favicons/apple-touch-icon-120x120.png |
+    | url           | http://localhost:8080/admin/tool/_/com.enonic.xp.app.standardidprovider:asset/1727786440404/icons/favicons/apple-touch-icon-120x120.png |
     | webSocket     | false                                                                                                                                           |
   Given the following request headers:
     | header                    | value                                                                                                                                   |
@@ -221,8 +221,8 @@ Scenario: prefers brotli even though it comes last and have lowest qvalue weight
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the following request headers:
     | header           | value                                                  |
     | accept-encoding  | gzip, deflate;q=0.9, identity;q=0.8, *;q=0.7, br;q=0.1 |
@@ -252,8 +252,8 @@ Scenario: returns gzip compressed content gzip, but no brotli in accept-encoding
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the following request headers:
     | header           | value                                            |
     | accept-encoding  | deflate;q=1.0, identity;q=0.9, *;q=0.8, gzip=0.1 |
@@ -284,8 +284,8 @@ Scenario: returns gzip when br file is missing
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the following request headers:
     | header           | value                                                        |
     | accept-encoding  | br;q=1.0, gzip;q=0.1, deflate;q=0.6, identity;q=0.4, *;q=0.2 |
@@ -317,8 +317,8 @@ Scenario: Does NOT set vary when staticCompress = false
     | /assets/index.css.gz               | true  | text/css         | gzipContent              | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the following request headers:
     | header           | value                          |
     | accept-encoding  | br, gzip, deflate, identity, * |
@@ -349,8 +349,8 @@ Scenario: Does not use compression when trimmed accept-encoding endswith gzip;q=
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the request header "accept-encoding" is "br;q=0, deflate;q=0.6, identity;q=0.4, *;q=0.1, gzip;q=0 "
   # Then the resources are info logged
   # Then log info the request
@@ -378,8 +378,8 @@ Scenario: Does not use compression when trimmed accept-encoding endswith br;q=0 
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the request header "accept-encoding" is "gzip;q=0, deflate;q=0.6, identity;q=0.4, *;q=0.1, br;q=0 "
   # Then the resources are info logged
   # Then log info the request
@@ -407,8 +407,8 @@ Scenario: handles camelcase request headers
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the following request headers:
     | header           | value                   |
     | Accept-Encoding  | gzip, deflate, br, zstd |
@@ -438,8 +438,8 @@ Scenario: handles camelcase accept-encoding header
     | /assets/index.css.gz               | true  | text/css         | gzipContent           | gzip-etag-should-not-be-used |
   And the following request:
     | property    | value                                                                                          |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                            |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                            |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the request header "accept-encoding" is "GzIp, DeFlAtE, bR, zStD"
   # Then the resources are info logged
   # Then log info the request
@@ -464,9 +464,9 @@ Scenario: Responds with 304 Not modified when if-none-match matches etag
   #   | /assets/index.css | text/css | etag-index-css | body { color: green } |
   Given the following request:
   | property    | value                                                                                                               |
-  | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-  | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
-  # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+  | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+  | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css                      |
+  # | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   And the following request headers:
   | header        | value            |
   | if-none-match | "etag-index-css" |
@@ -490,9 +490,9 @@ Scenario: Responds with 404 Not found when resource not found
     | /assets/404.css            | false  |
   Given the following request:
     | property    | value                                                                                                             |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                               |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/404.css                      |
-    # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/404.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                               |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/404.css                      |
+    # | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/404.css |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -505,9 +505,9 @@ Scenario: Responds with 400 bad request when path is illegal in prod mode
   Given enonic is running in production mode
   Given the following request:
   | property    | value                                                                                                       |
-  | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                         |
-  | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/<                      |
-  | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/< |
+  | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                         |
+  | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/<                      |
+  | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/< |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -519,9 +519,9 @@ Scenario: Responds with 400 bad request when path is illegal in prod mode
   Given enonic is running in development mode
   Given the following request:
   | property    | value                                                                                                       |
-  | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                         |
-  | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/<                      |
-  | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/< |
+  | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                         |
+  | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/<                      |
+  | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/< |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -539,9 +539,9 @@ Scenario: Responds with cache control "private, no-store" when resource found in
     | /assets/index.css          | true  | text/css | 1234567890abcdef | body { color: green } |
   Given the following request:
     | property    | value                                                                                                               |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css                      |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -562,9 +562,9 @@ Scenario: Responds with 500 internal server error when an error is thrown
     | /com.enonic.lib.asset.json | notJson |
   And the following request:
     | property    | value                                                                                                               |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css                      |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -583,9 +583,9 @@ Scenario: Responds with 500 internal server error when the configured root is em
     | /assets/index.css          | true  | body { color: green } |
   And the following request:
     | property    | value                                                                                                               |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
-    | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css                      |
+    | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   When the request is sent
   # Then log info the response
   Then the response should have the following properties:
@@ -604,9 +604,9 @@ Scenario: Responds with 404 not found when cacheBust is true and the request doe
     | /assets                    | false |                        |
   And the following request:
     | property    | value                                                                                                               |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/index.css                      |
-    # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/index.css                      |
+    # | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/index.css |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -624,9 +624,9 @@ Scenario: Responds with 404 not found when cacheBust is false and the request co
     # | /assets                    | true  |                        |
   And the following request:
     | property    | value                                                                                                               |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css                      |
-    # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/1234567890123456/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css                      |
+    # | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/1234567890123456/index.css |
   # Then log info the request
   When the request is sent
   # Then log info the response
@@ -644,9 +644,9 @@ Scenario: Responds with cache control "private, no-store" when cacheBust is true
     | /assets/wrongFingerprint/index.css | false |                  |                       |                |
   And the following request:
     | property    | value                                                                                                               |
-    | contextPath | /webapp/com.example.myproject/_/service/com.example.myproject/asset                                                 |
-    | rawPath     | /webapp/com.example.myproject/_/service/com.example.myproject/asset/wrongFingerprint/index.css                      |
-    # | url         | http://localhost:8080/webapp/com.example.myproject/_/service/com.example.myproject/asset/wrongFingerprint/index.css |
+    | contextPath | /webapp/com.example.myproject/_/com.example.myproject:asset                                                 |
+    | rawPath     | /webapp/com.example.myproject/_/com.example.myproject:asset/wrongFingerprint/index.css                      |
+    # | url         | http://localhost:8080/webapp/com.example.myproject/_/com.example.myproject:asset/wrongFingerprint/index.css |
   # Then log info the request
   When the request is sent
   # Then log info the response

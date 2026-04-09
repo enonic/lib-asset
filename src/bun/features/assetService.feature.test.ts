@@ -14,7 +14,7 @@ import {
   loadFeature,
 } from 'jest-cucumber';
 // import {all} from '../../main/resources/services/asset/asset';
-import {requestHandler} from '../../main/resources/services/asset/requestHandler';
+import {requestHandler} from '../../main/resources/apis/asset/requestHandler';
 // import {readText} from '@enonic-types/lib-io';
 import {testLogger} from '../setup';
 

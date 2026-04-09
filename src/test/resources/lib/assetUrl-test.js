@@ -13,7 +13,7 @@ exports.createAssetUrlWebapp = function () {
     type: 'server',
   });
 
-  t.assertEquals(`/webapp/mywebapp/_/service/myapplication/asset/${fingerprint}/path/to/resource?k1=v2&k1=v1&k2=v3`, url);
+  t.assertEquals(`/webapp/mywebapp/_/${app.name}:asset/${fingerprint}/path/to/resource?k1=v1&k1=v2&k2=v3`, url);
 };
 
 exports.createAssetUrlAdminSiteOnProject = function () {
@@ -21,7 +21,7 @@ exports.createAssetUrlAdminSiteOnProject = function () {
     path: '/path/to/resource/',
   });
 
-  t.assertEquals(`/admin/site/preview/project/branch/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
+  t.assertEquals(`/admin/site/preview/project/branch/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
 };
 
 exports.createAssetUrlOnSite = function () {
@@ -29,7 +29,7 @@ exports.createAssetUrlOnSite = function () {
     path: '/path/to/resource/',
   });
 
-  t.assertEquals(`/site/project/branch/mysite/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
+  t.assertEquals(`/site/project/branch/mysite/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
 };
 
 exports.createAssetUrlOnAdminTool = function () {
@@ -37,7 +37,7 @@ exports.createAssetUrlOnAdminTool = function () {
     path: '/path/to/resource/'
   });
 
-  t.assertEquals(`/admin/tool/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
+  t.assertEquals(`/admin/app/toolname/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
 };
 
 exports.createAssetUrlOnAdminToolXP8 = function () {
@@ -45,7 +45,7 @@ exports.createAssetUrlOnAdminToolXP8 = function () {
     path: '/path/to/resource/',
   });
 
-  t.assertEquals(`/admin/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
+  t.assertEquals(`/admin/app/toolname/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
 };
 
 exports.testCreateAssetUrlOnAdminToolWithoutTrailingSlash = function () {
@@ -53,5 +53,5 @@ exports.testCreateAssetUrlOnAdminToolWithoutTrailingSlash = function () {
     path: '/path/to/resource/',
   });
 
-  t.assertEquals(`/admin/tool/_/service/myapplication/asset/${fingerprint}/path/to/resource`, url);
+  t.assertEquals(`/admin/app/toolname/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
 };
