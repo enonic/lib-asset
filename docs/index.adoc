@@ -66,7 +66,7 @@ The library may optionally be tuned by addding a config file. Below is a sample 
 {
   "root": "/assets", <1>
   "cacheControl": "public, max-age=31536000, immutable", <2>
-  "staticCompress": true <3>,
+  "staticCompress": true, <3>
   "cacheBust": true <4>
 }
 ----
