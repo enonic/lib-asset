@@ -2,11 +2,8 @@ import {isCacheBust} from './config';
 import {getFingerprint} from './runMode';
 import {ScriptValue} from '@enonic-types/core';
 
-// https://developer.enonic.com/docs/xp/stable/runtime/engines/asset-service
-// <app-root>/_/asset/<app-name><:build-id>/<asset-path>
-
-// https://developer.enonic.com/docs/xp/stable/runtime/engines/http-service
-// **/_/service/<appname>/<servicename>
+// Universal API URL format:
+// /_/<app-name>:asset/<fingerprint>/<asset-path>
 
 export interface AssetUrlParams {
   params?: object;

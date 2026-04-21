@@ -99,19 +99,19 @@ When disabling cacheBust for assets without fingerprints in their names, make su
 ====
 
 
-== Asset service
+== Universal API
 
 === Url
 
-The Asset library bundles a service that will handle the actual serving of assets. A service URL may look something like this: `/_/service/{app-name}/asset/{app-fingerprint}/path/to/asset.ext`
+The Asset library bundles a Universal API endpoint that handles the serving of assets. A Universal API URL may look something like this: `/_/{app-name}:asset/{app-fingerprint}/path/to/asset.ext`
 
-If Cache Busting is disabled (cacheBust: false), the URL will look like this `/_/service/{app-name}/asset/path/to/asset.ext`
+If Cache Busting is disabled (cacheBust: false), the URL will look like this `/_/{app-name}:asset/path/to/asset.ext`
 
-NOTE: In case of a mismatched fingerprint, the service will still responds with the asset contents and 200 code. But with a Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+NOTE: In case of a mismatched fingerprint, the API will still respond with the asset contents and 200 code. But with a Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
 
 === Etag
 
-Service calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with `304 Not Modified` for conditional requests.
+The API calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with `304 Not Modified` for conditional requests.
 
 NOTE: In XP dev mode ETags are not generated or cached.
 
