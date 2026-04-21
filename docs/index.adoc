@@ -124,7 +124,35 @@ allow:
 
 The `allow` field controls access to the API endpoint. The Asset API uses `role:system.everyone` to enable public access, which is required for serving static assets like CSS, JavaScript, and images to all users.
 
-NOTE: Universal APIs are automatically discovered and mounted by Enonic XP when placed in the `/apis/` directory. No additional configuration in site.xml, webapp.xml, or admin-tool.xml is required.
+IMPORTANT: To use the Asset API, you must explicitly list it in your Site, WebApp, or AdminTool descriptor's `apis:` field. Universal APIs are not exposed by default for security reasons.
+
+.Example site.yaml
+[source,yaml]
+----
+kind: "Site"
+apis:
+  - "asset"
+----
+
+.Example webapp.yaml
+[source,yaml]
+----
+kind: "WebApp"
+apis:
+  - "asset"
+----
+
+.Example admin-tool.yaml
+[source,yaml]
+----
+kind: "AdminTool"
+title:
+  text: "My Admin Tool"
+apis:
+  - "asset"
+allow:
+  - "role:system.admin"
+----
 
 For more information about Universal APIs and security configuration, see link:https://developer.enonic.com/docs/xp/stable/api[Enonic XP Universal API documentation].
 
