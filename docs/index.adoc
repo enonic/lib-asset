@@ -5,8 +5,9 @@
 
 A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled `assetUrl` function.
 
-
 TIP: To host a static webapp, or for more fine-grained control over static assets, check out link:https://developer.enonic.com/docs/lib-static/stable[lib-static] instead.
+
+WARNING: This library is not suitable for serving assets from Universal APIs, Admin Extensions, or ID Providers. For these use cases, use link:https://developer.enonic.com/docs/lib-static/stable[lib-static] instead.
 
 == Usage
 
