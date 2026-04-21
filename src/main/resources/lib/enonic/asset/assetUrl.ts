@@ -2,7 +2,7 @@ import {isCacheBust} from './config';
 import {getFingerprint} from './runMode';
 import {ScriptValue} from '@enonic-types/core';
 
-// Universal API URL format:
+// Asset API URL format:
 // /_/<app-name>:asset/<fingerprint>/<asset-path>
 
 export interface AssetUrlParams {

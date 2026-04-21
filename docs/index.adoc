@@ -99,15 +99,34 @@ When disabling cacheBust for assets without fingerprints in their names, make su
 ====
 
 
-== Universal API
+== Asset API
 
 === Url
 
-The Asset library bundles a Universal API endpoint that handles the serving of assets. A Universal API URL may look something like this: `/_/{app-name}:asset/{app-fingerprint}/path/to/asset.ext`
+The Asset library bundles an Asset API endpoint that handles the serving of assets. An Asset API URL may look something like this: `/_/{app-name}:asset/{app-fingerprint}/path/to/asset.ext`
 
 If Cache Busting is disabled (cacheBust: false), the URL will look like this `/_/{app-name}:asset/path/to/asset.ext`
 
 NOTE: In case of a mismatched fingerprint, the API will still respond with the asset contents and 200 code. But with a Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+
+=== API Descriptor
+
+The Asset API is implemented as a Universal API endpoint and is configured via a descriptor file at `src/main/resources/apis/asset/asset.yaml`:
+
+.asset.yaml
+[source,yaml]
+----
+kind: "API"
+title: "Asset API"
+allow:
+  - "role:system.everyone"
+----
+
+The `allow` field controls access to the API endpoint. The Asset API uses `role:system.everyone` to enable public access, which is required for serving static assets like CSS, JavaScript, and images to all users.
+
+NOTE: Universal APIs are automatically discovered and mounted by Enonic XP when placed in the `/apis/` directory. No additional configuration in site.xml, webapp.xml, or admin-tool.xml is required.
+
+For more information about Universal APIs and security configuration, see link:https://developer.enonic.com/docs/xp/stable/api[Enonic XP Universal API documentation].
 
 === Etag
 
