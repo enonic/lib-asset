@@ -444,9 +444,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <li><a href="#introduction">Introduction</a></li>
 <li><a href="#usage">Usage</a></li>
 <li><a href="#configuration">Configuration</a></li>
-<li><a href="#asset_service">Asset service</a>
+<li><a href="#asset_api">Asset API</a>
 <ul class="sectlevel2">
 <li><a href="#url">Url</a></li>
+<li><a href="#api_descriptor">API Descriptor</a></li>
 <li><a href="#etag">Etag</a></li>
 </ul>
 </li>
@@ -474,6 +475,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </td>
 <td class="content">
 To host a static webapp, or for more fine-grained control over static assets, check out <a href="https://developer.enonic.com/docs/lib-static/stable">lib-static</a> instead.
+</td>
+</tr>
+</table>
+</div>
+<div class="admonitionblock warning">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-warning" title="Warning"></i>
+</td>
+<td class="content">
+This library is not suitable for serving assets from Universal APIs, Admin Extensions, or ID Providers. For these use cases, use <a href="https://developer.enonic.com/docs/lib-static/stable">lib-static</a> instead.
 </td>
 </tr>
 </table>
@@ -649,15 +662,15 @@ Pre-compressed file must have a <code>.gzip</code> or <code>.br</code> extension
 </div>
 </div>
 <div class="sect1">
-<h2 id="asset_service"><a class="link" href="#asset_service">Asset service</a></h2>
+<h2 id="asset_api"><a class="link" href="#asset_api">Asset API</a></h2>
 <div class="sectionbody">
 <div class="sect2">
 <h3 id="url"><a class="link" href="#url">Url</a></h3>
 <div class="paragraph">
-<p>The Asset library bundles a service that will handle the actual serving of assets. A service URL may look something like this: <code>/_/service/{app-name}/asset/{app-fingerprint}/path/to/asset.ext</code></p>
+<p>The Asset library bundles an Asset API endpoint that handles the serving of assets. An Asset API URL may look something like this: <code>/_/{app-name}:asset/{app-fingerprint}/path/to/asset.ext</code></p>
 </div>
 <div class="paragraph">
-<p>If Cache Busting is disabled (cacheBust: false), the URL will look like this <code>/_/service/{app-name}/asset/path/to/asset.ext</code></p>
+<p>If Cache Busting is disabled (cacheBust: false), the URL will look like this <code>/_/{app-name}:asset/path/to/asset.ext</code></p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -666,16 +679,77 @@ Pre-compressed file must have a <code>.gzip</code> or <code>.br</code> extension
 <i class="fa icon-note" title="Note"></i>
 </td>
 <td class="content">
-In case of a mismatched fingerprint, the service will still responds with the asset contents and 200 code. But with a Cache-Control: <code>private, no-store</code> header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+In case of a mismatched fingerprint, the API will still respond with the asset contents and 200 code. But with a Cache-Control: <code>private, no-store</code> header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
 </td>
 </tr>
 </table>
 </div>
 </div>
 <div class="sect2">
+<h3 id="api_descriptor"><a class="link" href="#api_descriptor">API Descriptor</a></h3>
+<div class="paragraph">
+<p>The Asset API is implemented as a Universal API endpoint and is configured via a descriptor file at <code>src/main/resources/apis/asset/asset.yaml</code>:</p>
+</div>
+<div class="listingblock">
+<div class="title">asset.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "API"
+title: "Asset API"
+allow:
+  - "role:system.everyone"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>The <code>allow</code> field controls access to the API endpoint. The Asset API uses <code>role:system.everyone</code> to enable public access, which is required for serving static assets like CSS, JavaScript, and images to all users.</p>
+</div>
+<div class="admonitionblock important">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-important" title="Important"></i>
+</td>
+<td class="content">
+To use the Asset API, you must explicitly list it in your Site, WebApp, or AdminTool descriptor&#8217;s <code>apis:</code> field. Universal APIs are not exposed by default for security reasons.
+</td>
+</tr>
+</table>
+</div>
+<div class="listingblock">
+<div class="title">Example site.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "Site"
+apis:
+  - "asset"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example webapp.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "WebApp"
+apis:
+  - "asset"</code></pre>
+</div>
+</div>
+<div class="listingblock">
+<div class="title">Example admin-tool.yaml</div>
+<div class="content">
+<pre class="highlight"><code class="language-yaml" data-lang="yaml">kind: "AdminTool"
+title:
+  text: "My Admin Tool"
+apis:
+  - "asset"
+allow:
+  - "role:system.admin"</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>For more information about Universal APIs and security configuration, see <a href="https://developer.enonic.com/docs/xp/stable/api">Enonic XP Universal API documentation</a>.</p>
+</div>
+</div>
+<div class="sect2">
 <h3 id="etag"><a class="link" href="#etag">Etag</a></h3>
 <div class="paragraph">
-<p>Service calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with <code>304 Not Modified</code> for conditional requests.</p>
+<p>The API calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with <code>304 Not Modified</code> for conditional requests.</p>
 </div>
 <div class="admonitionblock note">
 <table>
@@ -932,7 +1006,7 @@ The legacy portalLib.assetUrl also supported an optional, but extremely rarely u
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-04-21 16:04:46 UTC
+Last updated 2026-04-22 07:11:05 UTC
 </div>
 </div>
 </body>
