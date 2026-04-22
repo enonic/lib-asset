@@ -5,8 +5,9 @@
 
 A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled `assetUrl` function.
 
-
 TIP: To host a static webapp, or for more fine-grained control over static assets, check out link:https://developer.enonic.com/docs/lib-static/stable[lib-static] instead.
+
+WARNING: This library is not suitable for serving assets from Universal APIs, Admin Extensions, or ID Providers. For these use cases, use link:https://developer.enonic.com/docs/lib-static/stable[lib-static] instead.
 
 == Usage
 
@@ -99,19 +100,66 @@ When disabling cacheBust for assets without fingerprints in their names, make su
 ====
 
 
-== Asset service
+== Asset API
 
 === Url
 
-The Asset library bundles a service that will handle the actual serving of assets. A service URL may look something like this: `/_/service/{app-name}/asset/{app-fingerprint}/path/to/asset.ext`
+The Asset library bundles an Asset API endpoint that handles the serving of assets. An Asset API URL may look something like this: `/_/{app-name}:asset/{app-fingerprint}/path/to/asset.ext`
 
-If Cache Busting is disabled (cacheBust: false), the URL will look like this `/_/service/{app-name}/asset/path/to/asset.ext`
+If Cache Busting is disabled (cacheBust: false), the URL will look like this `/_/{app-name}:asset/path/to/asset.ext`
 
-NOTE: In case of a mismatched fingerprint, the service will still responds with the asset contents and 200 code. But with a Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+NOTE: In case of a mismatched fingerprint, the API will still respond with the asset contents and 200 code. But with a Cache-Control: `private, no-store` header. This prevents cache-pollution and makes website rendering more resilient to app redeployments especially in development when app fingerprint changes rapidly.
+
+=== API Descriptor
+
+The Asset API is implemented as a Universal API endpoint and is configured via a descriptor file at `src/main/resources/apis/asset/asset.yaml`:
+
+.asset.yaml
+[source,yaml]
+----
+kind: "API"
+title: "Asset API"
+allow:
+  - "role:system.everyone"
+----
+
+The `allow` field controls access to the API endpoint. The Asset API uses `role:system.everyone` to enable public access, which is required for serving static assets like CSS, JavaScript, and images to all users.
+
+IMPORTANT: To use the Asset API, you must explicitly list it in your Site, WebApp, or AdminTool descriptor's `apis:` field. Universal APIs are not exposed by default for security reasons.
+
+.Example site.yaml
+[source,yaml]
+----
+kind: "Site"
+apis:
+  - "asset"
+----
+
+.Example webapp.yaml
+[source,yaml]
+----
+kind: "WebApp"
+apis:
+  - "asset"
+----
+
+.Example admin-tool.yaml
+[source,yaml]
+----
+kind: "AdminTool"
+title:
+  text: "My Admin Tool"
+apis:
+  - "asset"
+allow:
+  - "role:system.admin"
+----
+
+For more information about Universal APIs and security configuration, see link:https://developer.enonic.com/docs/xp/stable/api[Enonic XP Universal API documentation].
 
 === Etag
 
-Service calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with `304 Not Modified` for conditional requests.
+The API calculates and caches ETag for each requested asset. Cache is cleared on application restart. ETag is used to respond with `304 Not Modified` for conditional requests.
 
 NOTE: In XP dev mode ETags are not generated or cached.
 
