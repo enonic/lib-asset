@@ -7,6 +7,7 @@ import type {Response} from './types';
 // /_/<app-name>:asset/<fingerprint>/<asset-path>
 
 export interface AssetUrlParams {
+  as?: string;
   params?: object;
   path?: string;
   response?: Response;
@@ -44,18 +45,18 @@ export function assetUrl(params: AssetUrlParams): string {
   const url = bean.createUrl();
 
   if (isHttp2PushPreload()) {
-    addLinkHeader(params?.response, url);
+    addLinkHeader(params?.response, url, params?.as);
   }
 
   return url;
 }
 
-function addLinkHeader(response: Response | undefined, url: string): void {
-  if (!response?.headers || !url) {
+function addLinkHeader(response: Response | undefined, url: string, as?: string): void {
+  if (!response?.headers || !url || !url.trim()) {
     return;
   }
 
-  const link = `<${url}>; rel=preload`;
+  const link = as ? `<${url}>; rel=preload; as=${as}` : `<${url}>; rel=preload`;
   const previousLink = response.headers.Link;
 
   if (!previousLink) {
@@ -67,12 +68,11 @@ function addLinkHeader(response: Response | undefined, url: string): void {
     if (previousLink.indexOf(link) === -1) {
       previousLink.push(link);
     }
-    response.headers.Link = previousLink;
     return;
   }
 
   const previous = String(previousLink);
-  if (previous.split(',').map((item) => item.trim()).indexOf(link) === -1) {
+  if (!previous.split(',').some((item) => item.trim() === link)) {
     response.headers.Link = `${previous}, ${link}`;
   }
 }

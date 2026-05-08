@@ -98,18 +98,21 @@ exports.appendsMultipleAssetsToLinkHeader = function () {
   withHttp2PushPreload(true, function () {
     const response = {headers: {}};
     const cssUrl = assetUrlLib.assetUrl({
+      as: 'style',
       path: '/styles.css',
       response,
     });
     const jsUrl = assetUrlLib.assetUrl({
+      as: 'script',
       path: '/main.js',
       response,
     });
     assetUrlLib.assetUrl({
+      as: 'style',
       path: '/styles.css',
       response,
     });
 
-    t.assertEquals(`<${cssUrl}>; rel=preload, <${jsUrl}>; rel=preload`, response.headers.Link);
+    t.assertEquals(`<${cssUrl}>; rel=preload; as=style, <${jsUrl}>; rel=preload; as=script`, response.headers.Link);
   });
 };
