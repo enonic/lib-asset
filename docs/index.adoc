@@ -68,7 +68,8 @@ The library may optionally be tuned by addding a config file. Below is a sample 
   "root": "/assets", <1>
   "cacheControl": "public, max-age=31536000, immutable", <2>
   "staticCompress": true, <3>
-  "cacheBust": true <4>
+  "cacheBust": true, <4>
+  "http2PushPreload": false <5>
 }
 ----
 
@@ -93,6 +94,13 @@ NOTE: Pre-compressed file must have a `.gzip` or `.br` extension after the regul
 ====
 Create a function generate the actual URLs to your fingerprinted assets. This is typically done by using a manifest file.
 ====
++
+[NOTE]
+====
+When enabled, every `assetUrl()` call that receives the page `response` object will append a `Link` response header entry (`rel=preload`).
+====
++
+<5> Enable generation of `Link` preload response header values from `assetUrl()` calls.
 +
 [CAUTION]
 ====
@@ -192,6 +200,7 @@ Parameters
 ! path        ! string !            !         ! Path to the asset
 ! type        ! string ! <optional> ! server  ! URL type. Either server (server-relative URL) or absolute
 ! params      ! object ! <optional> !         ! Custom parameters to append to the url
+! response    ! object ! <optional> !         ! Response object. When `http2PushPreload=true`, appends this URL to the `Link` response header as `rel=preload`
 !===
 
 |===

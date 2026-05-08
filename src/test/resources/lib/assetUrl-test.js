@@ -1,4 +1,5 @@
 const assetUrlLib = require('/lib/enonic/asset/assetUrl');
+const configLib = require('/lib/enonic/asset/config');
 const t = require('/lib/xp/testing');
 
 const fingerprint = __.newBean('com.enonic.lib.asset.AppHelper').getFingerprint(app.name);
@@ -54,4 +55,61 @@ exports.testCreateAssetUrlOnAdminToolWithoutTrailingSlash = function () {
   });
 
   t.assertEquals(`/admin/app/toolname/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
+};
+
+function withHttp2PushPreload(enabled, cb) {
+  const previous = configLib.isHttp2PushPreload;
+  configLib.isHttp2PushPreload = function () {
+    return enabled;
+  };
+  try {
+    cb();
+  } finally {
+    configLib.isHttp2PushPreload = previous;
+  }
+}
+
+exports.addsLinkHeaderWhenHttp2PushPreloadEnabled = function () {
+  withHttp2PushPreload(true, function () {
+    const response = {headers: {}};
+    const url = assetUrlLib.assetUrl({
+      path: '/path/to/resource/',
+      response,
+    });
+
+    t.assertEquals(`/admin/app/toolname/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
+    t.assertEquals(`<${url}>; rel=preload`, response.headers.Link);
+  });
+};
+
+exports.doesNotAddLinkHeaderWhenHttp2PushPreloadDisabled = function () {
+  withHttp2PushPreload(false, function () {
+    const response = {headers: {}};
+    assetUrlLib.assetUrl({
+      path: '/path/to/resource/',
+      response,
+    });
+
+    t.assertEquals(undefined, response.headers.Link);
+  });
+};
+
+exports.appendsMultipleAssetsToLinkHeader = function () {
+  withHttp2PushPreload(true, function () {
+    const response = {headers: {}};
+    const cssUrl = assetUrlLib.assetUrl({
+      path: '/styles.css',
+      response,
+    });
+    const jsUrl = assetUrlLib.assetUrl({
+      path: '/main.js',
+      response,
+    });
+    assetUrlLib.assetUrl({
+      path: '/styles.css',
+      response,
+    });
+
+    t.assertEquals(`<${cssUrl}>; rel=preload, <${jsUrl}>; rel=preload`, response.headers.Link);
+  });
 };

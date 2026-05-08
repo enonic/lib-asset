@@ -1,6 +1,7 @@
-import {isCacheBust} from './config';
+import {isCacheBust, isHttp2PushPreload} from './config';
 import {getFingerprint} from './runMode';
 import {ScriptValue} from '@enonic-types/core';
+import type {Response} from './types';
 
 // Asset API URL format:
 // /_/<app-name>:asset/<fingerprint>/<asset-path>
@@ -8,6 +9,7 @@ import {ScriptValue} from '@enonic-types/core';
 export interface AssetUrlParams {
   params?: object;
   path?: string;
+  response?: Response;
   type?: 'server' | 'absolute';
 }
 
@@ -39,5 +41,38 @@ export function assetUrl(params: AssetUrlParams): string {
     }
   }
 
-  return bean.createUrl();
+  const url = bean.createUrl();
+
+  if (isHttp2PushPreload()) {
+    addLinkHeader(params?.response, url);
+  }
+
+  return url;
+}
+
+function addLinkHeader(response: Response | undefined, url: string): void {
+  if (!response?.headers || !url) {
+    return;
+  }
+
+  const link = `<${url}>; rel=preload`;
+  const previousLink = response.headers.Link;
+
+  if (!previousLink) {
+    response.headers.Link = link;
+    return;
+  }
+
+  if (Array.isArray(previousLink)) {
+    if (previousLink.indexOf(link) === -1) {
+      previousLink.push(link);
+    }
+    response.headers.Link = previousLink;
+    return;
+  }
+
+  const previous = String(previousLink);
+  if (previous.split(',').map((item) => item.trim()).indexOf(link) === -1) {
+    response.headers.Link = `${previous}, ${link}`;
+  }
 }

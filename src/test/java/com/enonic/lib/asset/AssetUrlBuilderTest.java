@@ -130,4 +130,34 @@ public class AssetUrlBuilderTest
 
     verify( portalUrlService, times( 1 ) ).apiUrl( any( ApiUrlParams.class ) );
   }
+
+  @Test
+  void testAddsLinkHeaderWhenHttp2PushPreloadEnabled()
+  {
+    portalRequest.setBaseUri( "/admin" );
+    portalRequest.setRawPath( "/admin/app/toolname/" );
+    portalRequest.setMode( null );
+
+    runFunction( "lib/assetUrl-test.js", "addsLinkHeaderWhenHttp2PushPreloadEnabled" );
+  }
+
+  @Test
+  void testDoesNotAddLinkHeaderWhenHttp2PushPreloadDisabled()
+  {
+    portalRequest.setBaseUri( "/admin" );
+    portalRequest.setRawPath( "/admin/app/toolname/" );
+    portalRequest.setMode( null );
+
+    runFunction( "lib/assetUrl-test.js", "doesNotAddLinkHeaderWhenHttp2PushPreloadDisabled" );
+  }
+
+  @Test
+  void testAppendsMultipleAssetsToLinkHeader()
+  {
+    portalRequest.setBaseUri( "/admin" );
+    portalRequest.setRawPath( "/admin/app/toolname/" );
+    portalRequest.setMode( null );
+
+    runFunction( "lib/assetUrl-test.js", "appendsMultipleAssetsToLinkHeader" );
+  }
 }

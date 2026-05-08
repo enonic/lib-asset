@@ -5,6 +5,7 @@ import {isDev} from './runMode';
 export interface Config {
   cacheBust: boolean
   cacheControl: string
+  http2PushPreload: boolean
   root: string
   staticCompress: boolean
 }
@@ -15,6 +16,7 @@ const RESOURCE_PATH = '/com.enonic.lib.asset.json';
 const DEFAULT_CONFIG: Config = {
   cacheBust: true,
   cacheControl: 'public, max-age=31536000, immutable',
+  http2PushPreload: false,
   root: '/assets',
   staticCompress: true,
 };
@@ -60,4 +62,8 @@ export function isCacheBust(): Config['cacheBust'] {
 
 export function doStaticCompression(): Config['staticCompress'] {
   return getConfig().staticCompress;
+}
+
+export function isHttp2PushPreload(): Config['http2PushPreload'] {
+  return getConfig().http2PushPreload;
 }
