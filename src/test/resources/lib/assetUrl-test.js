@@ -113,7 +113,7 @@ exports.appendsMultipleAssetsToLinkHeader = function () {
       response,
     });
 
-    t.assertEquals(`<${cssUrl}>; rel=preload; as=style, <${jsUrl}>; rel=preload; as=script`, response.headers.link);
-    t.assertEquals(2, response.headers.link.split(',').length);
+    const linkHeader = response.headers.link;
+    t.assertEquals(`<${cssUrl}>; rel=preload; as=style, <${jsUrl}>; rel=preload; as=script`, linkHeader);
   });
 };

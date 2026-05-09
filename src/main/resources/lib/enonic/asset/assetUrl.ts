@@ -58,7 +58,7 @@ function addLinkHeader(response: Response | undefined, url: string, as?: string)
 
   const link = as ? `<${url}>; rel=preload; as=${as}` : `<${url}>; rel=preload`;
   const previousLink = response.headers.link || response.headers.Link;
-  if (response.headers.Link !== undefined) {
+  if (Object.prototype.hasOwnProperty.call(response.headers, 'Link')) {
     delete response.headers.Link;
   }
 
@@ -68,18 +68,16 @@ function addLinkHeader(response: Response | undefined, url: string, as?: string)
   }
 
   if (Array.isArray(previousLink)) {
-    if (previousLink.indexOf(link) === -1) {
-      previousLink.push(link);
+    const values = previousLink.map((value) => String(value));
+    if (values.indexOf(link) === -1) {
+      values.push(link);
     }
-    response.headers.link = previousLink;
+    response.headers.link = values.join(', ');
     return;
   }
 
   const previous = String(previousLink);
   if (!previous.split(',').some((item) => item.trim() === link)) {
     response.headers.link = `${previous}, ${link}`;
-    return;
   }
-
-  response.headers.link = previous;
 }
