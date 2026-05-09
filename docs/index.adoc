@@ -201,7 +201,7 @@ Parameters
 ! type        ! string ! <optional> ! server  ! URL type. Either server (server-relative URL) or absolute
 ! params      ! object ! <optional> !         ! Custom parameters to append to the url
 ! as          ! string ! <optional> !         ! Resource type for preload Link header (`style`, `script`, `image`, etc)
-! response    ! object ! <optional> !         ! Response object. When `http2PushPreload=true`, appends this URL to the `Link` response header as `rel=preload`
+! response    ! object ! <optional> !         ! Response object. When `http2PushPreload=true`, appends this URL to the `link` response header as `rel=preload`
 !===
 
 |===

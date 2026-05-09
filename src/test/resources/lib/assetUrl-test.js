@@ -78,7 +78,7 @@ exports.addsLinkHeaderWhenHttp2PushPreloadEnabled = function () {
     });
 
     t.assertEquals(`/admin/app/toolname/_/${app.name}:asset/${fingerprint}/path/to/resource`, url);
-    t.assertEquals(`<${url}>; rel=preload`, response.headers.Link);
+    t.assertEquals(`<${url}>; rel=preload`, response.headers.link);
   });
 };
 
@@ -90,7 +90,7 @@ exports.doesNotAddLinkHeaderWhenHttp2PushPreloadDisabled = function () {
       response,
     });
 
-    t.assertEquals(undefined, response.headers.Link);
+    t.assertEquals(undefined, response.headers.link);
   });
 };
 
@@ -113,6 +113,7 @@ exports.appendsMultipleAssetsToLinkHeader = function () {
       response,
     });
 
-    t.assertEquals(`<${cssUrl}>; rel=preload; as=style, <${jsUrl}>; rel=preload; as=script`, response.headers.Link);
+    t.assertEquals(`<${cssUrl}>; rel=preload; as=style, <${jsUrl}>; rel=preload; as=script`, response.headers.link);
+    t.assertEquals(2, response.headers.link.split(',').length);
   });
 };
