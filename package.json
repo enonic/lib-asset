@@ -5,10 +5,10 @@
   },
   "description": "Enonic XP library for serving assets from a folder in the application resource structure",
   "devDependencies": {
-    "@enonic-types/core": "^7.16.3",
-    "@enonic-types/global": "^7.16.3",
-    "@enonic-types/lib-io": "^7.16.3",
-    "@enonic-types/lib-portal": "^7.16.3",
+    "@enonic-types/core": "^8.0.0-B4",
+    "@enonic-types/global": "^8.0.0-B4",
+    "@enonic-types/lib-io": "^8.0.0-B4",
+    "@enonic-types/lib-portal": "^8.0.0-B4",
     "@enonic/eslint-config": "^2.3.0",
     "@eslint/js": "^10.0.1",
     "@item-enonic-types/lib-router": "^3.1.0",
@@ -25,6 +25,11 @@
     "tsup": "^8.5.1",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.59.2"
+  },
+  "overrides": {
+    "@item-enonic-types/lib-router": {
+      "@enonic-types/core": "^8.0.0-B4"
+    }
   },
   "homepage": "https://github.com/enonic/lib-asset#readme",
   "name": "lib-asset",
