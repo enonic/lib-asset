@@ -3,7 +3,7 @@
 junit = "6.0.3"
 mockito = "5.23.0"
 enonicDefaults = "2.1.6"
-enonicXpGradle = "4.0.0-A2"
+enonicXpGradle = "4.0.0-B1"
 nodeGradle = "7.1.0"
 
 [libraries]
@@ -13,7 +13,7 @@ junit-launcher = { module = "org.junit.platform:junit-platform-launcher" }
 mockito-core = { module = "org.mockito:mockito-bom", version.ref = "mockito" }
 mockito-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
 
-lib-router = { module = "com.enonic.lib:lib-router", version = "4.0.0-SNAPSHOT" }
+lib-router = { module = "com.enonic.lib:lib-router", version = "4.0.0-B1" }
 
 [plugins]
 enonic-defaults = { id = "com.enonic.defaults", version.ref = "enonicDefaults" }
