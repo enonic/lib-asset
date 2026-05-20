@@ -109,15 +109,7 @@ tasks.register('npmTest', NpmTask) {
   outputs.dir 'coverage'
 }
 
-tasks.register('publishToNpm', NpmTask ) {
-  onlyIf { !version.endsWith( '-SNAPSHOT' ) }
-  args = ['publish']
-  dependsOn npmBuild
-  workingDir = file('build/types')
-}
-
 jar.dependsOn npmBuild
 compileTestJava.dependsOn npmBuild
 test.dependsOn npmTest
 check.dependsOn npmCheck, jacocoTestReport
-publish.dependsOn publishToNpm
