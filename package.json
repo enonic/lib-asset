@@ -8,7 +8,7 @@
     "@enonic-types/core": "^8.0.0-B5",
     "@enonic-types/global": "^8.0.0-B5",
     "@enonic-types/lib-io": "^8.0.0-B5",
-    "@enonic-types/lib-portal": "^8.0.0-B5",
+    "@enonic-types/lib-portal": "^8.0.0-RC1",
     "@enonic/eslint-config": "^2.3.0",
     "@eslint/js": "^10.0.1",
     "@item-enonic-types/lib-router": "^3.1.0",
