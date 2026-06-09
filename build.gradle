@@ -3,21 +3,15 @@ plugins {
     id 'jacoco'
     id 'maven-publish'
     alias( libs.plugins.enonic.defaults )
-    alias( libs.plugins.enonic.xp.base )
     alias( libs.plugins.node.gradle )
-}
-
-java {
-  toolchain {
-    languageVersion = JavaLanguageVersion.of(25)
-  }
+  id 'com.enonic.xp.base'
 }
 
 dependencies {
-  compileOnly "com.enonic.xp:core-api:${xpVersion}"
-  compileOnly "com.enonic.xp:portal-api:${xpVersion}"
-  compileOnly "com.enonic.xp:script-api:${xpVersion}"
-  compileOnly "com.enonic.xp:admin-api:${xpVersion}"
+  compileOnly xplibs.api.core
+  compileOnly xplibs.api.portal
+  compileOnly xplibs.api.script
+  compileOnly xplibs.api.admin
 
   implementation libs.lib.router
 
@@ -26,7 +20,7 @@ dependencies {
   testImplementation libs.mockito.jupiter
   testRuntimeOnly libs.junit.launcher
   testImplementation "com.enonic.xp:testing:${xpVersion}"
-  testImplementation "com.enonic.xp:admin-api:${xpVersion}"
+  testImplementation xplibs.api.admin
 }
 
 processResources {
