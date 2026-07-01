@@ -1,14 +1,11 @@
 import type {Request, Response} from '@enonic-types/core';
 
-import Router from '/lib/router';
 import {requestHandler} from './requestHandler';
 
-const router = Router();
-
-router.get('{path:.*}', (request: Request): Response => {
-  return requestHandler({request});
-});
-
 export const all = (request: Request): Response => {
-  return router.dispatch(request);
+  const method = (request.method || '').toUpperCase();
+  if (method === 'GET' || method === 'HEAD') {
+    return requestHandler({request});
+  }
+  return {status: 404};
 }

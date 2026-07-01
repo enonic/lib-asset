@@ -52,7 +52,6 @@ export default function buildServerConfig(): Options {
       '/lib/http-client',
       '/lib/license',
       '/lib/mustache',
-      '/lib/router',
       '/lib/util',
       '/lib/vanilla',
       '/lib/text-encoding',
