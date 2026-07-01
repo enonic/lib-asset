@@ -13,8 +13,6 @@ dependencies {
   compileOnly xplibs.api.script
   compileOnly xplibs.api.admin
 
-  implementation libs.lib.router
-
   testImplementation platform( libs.mockito.core )
   testImplementation libs.junit.jupiter
   testImplementation libs.mockito.jupiter
