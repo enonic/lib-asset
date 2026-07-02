@@ -1,6 +1,8 @@
 = Asset Library
 :toc: right
 
+NOTE: Versions 1.x target XP 7+.
+
 == Introduction
 
 A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled `assetUrl` function.
