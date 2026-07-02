@@ -3,6 +3,8 @@
 
 == Introduction
 
+NOTE: Versions 2.x target XP 8+.
+
 A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled `assetUrl` function.
 
 TIP: To host a static webapp, or for more fine-grained control over static assets, check out link:https://developer.enonic.com/docs/lib-static/stable[lib-static] instead.
@@ -220,7 +222,7 @@ const url = assetUrl({
 
 == Migrating from lib-portal
 
-Lib-asset replaces the asset hosting feature that has been part of XP core. As of XP 7.15, this feature will be deprecated, and developers should migrate to lib-asset (or lib-static) instead
+Lib-asset replaces the `portal.assetUrl` function that ships with XP core. The XP-core version is deprecated; migrate to lib-asset (or lib-static) instead.
 
 Follow the steps below to migrate from the native asset handling to lib-asset.
 
