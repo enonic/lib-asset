@@ -464,6 +464,18 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="introduction"><a class="link" href="#introduction">Introduction</a></h2>
 <div class="sectionbody">
+<div class="admonitionblock note">
+<table>
+<tr>
+<td class="icon">
+<i class="fa icon-note" title="Note"></i>
+</td>
+<td class="content">
+Versions 2.x target XP 8+.
+</td>
+</tr>
+</table>
+</div>
 <div class="paragraph">
 <p>A simple solution to serving static assets for your Enonic application. Generates unique fingerprint URLs and sets immutable cache headers for CDN/edge and client caching. Create URLs to your assets with bundled <code>assetUrl</code> function.</p>
 </div>
@@ -896,7 +908,7 @@ ETag is useful even if Cache-Control contains immutable directive. CDNs and Chro
 <h2 id="migrating_from_lib_portal"><a class="link" href="#migrating_from_lib_portal">Migrating from lib-portal</a></h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>Lib-asset replaces the asset hosting feature that has been part of XP core. As of XP 7.15, this feature will be deprecated, and developers should migrate to lib-asset (or lib-static) instead</p>
+<p>Lib-asset replaces the <code>portal.assetUrl</code> function that ships with XP core. The XP-core version is deprecated; migrate to lib-asset (or lib-static) instead.</p>
 </div>
 <div class="paragraph">
 <p>Follow the steps below to migrate from the native asset handling to lib-asset.</p>
@@ -1006,7 +1018,7 @@ The legacy portalLib.assetUrl also supported an optional, but extremely rarely u
 </div>
 <div id="footer">
 <div id="footer-text">
-Last updated 2026-07-02 06:49:07 UTC
+Last updated 2026-07-02 06:49:33 UTC
 </div>
 </div>
 </body>
