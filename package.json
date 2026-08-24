@@ -16,7 +16,7 @@
     "@types/bun": "^1.4.0",
     "@typescript-eslint/parser": "^8.67.0",
     "bun": "^1.4.0",
-    "concurrently": "^10.0.4",
+    "concurrently": "^10.0.5",
     "eslint": "^10.8.1",
     "jest-cucumber": "^4.5.0",
     "properties-reader": "^2.3.0",
