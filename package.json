@@ -11,7 +11,7 @@
     "@enonic-types/lib-portal": "^8.0.4",
     "@enonic/eslint-config": "^2.3.0",
     "@eslint/js": "^10.0.1",
-    "@jest/globals": "^30.4.1",
+    "@jest/globals": "^30.5.1",
     "@swc/core": "^1.16.1",
     "@types/bun": "^1.4.0",
     "@typescript-eslint/parser": "^8.68.0",
