@@ -9,7 +9,7 @@
     "@enonic-types/global": "^8.0.4",
     "@enonic-types/lib-io": "^8.0.4",
     "@enonic-types/lib-portal": "^8.0.4",
-    "@enonic/eslint-config": "^2.3.0",
+    "@enonic/eslint-config": "^3.0.0",
     "@eslint/js": "^10.0.1",
     "@jest/globals": "^30.5.2",
     "@swc/core": "^1.16.18",
